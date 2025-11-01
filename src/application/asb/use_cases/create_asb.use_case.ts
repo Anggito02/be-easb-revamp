@@ -1,15 +1,11 @@
-import { AsbRepository } from '../asb.repository';
-import { Asb } from '../asb.entity';
+import { AsbRepository } from '../../../domain/asb/asb.repository';
+import { Asb } from '../../../domain/asb/asb.entity';
+import { CreateAsbDto } from 'src/presentation/asb/dto/create_asb.dto';
 
 export class CreateAsbUseCase {
     constructor(private readonly asbRepo: AsbRepository) {}
 
-    async execute(data: {
-        name: string;
-        jenisBangunan: string;
-        klasifikasi: string;
-        rekomendasiFile?: string;
-    }): Promise<Asb> {
+    async execute(data: CreateAsbDto): Promise<Asb> {
         const asb = new Asb(
             null,
             data.name,

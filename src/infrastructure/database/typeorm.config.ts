@@ -1,7 +1,7 @@
 import { DataSourceOptions } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
-import { AsbOrmEntity } from '../asb/orm/asb.orm-entity';
-import { UserOrmEntity } from '../user/orm/user.orm-entity';
+import { AsbOrmEntity } from '../asb/orm/asb.orm_entity';
+import { UserOrmEntity } from '../user/orm/user.orm_entity';
 
 export const typeOrmConfig = (config: ConfigService): DataSourceOptions => ({
     type: 'postgres',

@@ -1,5 +1,5 @@
-import { UserRepository } from '../user.repository';
-import { User } from '../user.entity';
+import { UserRepository } from '../../../domain/user/user.repository';
+import { User } from '../../../domain/user/user.entity';
 import * as bcrypt from 'bcryptjs';
 
 export class ValidateUserUseCase {
