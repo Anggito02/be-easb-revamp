@@ -10,6 +10,8 @@ import { RefreshJwtStrategy } from 'src/application/auth/refresh.strategy';
 import { JwtAuthGuard } from 'src/common/guards/jwt_auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { UserService } from 'src/domain/user/user.service';
+import { UserServiceImpl } from 'src/application/user/user.service.impl';
 
 
 

@@ -24,6 +24,11 @@ async function bootstrap() {
         }),
     );
 
+    app.enableCors({
+        origin: true,
+        credentials: true,
+    });
+
     // Global serialization (untuk @Exclude, @Expose)
     const reflector = app.get(Reflector);
     app.useGlobalInterceptors(new ClassSerializerInterceptor(reflector));

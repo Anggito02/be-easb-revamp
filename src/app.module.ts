@@ -8,6 +8,9 @@ import { AuthModule } from './presentation/auth/auth.module';
 import { AsbModule } from './presentation/asb/asb.module';
 import { UserModule } from './presentation/users/user.module';
 
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
+
 // import module lain sesuai kebutuhan
 
 @Module({
@@ -36,6 +39,9 @@ import { UserModule } from './presentation/users/user.module';
         AsbModule,
         UserModule,
         // other modules...
+    ],
+    providers: [
+        { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
     ],
 })
 export class AppModule {}

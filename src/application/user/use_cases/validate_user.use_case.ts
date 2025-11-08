@@ -1,6 +1,6 @@
 import { UserRepository } from '../../../domain/user/user.repository';
 import { User } from '../../../domain/user/user.entity';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { LoginDto } from 'src/presentation/auth/dto/login.dto';
 
 export class ValidateUserUseCase {

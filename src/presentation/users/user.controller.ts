@@ -12,7 +12,7 @@ import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateUserDto } from './dto/create_user.dto';
   import { ResponseDto } from '../../common/dto/response.dto';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { Role } from 'src/domain/user/user_role.enum';
 
 @Controller('users')

@@ -5,15 +5,11 @@ export class SeedUsers1762602188283 implements MigrationInterface {
   name = 'SeedUsers1762602188283';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const username = process.env.SEED_ADMIN_USERNAME ?? 'superadmin';
-    const plain = process.env.SEED_ADMIN_PASSWORD ?? 'ChangeMe123!';
-    const hash = await bcrypt.hash(plain, 10);
-
     await queryRunner.query(
       `INSERT INTO "users" ("username","password_hash","roles")
        VALUES ($1, $2, $3)
        ON CONFLICT ("username") DO NOTHING`,
-      [username, hash, ['superadmin']]
+        ['superadmin', await bcrypt.hash('SuperAdminPass123!', 10), ['superadmin','admin','verifikator','opd','guest']]
     );
 
     await queryRunner.query(
