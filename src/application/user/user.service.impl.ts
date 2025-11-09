@@ -14,13 +14,18 @@ export class UserServiceImpl implements UserService {
         this.validateUserUseCase = new ValidateUserUseCase(userRepo);
     }
 
-    create(user: CreateUserDto): Promise<User> { return this.userRepo.create(user); }
+    async create(user: CreateUserDto): Promise<User> { return this.userRepo.create(user); }
 
-    validateUser(dto: LoginDto): Promise<User | null> {
-        return this.validateUserUseCase.execute(dto);
+    async validateUser(dto: LoginDto): Promise<User | null> {
+        return await this.validateUserUseCase.execute(dto);
     }
 
-    findByUsername(username: string): Promise<User | null> {
-        return this.userRepo.findByUsername(username);
+    async findByUsername(username: string): Promise<User | null> {
+        return await this.userRepo.findByUsername(username);
+    }
+
+    async findById(id: number): Promise<User | null> {
+        const user = await this.userRepo.findById(id);
+        return user;
     }
 }

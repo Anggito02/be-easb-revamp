@@ -21,8 +21,10 @@ export class UserRepositoryImpl implements UserRepository {
         return u ? ({ id: u.id, username: u.username, passwordHash: u.passwordHash, roles: u.roles, refreshTokenVersion: u.refreshTokenVersion }) : null;
     }
 
-    async findById(id: number): Promise<User | null> {
+    async findById(id: number): Promise<User | null> { 
         const u = await this.repo.findOne({ where: { id } });
+
+        console.log("Type: ", u);
         return u ? ({ id: u.id, username: u.username, passwordHash: u.passwordHash, roles: u.roles, refreshTokenVersion: u.refreshTokenVersion }) : null;
     }
 }

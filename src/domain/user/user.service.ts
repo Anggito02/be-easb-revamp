@@ -6,4 +6,5 @@ export abstract class UserService {
     abstract create(user: CreateUserDto): Promise<User>
     abstract validateUser(loginDto: LoginDto): Promise<User | null>
     abstract findByUsername(username: string): Promise<User | null>
+    abstract findById(id: number): Promise<User | null>
 }

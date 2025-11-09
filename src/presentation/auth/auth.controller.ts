@@ -5,6 +5,9 @@ import { ResponseDto } from 'src/common/dto/response.dto';
 import { LoginDto } from './dto/login.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 import { RefreshJwtAuthGuard } from 'src/common/guards/jwt_refresh.guard';
+import { Role } from 'src/domain/user/user_role.enum';
+import { Roles, ROLES_KEY } from 'src/common/decorators/roles.decorator';
+import { RevokeAllDto } from './dto/revoke_all.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -57,5 +60,14 @@ export class AuthController {
     async logout(@Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         res.clearCookie('refreshToken', { path: '/api/dev/v1/auth' });
         return { status: 'success', responseCode: 200, message: 'Logged out', data: null };
+    }
+
+    @Post('revoke-all')
+    @Roles(Role.SUPERADMIN)
+    async revokeAll(@Body() revokeDto: RevokeAllDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+        await this.authService.revokeAllRefreshTokens(revokeDto);
+
+        res.clearCookie('refreshToken', { path: '/api/dev/v1/auth' });
+        return { status: 'success', responseCode: 200, message: 'All refresh tokens revoked', data: null };
     }
 }

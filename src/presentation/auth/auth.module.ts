@@ -16,6 +16,7 @@ import { UserRepositoryImpl } from 'src/infrastructure/user/repositories/user.re
 import { UserRepository } from 'src/domain/user/user.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
+import { AuthRepository } from 'src/application/auth/auth.repository';
 
 
 
@@ -50,6 +51,7 @@ import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
         provide: UserRepository,
         useExisting: UserRepositoryImpl,
     },
+    AuthRepository,
 ],
   exports: [AuthService],
 })
