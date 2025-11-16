@@ -42,7 +42,7 @@ export class AuthService {
 
         return this.jwt.sign(payload, {
         secret: this.config.getOrThrow<string>('jwt.refreshSecret'),
-        expiresIn: this.config.getOrThrow<number>('jwt.refreshTtl'), // e.g. "7d"
+        expiresIn: this.config.getOrThrow<number>('jwt.refreshTtl'),
         });
     }
 
@@ -62,7 +62,6 @@ export class AuthService {
     async revokeAllRefreshTokens(revokeDto: RevokeAllDto): Promise<void> {
         const userId = revokeDto.userId;
         const user = await this.userService.findById(userId);
-        console.log("User: " , user);
         if (!user) throw new UnauthorizedException('User not found');
 
         await this.authRepo.incrementRefreshTokenVersion(userId);

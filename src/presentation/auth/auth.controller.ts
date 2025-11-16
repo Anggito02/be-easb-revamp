@@ -25,7 +25,7 @@ export class AuthController {
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
             path: '/api/dev/v1/auth',
-            maxAge: token.maxAgeRefresh, // <- gunakan ms dari service
+            maxAge: token.maxAgeRefresh,
         });
 
         return {
