@@ -1,4 +1,4 @@
-import { ConflictException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 import { User } from '../../domain/user/user.entity';
 import { ValidateUserUseCase } from './use_cases/validate_user.use_case';
@@ -6,6 +6,7 @@ import { UserService } from 'src/domain/user/user.service';
 import { LoginDto } from 'src/presentation/auth/dto/login.dto';
 import { CreateUserDto } from 'src/presentation/users/dto/create_user.dto';
 import bcrypt from 'bcryptjs';
+import { Role } from 'src/domain/user/user_role.enum';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
@@ -17,6 +18,36 @@ export class UserServiceImpl implements UserService {
 
     async create(userDto: CreateUserDto): Promise<User> {
         try {
+            // cek username existing
+            const exists = await this.userRepo.findByUsername(userDto.username);
+            if (exists) {
+                throw new ConflictException('Username already exists');
+            }
+            
+            // hash password
+            userDto.password = bcrypt.hashSync(userDto.password);
+
+            // create user
+            const newUser = await this.userRepo.create(userDto); 
+            
+            const { passwordHash: _, ...safe } = newUser as any;
+            return safe as User;
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+
+            throw new InternalServerErrorException("Failed to create user");
+        }
+    }
+
+    async createUserByAdmin(userDto: CreateUserDto): Promise<User> {
+        try {
+            // cek role yang ingin di-assign ke user baru
+            if (userDto.roles.includes(Role.SUPERADMIN) || userDto.roles.includes(Role.ADMIN)) {
+                throw new ForbiddenException("Admin can't add new admin users")
+            }
+
             // cek username existing
             const exists = await this.userRepo.findByUsername(userDto.username);
             if (exists) {
