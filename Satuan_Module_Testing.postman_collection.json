@@ -1,0 +1,666 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Satuan Module Testing",
+		"description": "Collection untuk testing API Satuan Module dengan role SUPERADMIN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testSatuanId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Superadmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        console.log('✅ Access token saved to collection variables');",
+									"    } else {",
+									"        console.log('❌ No access token found in response');",
+									"    }",
+									"} else {",
+									"    console.log('❌ Login failed with status:', pm.response.status);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"SuperAdminPass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Satuan CRUD Operations",
+			"item": [
+				{
+					"name": "Get All Satuans (List)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Satuan Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testSatuanId', response.data.id.toString());",
+									"        console.log('✅ Satuan ID saved for testing:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Satuan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(201)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testSatuanId', response.data.id.toString());",
+									"        console.log('✅ Test Satuan ID saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"satuan\": \"TestUnit\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Satuan",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testSatuanId', response.data.id.toString());",
+									"        console.log('✅ Test Satuan ID updated:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testSatuanId}},\n  \"satuan\": \"UpdatedTestUnit\",\n  \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Satuan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testSatuanId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Error Testing",
+			"item": [
+				{
+					"name": "Test Unauthorized Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Should return 401 for unauthorized access', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Duplicate Satuan Name",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"satuan\": \"TestUnit\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Empty Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"satuan\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Not Found Error - Invalid ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update Non-existent Satuan",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999,\n  \"satuan\": \"NonExistentUnit\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Delete Non-existent Satuan",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Pagination Testing",
+			"item": [
+				{
+					"name": "Get Satuans Page 1 (10 items per page)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Satuans Page 2 (5 items per page)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 2,\n  \"amount\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Satuans Large Page",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 9999,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Soft Delete Testing",
+			"item": [
+				{
+					"name": "Create Test Satuan for Soft Delete",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(201)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testSatuanId', response.data.id.toString());",
+									"        console.log('✅ Test Satuan ID for soft delete:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"satuan\": \"SoftDeleteTestUnit\",\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Test Satuan (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testSatuanId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Soft Deleted Satuan Not in List",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 100\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Test Data Cleanup",
+			"item": [
+				{
+					"name": "Delete Test Satuan (if exists)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/satuans",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"satuans"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

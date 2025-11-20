@@ -8,6 +8,7 @@ import { AuthModule } from './presentation/auth/auth.module';
 import { UserModule } from './presentation/users/user.module';
 import { ProvinceModule } from './presentation/provinces/province.module';
 import { KabKotaModule } from './presentation/kabkota/kabkota.module';
+import { SatuanModule } from './presentation/satuan/satuan.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -40,6 +41,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         UserModule,
         ProvinceModule,
         KabKotaModule,
+        SatuanModule,
         // other modules...
     ],
     providers: [
