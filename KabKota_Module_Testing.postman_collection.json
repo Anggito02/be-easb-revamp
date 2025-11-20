@@ -1,0 +1,418 @@
+{
+	"info": {
+		"_postman_id": "b2c3d4e5-f6g7-8901-abcd-ef1234567891",
+		"name": "KabKota Module Testing",
+		"description": "Collection untuk testing API KabKota Module dengan role SUPERADMIN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testKabKotaId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "provinceId",
+			"value": "31",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Superadmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        console.log('✅ Access token saved to collection variables');",
+									"    } else {",
+									"        console.log('❌ No access token found in response');",
+									"    }",
+									"} else {",
+									"    console.log('❌ Login failed with status:', pm.response.status);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"SuperAdminPass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. KabKota CRUD Operations",
+			"item": [
+				{
+					"name": "Get All KabKotas (List)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get KabKota Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testKabKotaId', response.data.id.toString());",
+									"        console.log('✅ KabKota ID saved for testing:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create KabKota",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"9999\",\n  \"nama\": \"Test KabKota\",\n  \"provinceId\": {{provinceId}},\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update KabKota",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testKabKotaId', response.data.id.toString());",
+									"        console.log('✅ Test KabKota ID updated:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testKabKotaId}},\n  \"kode\": \"9999\",\n  \"nama\": \"Updated Test KabKota\",\n  \"provinceId\": {{provinceId}},\n  \"isActive\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete KabKota",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testKabKotaId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Error Testing",
+			"item": [
+				{
+					"name": "Test Unauthorized Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Should return 401 for unauthorized access', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Duplicate Kode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"3171\",\n  \"nama\": \"Jakarta Selatan Duplicate\",\n  \"provinceId\": {{provinceId}},\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Empty Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"\",\n  \"nama\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Foreign Key Constraint - Invalid Province",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"kode\": \"9998\",\n  \"nama\": \"Test Invalid Province\",\n  \"provinceId\": 9999,\n  \"isActive\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Test Data Cleanup",
+			"item": [
+				{
+					"name": "Delete Test KabKota (if exists)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/kabkotas",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"kabkotas"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

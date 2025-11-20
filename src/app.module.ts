@@ -6,6 +6,8 @@ import configuration from './config/configuration';
 
 import { AuthModule } from './presentation/auth/auth.module';
 import { UserModule } from './presentation/users/user.module';
+import { ProvinceModule } from './presentation/provinces/province.module';
+import { KabKotaModule } from './presentation/kabkota/kabkota.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -36,6 +38,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         }),
         AuthModule,
         UserModule,
+        ProvinceModule,
+        KabKotaModule,
         // other modules...
     ],
     providers: [
