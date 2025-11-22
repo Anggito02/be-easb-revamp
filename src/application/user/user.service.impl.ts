@@ -247,14 +247,17 @@ export class UserServiceImpl implements UserService {
             const result = await this.userRepo.getUsers(pagination);
             
             // sanitize users - remove passwordHash from response and superadmin users
-            const sanitizedUsers = result.users.map(user => {
+            const sanitizedUsers = result.data.map(user => {
                 const { passwordHash: _, ...safe } = user as any;
                 return safe as User;
             }).filter(user => !user.roles.includes(Role.SUPERADMIN));
 
             return {
-                ...result,
-                users: sanitizedUsers
+                users: sanitizedUsers,
+                total: result.total,
+                page: pagination.page,
+                amount: pagination.amount,
+                totalPages: Math.ceil(result.total / pagination.amount)
             };
         } catch (error) {
             if (error instanceof HttpException) {

@@ -35,7 +35,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
                 database: config.get('db.name'),
                 entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
                 synchronize: false, // always false in production
-                migrationsRun: true,
+                migrationsRun: false,
                 migrations: [__dirname + '/migrations/*{.ts,.js}'],
             }),
             inject: [ConfigService],
