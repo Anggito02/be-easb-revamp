@@ -1,0 +1,633 @@
+{
+	"info": {
+		"_postman_id": "c3d4e5f6-g7h8-9012-bcde-f23456789014",
+		"name": "AsbStatus Module Testing",
+		"description": "Collection untuk testing API AsbStatus Module dengan role SUPERADMIN",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/dev/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testAsbStatusId",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Superadmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        console.log('✅ Access token saved to collection variables');",
+									"    } else {",
+									"        console.log('❌ No access token found in response');",
+									"    }",
+									"} else {",
+									"    console.log('❌ Login failed with status:', pm.response.status);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"SuperAdminPass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. AsbStatus CRUD Operations",
+			"item": [
+				{
+					"name": "Get All AsbStatuses (List)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get AsbStatus Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testAsbStatusId', response.data.id.toString());",
+									"        console.log('✅ AsbStatus ID saved for testing:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create AsbStatus",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"Test Status Bangunan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update AsbStatus",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testAsbStatusId', response.data.id.toString());",
+									"        console.log('✅ Test AsbStatus ID updated:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testAsbStatusId}},\n  \"status\": \"Updated Test Status Bangunan\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete AsbStatus",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testAsbStatusId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Error Testing",
+			"item": [
+				{
+					"name": "Test Unauthorized Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Should return 401 for unauthorized access', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Duplicate Status",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"General Documents\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Empty Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"field\": \"Test Only Field\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Not Found Error - Invalid ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update Non-existent AsbStatus",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999,\n  \"status\": \"Non-existent Status\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Delete Non-existent AsbStatus",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Test Data Cleanup",
+			"item": [
+				{
+					"name": "Delete Test AsbStatus (if exists)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 99999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Pagination Testing",
+			"item": [
+				{
+					"name": "Test Pagination - Page 1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Pagination - Page 2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 2,\n  \"amount\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Pagination - Large Limit",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 100\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Data Integrity Testing",
+			"item": [
+				{
+					"name": "Test Soft Delete - Verify Record Still Exists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testAsbStatusId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test List Should Not Include Deleted Records",
+					"request": {
+						"method": "GET",
+                        "header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 50\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/asb-status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"asb-status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
