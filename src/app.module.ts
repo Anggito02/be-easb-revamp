@@ -12,6 +12,7 @@ import { SatuanModule } from './presentation/satuan/satuan.module';
 import { AsbFungsiRuangModule } from './presentation/asb_fungsi_ruang/asb_fungsi_ruang.module';
 import { AsbJenisModule } from './presentation/asb_jenis/asb_jenis.module';
 import { AsbLantaiModule } from './presentation/asb_lantai/asb_lantai.module';
+import { RekeningModule } from './presentation/rekening/rekening.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -48,6 +49,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbFungsiRuangModule,
         AsbJenisModule,
         AsbLantaiModule,
+        RekeningModule,
         // other modules...
     ],
     providers: [

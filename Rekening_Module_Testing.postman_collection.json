@@ -1,0 +1,770 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+		"name": "Rekening Module Testing",
+		"description": "Collection untuk testing API Rekening Module dengan role SUPERADMIN. Modul ini mengelola data rekening/akun government dengan fitur pencarian berdasarkan kode rekening.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000/api/dev/v1",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testRekeningId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "testRekeningKode",
+			"value": "TEST-REKENING-001",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "1. Authentication",
+			"item": [
+				{
+					"name": "Login as Superadmin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.accessToken) {",
+									"        pm.collectionVariables.set('accessToken', response.data.accessToken);",
+									"        console.log('✅ Access token saved to collection variables');",
+									"    } else {",
+									"        console.log('❌ No access token found in response');",
+									"    }",
+									"} else {",
+									"    console.log('❌ Login failed with status:', pm.response.status);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"superadmin\",\n  \"password\": \"SuperAdminPass123!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Rekening CRUD Operations",
+			"item": [
+				{
+					"name": "Get All Rekenings (List)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Rekening Detail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testRekeningId', response.data.id.toString());",
+									"        console.log('✅ Rekening ID saved for testing:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Rekening",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testRekeningId', response.data.id.toString());",
+									"        console.log('✅ Test Rekening ID saved:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rekening_kode\": \"{{testRekeningKode}}\",\n  \"rekening_uraian\": \"Rekening Test untuk Development\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rekening",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.to.have.status(200)) {",
+									"    const response = pm.response.json();",
+									"    if (response.data && response.data.id) {",
+									"        pm.collectionVariables.set('testRekeningId', response.data.id.toString());",
+									"        console.log('✅ Test Rekening ID updated:', response.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testRekeningId}},\n  \"rekening_kode\": \"{{testRekeningKode}}\",\n  \"rekening_uraian\": \"Rekening Test yang Telah Diupdate\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Rekening",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testRekeningId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Search Functionality Testing",
+			"item": [
+				{
+					"name": "Search by Kode using LIKE query",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10,\n  \"rekening_kode\": \"5.1.02.02\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search by Partial Kode",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 5,\n  \"rekening_kode\": \"5.2\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Error Testing",
+			"item": [
+				{
+					"name": "Test Unauthorized Access",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Should return 401 for unauthorized access', function () {",
+									"    pm.response.to.have.status(401);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Duplicate Rekening Kode",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rekening_kode\": \"5\",\n  \"rekening_uraian\": \"Ini akan дубликат потому что уже ada\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Empty Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rekening_kode\": \"\",\n  \"rekening_uraian\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Validation Error - Missing Required Fields",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rekening_kode\": \"TEST-ONLY-KODE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Not Found Error - Invalid ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 999999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Update Non-existent Rekening",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 999999,\n  \"rekening_kode\": \"NON-EXISTENT\",\n  \"rekening_uraian\": \"Non-existent Rekening\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Delete Non-existent Rekening",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 999999\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Test Data Cleanup",
+			"item": [
+				{
+					"name": "Delete Test Rekening (if exists)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"rekening_kode\": \"{{testRekeningKode}}\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Pagination Testing",
+			"item": [
+				{
+					"name": "Test Pagination - Page 1",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Pagination - Page 2",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 2,\n  \"amount\": 5\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test Pagination - Large Limit",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 100\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "7. Data Integrity Testing",
+			"item": [
+				{
+					"name": "Test Soft Delete - Verify Record Still Exists",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": {{testRekeningId}}\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Test List Should Not Include Deleted Records",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 50\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Real Data Testing",
+			"item": [
+				{
+					"name": "Test with Real Government Rekening Kode",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"page\": 1,\n  \"amount\": 10,\n  \"rekening_kode\": \"5.1.02.02.08.0001\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Detail of Real Rekening Data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"id\": 1\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/rekenings/detail",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"rekenings",
+								"detail"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
