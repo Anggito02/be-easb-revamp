@@ -14,6 +14,7 @@ import { AsbJenisModule } from './presentation/asb_jenis/asb_jenis.module';
 import { AsbLantaiModule } from './presentation/asb_lantai/asb_lantai.module';
 import { AsbStatusModule } from './presentation/asb_status/asb_status.module';
 import { RekeningModule } from './presentation/rekening/rekening.module';
+import { JenisStandarModule } from './presentation/jenis_standar/jenis_standar.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -52,6 +53,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbLantaiModule,
         RekeningModule,
         AsbStatusModule,
+        JenisStandarModule,
         // other modules...
     ],
     providers: [
