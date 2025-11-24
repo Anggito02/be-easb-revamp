@@ -6,7 +6,7 @@ export default () => ({
         username:  process.env.NODE_ENV === 'production' ? undefined : process.env.DB_USERNAME,
         password: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_PASSWORD,
         name: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_NAME,
-        url: process.env.NODE_ENV === 'production' ? process.env.DB_URL : undefined,
+        url: process.env.NODE_ENV,
     },
     jwt: {
         accessSecret: process.env.JWT_ACCESS_SECRET,
