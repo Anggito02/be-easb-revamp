@@ -9,7 +9,7 @@ export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT ?? 5432),
-  url: process.env.DATABASE_URL || undefined,
+  url: process.env.DB_ENV === 'production' ? process.env.DB_URL : undefined,
   username: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_USERNAME,
   password: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_PASSWORD,
   database: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_NAME,
