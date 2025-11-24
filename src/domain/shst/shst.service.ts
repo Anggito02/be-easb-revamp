@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import { CreateShstDto } from "../../presentation/shst/dto/create_shst.dto";
 import { UpdateNominalShstDto } from "../../presentation/shst/dto/update_nominal_shst.dto";
 import { GetShstDto } from "../../presentation/shst/dto/get_shst.dto";

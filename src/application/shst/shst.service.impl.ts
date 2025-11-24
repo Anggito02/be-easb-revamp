@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { ShstService } from "../../domain/shst/shst.service";
 import { ShstRepository } from "../../domain/shst/shst.repository";

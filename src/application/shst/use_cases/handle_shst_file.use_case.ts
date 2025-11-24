@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import * as fs from 'fs';
 import * as path from 'path';
 

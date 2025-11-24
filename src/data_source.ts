@@ -9,9 +9,10 @@ export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT ?? 5432),
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  url: process.env.DATABASE_URL || undefined,
+  username: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_USERNAME,
+  password: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_PASSWORD,
+  database: process.env.NODE_ENV === 'production' ? undefined : process.env.DB_NAME,
 
   // SESUAIKAN dengan penamaan file entity kamu (sudah kita sarankan pakai *.orm-entity.ts)
   entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
