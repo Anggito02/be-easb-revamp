@@ -6,10 +6,12 @@ import { AsbKlasifikasiRepositoryImpl } from '../../infrastructure/asb_klasifika
 import { AsbKlasifikasiOrmEntity } from '../../infrastructure/asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
 import { AsbKlasifikasiService } from '../../domain/asb_klasifikasi/asb_klasifikasi.service';
 import { AsbKlasifikasiRepository } from '../../domain/asb_klasifikasi/asb_klasifikasi.repository';
+import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AsbKlasifikasiOrmEntity]),
+    AsbTipeBangunanModule
   ],
   controllers: [AsbKlasifikasiController],
   providers: [
