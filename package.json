@@ -26,6 +26,7 @@
     "migration:show": "npm run typeorm -- migration:show"
   },
   "dependencies": {
+    "@nestjs/cli": "^11.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -41,7 +42,6 @@
     "dotenv": "^17.2.3",
     "joi": "^18.0.1",
     "multer": "^2.0.2",
-    "@nestjs/cli": "^11.0.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "pg": "^8.16.3",
@@ -49,13 +49,13 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "typeorm": "^0.3.27",
+    "typeorm-naming-strategies": "^4.1.0",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
     "@eslint/js": "^9.18.0",
-    "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
     "@types/cookie-parser": "^1.4.10",
@@ -75,7 +75,6 @@
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.2",
-    "typeorm-naming-strategies": "^4.1.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
