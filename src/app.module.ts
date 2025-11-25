@@ -19,6 +19,7 @@ import { AsbTipeBangunanModule } from './presentation/asb_tipe_bangunan/asb_tipe
 import { AsbKlasifikasiModule } from './presentation/asb_klasifikasi/asb_klasifikasi.module';
 import { ShstModule } from './presentation/shst/shst.module';
 import { AsbKomponenBangunanModule } from './presentation/asb_komponen_bangunan/asb_komponen_bangunan.module';
+import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -61,7 +62,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbTipeBangunanModule,
         AsbKlasifikasiModule,
         ShstModule,
-        AsbKomponenBangunanModule
+        AsbKomponenBangunanModule,
+        AsbKomponenBangunanNonstdModule
         // other modules...
     ],
     providers: [
