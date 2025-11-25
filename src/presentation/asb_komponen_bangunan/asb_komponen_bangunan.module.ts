@@ -6,10 +6,12 @@ import { AsbKomponenBangunanRepositoryImpl } from '../../infrastructure/asb_komp
 import { AsbKomponenBangunanOrmEntity } from '../../infrastructure/asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
 import { AsbKomponenBangunanService } from '../../domain/asb_komponen_bangunan/asb_komponen_bangunan.service';
 import { AsbKomponenBangunanRepository } from '../../domain/asb_komponen_bangunan/asb_komponen_bangunan.repository';
+import { AsbJenisModule } from '../asb_jenis/asb_jenis.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbKomponenBangunanOrmEntity]),
+        AsbJenisModule,
     ],
     controllers: [AsbKomponenBangunanController],
     providers: [

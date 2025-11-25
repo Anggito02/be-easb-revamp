@@ -1,0 +1,34 @@
+import { IsNumber, IsOptional } from 'class-validator';
+
+export class UpdateAsbKomponenBangunanProsDto {
+    @IsNumber()
+    id!: number;
+
+    @IsNumber()
+    @IsOptional()
+    idAsbKomponenBangunan?: number;
+
+    @IsNumber()
+    @IsOptional()
+    idAsbTipeBangunan?: number;
+
+    @IsNumber()
+    @IsOptional()
+    min?: number;
+
+    @IsNumber()
+    @IsOptional()
+    avgMin?: number;
+
+    @IsNumber()
+    @IsOptional()
+    avg?: number;
+
+    @IsNumber()
+    @IsOptional()
+    avgMax?: number;
+
+    @IsNumber()
+    @IsOptional()
+    max?: number;
+}
