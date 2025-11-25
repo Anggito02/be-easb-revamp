@@ -1,0 +1,487 @@
+{
+	"info": {
+		"_postman_id": "asb-komponen-bangunan-testing",
+		"name": "AsbKomponenBangunan Module Testing",
+		"description": "API testing collection for AsbKomponenBangunan CRUD operations",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1. Create AsbKomponenBangunan - Success",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}",
+						"description": "SUPERADMIN token required"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"komponen\": \"Pondasi Test\",\n  \"files\": \"ORIGIN\",\n  \"idAsbJenis\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Create AsbKomponenBangunan - With REVIEW",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"komponen\": \"Struktur Test\",\n  \"files\": \"REVIEW\",\n  \"idAsbJenis\": 2\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Create - Invalid Enum (Should Fail)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"komponen\": \"Test\",\n  \"files\": \"INVALID\",\n  \"idAsbJenis\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Create - Missing Required Field (Should Fail)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"komponen\": \"Test\",\n  \"files\": \"ORIGIN\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Create - Invalid FK (Should Fail)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"komponen\": \"Test\",\n  \"files\": \"ORIGIN\",\n  \"idAsbJenis\": 99999\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Get All AsbKomponenBangunans - Page 1",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7. Get All - Page 2",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"page\": 2,\n  \"amount\": 10\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8. Get Detail - Success",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans/detail",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans", "detail"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "9. Get Detail - Not Found",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 99999\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans/detail",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans", "detail"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "10. Update - Change Komponen",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"komponen\": \"Pondasi Updated\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "11. Update - Change Files to REVIEW",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"files\": \"REVIEW\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "12. Update - Change FK",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1,\n  \"idAsbJenis\": 2\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "13. Update - All Fields",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 2,\n  \"komponen\": \"Struktur Complete Update\",\n  \"files\": \"ORIGIN\",\n  \"idAsbJenis\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "14. Update - Not Found",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 99999,\n  \"komponen\": \"Should Fail\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "15. Delete - Success",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "16. Delete - Not Found",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 99999\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "17. Test Access Control - No Token (401)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"page\": 1,\n  \"amount\": 10\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "18. Verify Soft Delete - Get Detail After Delete",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/asb-komponen-bangunans/detail",
+					"host": ["{{base_url}}"],
+					"path": ["asb-komponen-bangunans", "detail"]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/dev/v1",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "YOUR_SUPERADMIN_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}

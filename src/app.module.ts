@@ -18,6 +18,7 @@ import { JenisStandarModule } from './presentation/jenis_standar/jenis_standar.m
 import { AsbTipeBangunanModule } from './presentation/asb_tipe_bangunan/asb_tipe_bangunan.module';
 import { AsbKlasifikasiModule } from './presentation/asb_klasifikasi/asb_klasifikasi.module';
 import { ShstModule } from './presentation/shst/shst.module';
+import { AsbKomponenBangunanModule } from './presentation/asb_komponen_bangunan/asb_komponen_bangunan.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -59,11 +60,12 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         JenisStandarModule,
         AsbTipeBangunanModule,
         AsbKlasifikasiModule,
-        ShstModule
+        ShstModule,
+        AsbKomponenBangunanModule
         // other modules...
     ],
     providers: [
         { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
     ],
 })
-export class AppModule {}
+export class AppModule { }
