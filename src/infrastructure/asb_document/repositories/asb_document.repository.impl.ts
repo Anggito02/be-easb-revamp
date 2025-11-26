@@ -8,7 +8,7 @@ import { AsbDocumentOrmEntity } from '../orm/asb_document.orm_entity';
 import { DocumentSpec } from '../../../domain/asb_document/document_spec.enum';
 import { CreateAsbDocumentDto } from '../../../presentation/asb_document/dto/create_asb_document.dto';
 import { UpdateAsbDocumentDto } from '../../../presentation/asb_document/dto/update_asb_document.dto';
-import { GetAsbDocumentListFilterDto } from '../../../presentation/asb_document/dto';
+import { GetAsbDocumentListFilterDto } from '../../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
 
 @Injectable()
 export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
