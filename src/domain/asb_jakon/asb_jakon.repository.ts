@@ -10,7 +10,7 @@ export abstract class AsbJakonRepository {
     abstract findAll(pagination: { page: number; amount: number }): Promise<{ data: AsbJakon[]; total: number }>;
     abstract findByAsbJenisId(id: number): Promise<AsbJakon[]>;
     abstract findByAsbTipeBangunanId(id: number): Promise<AsbJakon[]>;
-    abstract findByAsbKlasifikasiBangunanId(id: number): Promise<AsbJakon[]>;
+    abstract findByAsbKlasifikasiId(id: number): Promise<AsbJakon[]>;
     abstract findByTahun(tahun: number): Promise<AsbJakon[]>;
     abstract findByType(type: AsbJakonType): Promise<AsbJakon[]>;
 }

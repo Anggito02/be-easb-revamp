@@ -15,7 +15,7 @@ export abstract class AsbJakonService {
     abstract getDetail(dto: GetAsbJakonDetailDto): Promise<AsbJakon>;
     abstract findByAsbJenisId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByAsbTipeBangunanId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
-    abstract findByAsbKlasifikasiBangunanId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
+    abstract findByAsbKlasifikasiId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByTahun(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByType(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
 }

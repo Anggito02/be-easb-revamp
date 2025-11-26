@@ -88,7 +88,7 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
         }
     }
 
-    async findByAsbKlasifikasiBangunanId(id: number): Promise<AsbJakon[]> {
+    async findByAsbKlasifikasiId(id: number): Promise<AsbJakon[]> {
         try {
             const data = await this.repo.find({ where: { idAsbKlasifikasi: id } });
             return data || null;

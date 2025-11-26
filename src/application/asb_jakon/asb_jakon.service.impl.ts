@@ -121,12 +121,12 @@ export class AsbJakonServiceImpl implements AsbJakonService {
         }
     }
 
-    async findByAsbKlasifikasiBangunanId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
+    async findByAsbKlasifikasiId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]> {
         try {
             if (!dto.idAsbKlasifikasi) {
                 throw new BadRequestException('idAsbKlasifikasi is required');
             }
-            return await this.repository.findByAsbKlasifikasiBangunanId(dto.idAsbKlasifikasi);
+            return await this.repository.findByAsbKlasifikasiId(dto.idAsbKlasifikasi);
         } catch (error) {
             throw error;
         }
