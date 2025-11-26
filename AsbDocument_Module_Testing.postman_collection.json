@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "asb-document-module-testing",
+		"name": "AsbDocument Module Testing",
+		"description": "Test collection for AsbDocument module with document upload functionality and spec enum validation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Document - SURAT_REKOMENDASI",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "SURAT_REKOMENDASI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - LAPORAN",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - MATERI",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "MATERI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - Invalid Spec",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "INVALID_SPEC", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - File Too Large (>10MB)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - Invalid File Type (Image)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": "", "description": "Upload image instead of document"},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - No File",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Get All Documents - Paginated",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document?page=1&amount=10",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document"],
+					"query": [
+						{"key": "page", "value": "1"},
+						{"key": "amount", "value": "10"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get All Documents - Filter by Spec LAPORAN",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document?page=1&amount=10&spec=LAPORAN",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document"],
+					"query": [
+						{"key": "page", "value": "1"},
+						{"key": "amount", "value": "10"},
+						{"key": "spec", "value": "LAPORAN"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get All Documents - Filter by Spec SURAT_REKOMENDASI",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document?page=1&amount=10&spec=SURAT_REKOMENDASI",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document"],
+					"query": [
+						{"key": "page", "value": "1"},
+						{"key": "amount", "value": "10"},
+						{"key": "spec", "value": "SURAT_REKOMENDASI"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get Document Detail - Success",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document/detail?id=1",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document", "detail"],
+					"query": [
+						{"key": "id", "value": "1"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get Document Detail - Not Found",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document/detail?id=99999",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document", "detail"],
+					"query": [
+						{"key": "id", "value": "99999"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Get By Spec - LAPORAN",
+			"request": {
+				"method": "GET",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"url": {
+					"raw": "{{base_url}}/asb-document/by-spec?spec=LAPORAN",
+					"host": ["{{base_url}}"],
+					"path": ["asb-document", "by-spec"],
+					"query": [
+						{"key": "spec", "value": "LAPORAN"}
+					]
+				}
+			}
+		},
+		{
+			"name": "Update Document - Without  New File",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "id", "value": "1", "type": "text"},
+						{"key": "spec", "value": "MATERI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Update Document - With New File",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "id", "value": "1", "type": "text"},
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Update Document - Not Found",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "id", "value": "99999", "type": "text"},
+						{"key": "spec", "value": "MATERI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Delete Document - Success",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{"key": "Content-Type", "value": "application/json"},
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 1\n}"
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Delete Document - Not Found",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{"key": "Content-Type", "value": "application/json"},
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"id\": 99999\n}"
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Create Document - No Auth Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": ""},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Test PDF Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": "", "description": "Upload PDF file"},
+						{"key": "spec", "value": "LAPORAN", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Test DOC Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": "", "description": "Upload DOC file"},
+						{"key": "spec", "value": "SURAT_REKOMENDASI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		},
+		{
+			"name": "Test DOCX Upload",
+			"request": {
+				"method": "POST",
+				"header": [
+					{"key": "Authorization", "value": "Bearer {{superadmin_token}}"}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{"key": "file", "type": "file", "src": "", "description": "Upload DOCX file"},
+						{"key": "spec", "value": "MATERI", "type": "text"}
+					]
+				},
+				"url": {"raw": "{{base_url}}/asb-document", "host": ["{{base_url}}"], "path": ["asb-document"]}
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000/api/dev/v1",
+			"type": "string"
+		},
+		{
+			"key": "superadmin_token",
+			"value": "YOUR_SUPERADMIN_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}

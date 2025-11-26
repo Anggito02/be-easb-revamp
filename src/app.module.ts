@@ -23,6 +23,7 @@ import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_ban
 import { AsbKomponenBangunanProsModule } from './presentation/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.module';
 import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
 import { AsbBpsGalleryModule } from './presentation/asb_bps_gallery/asb_bps_gallery.module';
+import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -69,7 +70,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbKomponenBangunanNonstdModule,
         AsbKomponenBangunanProsModule,
         AsbJakonModule,
-        AsbBpsGalleryModule
+        AsbBpsGalleryModule,
+        AsbDocumentModule
         // other modules...
     ],
     providers: [
