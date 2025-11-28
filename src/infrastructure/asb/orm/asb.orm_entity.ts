@@ -1,0 +1,148 @@
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    ManyToOne,
+    JoinColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+    DeleteDateColumn,
+} from 'typeorm';
+import { AsbJenisOrmEntity } from '../../asb_jenis/orm/asb_jenis.orm_entity';
+import { AsbStatusOrmEntity } from '../../asb_status/orm/asb_status.orm_entity';
+import { OpdOrmEntity } from '../../opd/orm/opd.orm_entity';
+import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_bangunan.orm_entity';
+import { RekeningOrmEntity } from '../../rekening/orm/rekening.orm_entity';
+import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
+import { AsbKlasifikasiOrmEntity } from '../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
+
+@Entity('asb')
+export class AsbOrmEntity {
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    // Required Foreign Keys
+    @Column({ name: 'id_asb_jenis', type: 'int' })
+    idAsbJenis: number;
+
+    @Column({ name: 'id_asb_status', type: 'int' })
+    idAsbStatus: number;
+
+    @Column({ name: 'id_opd', type: 'int' })
+    idOpd: number;
+
+    @Column({ name: 'id_asb_tipe_bangunan', type: 'int' })
+    idAsbTipeBangunan: number;
+
+    // Optional Foreign Keys
+    @Column({ name: 'id_rekening', type: 'int', nullable: true })
+    idRekening: number | null;
+
+    @Column({ name: 'id_rekening_review', type: 'int', nullable: true })
+    idRekeningReview: number | null;
+
+    @Column({ name: 'id_kabkota', type: 'int', nullable: true })
+    idKabkota: number | null;
+
+    @Column({ name: 'id_asb_klasifikasi', type: 'int', nullable: true })
+    idAsbKlasifikasi: number | null;
+
+    // Core fields
+    @Column({ name: 'tahun_anggaran', type: 'int', nullable: true })
+    tahunAnggaran: number | null;
+
+    @Column({ name: 'nama_asb', type: 'text' })
+    namaAsb: string;
+
+    @Column({ type: 'text', nullable: true })
+    alamat: string | null;
+
+    @Column({ name: 'jumlah_kontraktor', type: 'int', nullable: true })
+    jumlahKontraktor: number | null;
+
+    @Column({ name: 'total_lantai', type: 'int', nullable: true })
+    totalLantai: number | null;
+
+    @Column({ name: 'reject_reason', type: 'text', nullable: true })
+    rejectReason: string | null;
+
+    // Double/numeric fields
+    @Column({ type: 'float', nullable: true })
+    shst: number | null;
+
+    @Column({
+        name: 'perencanaan_konstruksi',
+        type: 'float',
+        nullable: true,
+    })
+    perencanaanKonstruksi: number | null;
+
+    @Column({
+        name: 'pengawasan_konstruksi',
+        type: 'float',
+        nullable: true,
+    })
+    pengawasanKonstruksi: number | null;
+
+    @Column({
+        name: 'management_konstruksi',
+        type: 'float',
+        nullable: true,
+    })
+    managementKonstruksi: number | null;
+
+    @Column({
+        name: 'pengelolaan_kegiatan',
+        type: 'float',
+        nullable: true,
+    })
+    pengelolaanKegiatan: number | null;
+
+    // Timestamps
+    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+    updatedAt: Date;
+
+    @DeleteDateColumn({
+        name: 'deleted_at',
+        type: 'timestamptz',
+        nullable: true,
+    })
+    deletedAt: Date | null;
+
+    // Relationships - Required FKs (CASCADE)
+    @ManyToOne(() => AsbJenisOrmEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'id_asb_jenis' })
+    asbJenis: AsbJenisOrmEntity;
+
+    @ManyToOne(() => AsbStatusOrmEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'id_asb_status' })
+    asbStatus: AsbStatusOrmEntity;
+
+    @ManyToOne(() => OpdOrmEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'id_opd' })
+    opd: OpdOrmEntity;
+
+    @ManyToOne(() => AsbTipeBangunanOrmEntity, { onDelete: 'CASCADE' })
+    @JoinColumn({ name: 'id_asb_tipe_bangunan' })
+    asbTipeBangunan: AsbTipeBangunanOrmEntity;
+
+    // Relationships - Optional FKs (SET NULL)
+    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_rekening' })
+    rekening: RekeningOrmEntity;
+
+    @ManyToOne(() => RekeningOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_rekening_review' })
+    rekeningReview: RekeningOrmEntity;
+
+    @ManyToOne(() => KabKotaOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_kabkota' })
+    kabkota: KabKotaOrmEntity;
+
+    @ManyToOne(() => AsbKlasifikasiOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb_klasifikasi' })
+    asbKlasifikasi: AsbKlasifikasiOrmEntity;
+}
