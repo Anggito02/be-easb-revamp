@@ -35,7 +35,7 @@ export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
             ALTER TABLE "asb_detail_reviews"
             ADD CONSTRAINT "fk_asb_detail_reviews_detail"
             FOREIGN KEY ("id_asb_detail")
-            REFERENCES "asb_detail"("id")
+            REFERENCES "asb_details"("id")
             ON DELETE SET NULL
         `);
 
@@ -44,7 +44,7 @@ export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
             ALTER TABLE "asb_detail_reviews"
             ADD CONSTRAINT "fk_asb_detail_reviews_lantai"
             FOREIGN KEY ("id_asb_lantai")
-            REFERENCES "asb_lantai"("id")
+            REFERENCES "asb_lantais"("id")
             ON DELETE SET NULL
         `);
 
@@ -53,7 +53,7 @@ export class CreateAsbDetailReview1764316863490 implements MigrationInterface {
             ALTER TABLE "asb_detail_reviews"
             ADD CONSTRAINT "fk_asb_detail_reviews_fungsi_ruang"
             FOREIGN KEY ("id_asb_fungsi_ruang")
-            REFERENCES "asb_fungsi_ruang"("id")
+            REFERENCES "asb_fungsi_ruangs"("id")
             ON DELETE SET NULL
         `);
 
