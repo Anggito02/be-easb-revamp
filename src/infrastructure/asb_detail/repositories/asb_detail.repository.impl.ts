@@ -20,14 +20,7 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
 
     async create(dto: CreateAsbDetailDto): Promise<AsbDetail> {
         try {
-            const ormEntity = this.repository.create({
-                files: dto.files ?? Files.ORIGIN,
-                idAsbLantai: dto.idAsbLantai ?? null,
-                idAsbFungsiRuang: dto.idAsbFungsiRuang ?? null,
-                asbFungsiRuangKoef: dto.asbFungsiRuangKoef ?? null,
-                lantaiKoef: dto.lantaiKoef ?? null,
-                luas: dto.luas ?? null,
-            });
+            const ormEntity = this.repository.create(dto);
 
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbDetail, saved);

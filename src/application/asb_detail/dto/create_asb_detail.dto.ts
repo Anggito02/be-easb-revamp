@@ -7,22 +7,19 @@ export class CreateAsbDetailDto {
     files?: Files;
 
     @IsInt()
-    @IsOptional()
-    idAsbLantai?: number | null;
+    idAsbLantai: number;
 
     @IsInt()
-    @IsOptional()
-    idAsbFungsiRuang?: number | null;
+    idAsbFungsiRuang: number;
 
     @IsNumber()
     @IsOptional()
-    asbFungsiRuangKoef?: number | null;
+    asbFungsiRuangKoef: number;
 
     @IsNumber()
     @IsOptional()
-    lantaiKoef?: number | null;
+    lantaiKoef: number;
 
     @IsNumber()
-    @IsOptional()
-    luas?: number | null;
+    luas: number;
 }

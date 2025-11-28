@@ -5,15 +5,37 @@ import { AsbDetailRepository } from '../../domain/asb_detail/asb_detail.reposito
 import { Files } from '../../domain/asb_detail/files.enum';
 import { CreateAsbDetailDto } from './dto/create_asb_detail.dto';
 import { UpdateAsbDetailDto } from './dto/update_asb_detail.dto';
+import { CalculateKoefLantaiUseCase } from './use_cases/calculate_koef_lantai.use_case';
+import { CalculateKoefFungsiBangunanUseCase } from './use_cases/calculate_koef_fungsi_bangunan.use_case';
 
 @Injectable()
 export class AsbDetailServiceImpl extends AsbDetailService {
-    constructor(private readonly repository: AsbDetailRepository) {
+    constructor(
+        private readonly repository: AsbDetailRepository,
+        private readonly calculateKoefLantaiUseCase: CalculateKoefLantaiUseCase,
+        private readonly calculateKoefFungsiBangunanUseCase: CalculateKoefFungsiBangunanUseCase,
+    ) {
         super();
     }
 
     async create(dto: CreateAsbDetailDto): Promise<AsbDetail> {
         try {
+            // Calculate lantai koef
+            const lantaiKoef = await this.calculateKoefLantaiUseCase.execute(
+                dto.luas,
+                dto.idAsbLantai,
+            );
+
+            // Calculate fungsi bangunan koef
+            const asbFungsiRuangKoef =
+                await this.calculateKoefFungsiBangunanUseCase.execute(
+                    dto.luas,
+                    dto.idAsbFungsiRuang,
+                );
+
+            // Create with calculated coefficients
+            dto.lantaiKoef = lantaiKoef;
+            dto.asbFungsiRuangKoef = asbFungsiRuangKoef;
             return await this.repository.create(dto);
         } catch (error) {
             throw error;
