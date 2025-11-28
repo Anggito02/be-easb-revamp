@@ -8,11 +8,9 @@ export class CreateAsbBipekStandardDto {
     files: Files;
 
     @IsInt()
-    @IsOptional()
     idAsbKomponenBangunan: number;
 
     @IsNumber()
-    @IsOptional()
     bobotInput: number;
 
     @IsNumber()
@@ -20,14 +18,11 @@ export class CreateAsbBipekStandardDto {
     bobotInputProsentase: number;
 
     @IsEnum(CalculationMethod)
-    @IsOptional()
     calculationMethod: CalculationMethod;
 
     @IsNumber()
-    @IsOptional()
     jumlahBobot: number;
 
     @IsNumber()
-    @IsOptional()
     rincianHarga: number;
 }

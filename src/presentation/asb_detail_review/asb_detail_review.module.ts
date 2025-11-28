@@ -1,0 +1,31 @@
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AsbDetailReviewOrmEntity } from '../../infrastructure/asb_detail_review/orm/asb_detail_review.orm_entity';
+import { AsbDetailReviewRepository } from '../../domain/asb_detail_review/asb_detail_review.repository';
+import { AsbDetailReviewRepositoryImpl } from '../../infrastructure/asb_detail_review/repositories/asb_detail_review.repository.impl';
+import { AsbDetailReviewService } from '../../domain/asb_detail_review/asb_detail_review.service';
+import { AsbDetailReviewServiceImpl } from '../../application/asb_detail_review/asb_detail_review.service.impl';
+import { AsbDetailModule } from '../asb_detail/asb_detail.module';
+import { AsbLantaiModule } from '../asb_lantai/asb_lantai.module';
+import { AsbFungsiRuangModule } from '../asb_fungsi_ruang/asb_fungsi_ruang.module';
+
+@Module({
+    imports: [
+        TypeOrmModule.forFeature([AsbDetailReviewOrmEntity]),
+        AsbDetailModule,
+        AsbLantaiModule,
+        AsbFungsiRuangModule,
+    ],
+    providers: [
+        {
+            provide: AsbDetailReviewRepository,
+            useClass: AsbDetailReviewRepositoryImpl,
+        },
+        {
+            provide: AsbDetailReviewService,
+            useClass: AsbDetailReviewServiceImpl,
+        },
+    ],
+    exports: [AsbDetailReviewService],
+})
+export class AsbDetailReviewModule { }

@@ -28,6 +28,7 @@ import { AsbLogModule } from './presentation/asb_log/asb_log.module';
 import { AsbDetailModule } from './presentation/asb_detail/asb_detail.module';
 import { AsbBipekStandardModule } from './presentation/asb_bipek_standard/asb_bipek_standard.module';
 import { AsbBipekNonStdModule } from './presentation/asb_bipek_non_std/asb_bipek_non_std.module';
+import { AsbDetailReviewModule } from './presentation/asb_detail_review/asb_detail_review.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -79,7 +80,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbLogModule,
         AsbDetailModule,
         AsbBipekStandardModule,
-        AsbBipekNonStdModule
+        AsbBipekNonStdModule,
+        AsbDetailReviewModule
         // other modules...
     ],
     providers: [
