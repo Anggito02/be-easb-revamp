@@ -47,9 +47,6 @@ export class AsbBipekStandardRepositoryImpl extends AsbBipekStandardRepository {
             if (dto.bobotInput !== undefined) {
                 updateData.bobotInput = dto.bobotInput;
             }
-            if (dto.bobotInputProsentase !== undefined) {
-                updateData.bobotInputProsentase = dto.bobotInputProsentase;
-            }
             if (dto.calculationMethod !== undefined) {
                 updateData.calculationMethod = dto.calculationMethod;
             }

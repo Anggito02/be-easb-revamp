@@ -6,7 +6,6 @@ export class AsbBipekStandard {
     files: Files;
     idAsbKomponenBangunan: number | null;
     bobotInput: number | null;
-    bobotInputProsentase: number | null;
     calculationMethod: CalculationMethod | null;
     jumlahBobot: number | null;
     rincianHarga: number | null;

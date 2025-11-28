@@ -8,6 +8,8 @@ import { AsbDetailReviewServiceImpl } from '../../application/asb_detail_review/
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
 import { AsbLantaiModule } from '../asb_lantai/asb_lantai.module';
 import { AsbFungsiRuangModule } from '../asb_fungsi_ruang/asb_fungsi_ruang.module';
+import { CalculateKoefFungsiBangunanUseCase } from 'src/application/asb_detail_review/use_cases/calculate_koef_fungsi_bangunan.use_case';
+import { CalculateKoefLantaiUseCase } from 'src/application/asb_detail_review/use_cases/calculate_koef_lantai.use_case';
 
 @Module({
     imports: [
@@ -25,6 +27,8 @@ import { AsbFungsiRuangModule } from '../asb_fungsi_ruang/asb_fungsi_ruang.modul
             provide: AsbDetailReviewService,
             useClass: AsbDetailReviewServiceImpl,
         },
+        CalculateKoefFungsiBangunanUseCase,
+        CalculateKoefLantaiUseCase,
     ],
     exports: [AsbDetailReviewService],
 })

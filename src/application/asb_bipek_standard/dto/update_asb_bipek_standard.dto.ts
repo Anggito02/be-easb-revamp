@@ -18,10 +18,6 @@ export class UpdateAsbBipekStandardDto {
     @IsOptional()
     bobotInput?: number | null;
 
-    @IsNumber()
-    @IsOptional()
-    bobotInputProsentase?: number | null;
-
     @IsEnum(CalculationMethod)
     @IsOptional()
     calculationMethod?: CalculationMethod | null;

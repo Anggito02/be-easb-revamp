@@ -35,13 +35,6 @@ export class AsbBipekStandardOrmEntity {
     bobotInput: number | null;
 
     @Column({
-        name: 'bobot_input_prosentase',
-        type: 'float',
-        nullable: true,
-    })
-    bobotInputProsentase: number | null;
-
-    @Column({
         name: 'calculation_method',
         type: 'varchar',
         length: 20,

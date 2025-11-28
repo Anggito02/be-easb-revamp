@@ -13,10 +13,6 @@ export class CreateAsbBipekStandardDto {
     @IsNumber()
     bobotInput: number;
 
-    @IsNumber()
-    @IsOptional()
-    bobotInputProsentase: number;
-
     @IsEnum(CalculationMethod)
     calculationMethod: CalculationMethod;
 
