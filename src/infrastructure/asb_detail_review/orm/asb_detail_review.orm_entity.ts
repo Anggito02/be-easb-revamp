@@ -12,6 +12,7 @@ import { Files } from '../../../domain/asb_detail/files.enum';
 import { AsbDetailOrmEntity } from '../../asb_detail/orm/asb_detail.orm_entity';
 import { AsbLantaiOrmEntity } from '../../asb_lantai/orm/asb_lantai.orm_entity';
 import { AsbFungsiRuangOrmEntity } from '../../asb_fungsi_ruang/orm/asb_fungsi_ruang.orm_entity';
+import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_detail_reviews')
 export class AsbDetailReviewOrmEntity {
@@ -33,6 +34,9 @@ export class AsbDetailReviewOrmEntity {
 
     @Column({ name: 'id_asb_fungsi_ruang', type: 'int', nullable: true })
     idAsbFungsiRuang: number | null;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({
         name: 'asb_fungsi_ruang_koef',
@@ -71,4 +75,8 @@ export class AsbDetailReviewOrmEntity {
     @ManyToOne(() => AsbFungsiRuangOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_fungsi_ruang' })
     asbFungsiRuang: AsbFungsiRuangOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

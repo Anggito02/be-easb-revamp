@@ -11,11 +11,15 @@ import {
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
 import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
+import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_bipek_standard')
 export class AsbBipekStandardOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({
         type: 'varchar',
@@ -64,4 +68,8 @@ export class AsbBipekStandardOrmEntity {
     @ManyToOne(() => AsbKomponenBangunanOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_komponen_bangunan' })
     asbKomponenBangunan: AsbKomponenBangunanOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

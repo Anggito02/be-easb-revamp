@@ -4,6 +4,9 @@ export class UpdateAsbBpsGalleryDto {
     @IsNumber()
     id: number;
 
+    @IsNumber()
+    idAsb: number;
+
     @IsOptional()
     @IsNumber()
     idAsbKomponenBangunan?: number;

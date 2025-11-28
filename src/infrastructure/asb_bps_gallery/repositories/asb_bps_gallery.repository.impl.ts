@@ -53,6 +53,9 @@ export class AsbBpsGalleryRepositoryImpl extends AsbBpsGalleryRepository {
             if (dto.idAsbKomponenBangunan !== undefined) {
                 updateData.idAsbKomponenBangunan = dto.idAsbKomponenBangunan;
             }
+            if (dto.idAsb !== undefined) {
+                updateData.idAsb = dto.idAsb;
+            }
             if (dto.jumlahBobot !== undefined) {
                 updateData.jumlahBobot = dto.jumlahBobot;
             }

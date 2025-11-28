@@ -48,6 +48,9 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
             if (dto.idAsbBipekStandard !== undefined) {
                 updateData.idAsbBipekStandard = dto.idAsbBipekStandard;
             }
+            if (dto.idAsb !== undefined) {
+                updateData.idAsb = dto.idAsb;
+            }
             if (dto.idAsbKomponenBangunan !== undefined) {
                 updateData.idAsbKomponenBangunan = dto.idAsbKomponenBangunan;
             }

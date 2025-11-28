@@ -12,6 +12,9 @@ export class CreateAsbDetailDto {
     @IsInt()
     idAsbFungsiRuang: number;
 
+    @IsInt()
+    idAsbTipeBangunan: number;
+
     @IsNumber()
     @IsOptional()
     asbFungsiRuangKoef: number;

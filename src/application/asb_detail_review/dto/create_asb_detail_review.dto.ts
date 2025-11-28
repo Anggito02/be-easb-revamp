@@ -15,6 +15,9 @@ export class CreateAsbDetailReviewDto {
     @IsInt()
     idAsbFungsiRuang: number;
 
+    @IsInt()
+    idAsbTipeBangunan: number;
+
     @IsNumber()
     @IsOptional()
     asbFungsiRuangKoef: number;

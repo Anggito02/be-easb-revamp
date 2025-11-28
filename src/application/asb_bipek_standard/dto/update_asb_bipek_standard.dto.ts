@@ -6,6 +6,9 @@ export class UpdateAsbBipekStandardDto {
     @IsInt()
     id: number;
 
+    @IsInt()
+    idAsb: number;
+
     @IsEnum(Files)
     @IsOptional()
     files?: Files;

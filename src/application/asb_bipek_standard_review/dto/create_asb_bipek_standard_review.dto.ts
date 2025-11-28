@@ -10,6 +10,9 @@ export class CreateAsbBipekStandardReviewDto {
     @IsInt()
     idAsbKomponenBangunan: number;
 
+    @IsInt()
+    idAsb: number;
+
     @IsEnum(Files)
     @IsOptional()
     files: Files;

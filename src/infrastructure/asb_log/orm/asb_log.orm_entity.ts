@@ -9,6 +9,7 @@ import {
     DeleteDateColumn,
 } from 'typeorm';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
+import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_log')
 export class AsbLogOrmEntity {
@@ -17,6 +18,9 @@ export class AsbLogOrmEntity {
 
     @Column({ name: 'id_user', type: 'int' })
     idUser: number;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({ type: 'text' })
     log: string;
@@ -33,4 +37,8 @@ export class AsbLogOrmEntity {
     @ManyToOne(() => UserOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_user' })
     user: UserOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

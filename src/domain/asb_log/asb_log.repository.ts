@@ -8,6 +8,11 @@ export abstract class AsbLogRepository {
         page: number,
         amount: number,
     ): Promise<[AsbLog[], number]>;
+    abstract findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbLog[], number]>;
     abstract findAll(
         page: number,
         amount: number,

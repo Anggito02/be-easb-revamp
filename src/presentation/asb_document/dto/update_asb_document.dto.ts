@@ -5,6 +5,9 @@ export class UpdateAsbDocumentDto {
     @IsNumber()
     id: number;
 
+    @IsNumber()
+    idAsb: number;
+
     @IsOptional()
     @IsEnum(DocumentSpec)
     spec?: DocumentSpec;

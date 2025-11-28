@@ -60,6 +60,28 @@ export class AsbLogRepositoryImpl extends AsbLogRepository {
         }
     }
 
+    async findByAsb(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<[AsbLog[], number]> {
+        try {
+            const [entities, total] = await this.repository.findAndCount({
+                where: { idAsb },
+                order: { createdAt: 'DESC' },
+                skip: (page - 1) * amount,
+                take: amount,
+            });
+
+            const domainEntities = entities.map((e) =>
+                plainToInstance(AsbLog, e),
+            );
+            return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async findAll(
         page: number,
         amount: number,

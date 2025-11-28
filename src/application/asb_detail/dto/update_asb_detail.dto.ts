@@ -5,6 +5,9 @@ export class UpdateAsbDetailDto {
     @IsInt()
     id: number;
 
+    @IsInt()
+    idAsb: number;
+
     @IsEnum(Files)
     @IsOptional()
     files?: Files;

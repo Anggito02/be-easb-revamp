@@ -7,6 +7,9 @@ export class UpdateAsbBipekStandardReviewDto {
     id: number;
 
     @IsInt()
+    idAsb: number;
+
+    @IsInt()
     @IsOptional()
     idAsbBipekStandard?: number | null;
 

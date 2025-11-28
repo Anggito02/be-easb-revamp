@@ -11,11 +11,15 @@ import {
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { AsbLantaiOrmEntity } from 'src/infrastructure/asb_lantai/orm/asb_lantai.orm_entity';
 import { AsbFungsiRuangOrmEntity } from '../../asb_fungsi_ruang/orm/asb_fungsi_ruang.orm_entity';
+import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_detail')
 export class AsbDetailOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({
         type: 'varchar',
@@ -63,4 +67,8 @@ export class AsbDetailOrmEntity {
     @ManyToOne(() => AsbFungsiRuangOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_fungsi_ruang' })
     asbFungsiRuang: AsbFungsiRuangOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

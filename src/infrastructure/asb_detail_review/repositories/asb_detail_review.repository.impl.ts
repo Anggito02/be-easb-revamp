@@ -44,6 +44,9 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
             if (dto.idAsbDetail !== undefined) {
                 updateData.idAsbDetail = dto.idAsbDetail;
             }
+            if (dto.idAsb !== undefined) {
+                updateData.idAsb = dto.idAsb;
+            }
             if (dto.files !== undefined) {
                 updateData.files = dto.files;
             }

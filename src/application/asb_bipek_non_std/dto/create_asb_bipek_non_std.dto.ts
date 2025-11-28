@@ -9,6 +9,9 @@ export class CreateAsbBipekNonStdDto {
     @IsInt()
     idAsbKomponenBangunan: number;
 
+    @IsInt()
+    idAsb: number;
+
     @IsNumber()
     bobotInput: number;
 

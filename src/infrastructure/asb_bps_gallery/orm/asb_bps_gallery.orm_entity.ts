@@ -9,6 +9,7 @@ import {
     DeleteDateColumn,
 } from 'typeorm';
 import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
+import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_bps_gallery')
 export class AsbBpsGalleryOrmEntity {
@@ -17,6 +18,9 @@ export class AsbBpsGalleryOrmEntity {
 
     @Column({ name: 'id_asb_komponen_bangunan', type: 'int', nullable: true })
     idAsbKomponenBangunan: number | null;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({ type: 'text' })
     filename: string;
@@ -38,8 +42,12 @@ export class AsbBpsGalleryOrmEntity {
 
     @ManyToOne(
         () => AsbKomponenBangunanOrmEntity,
-        { onDelete: 'CASCADE', nullable: true },
+        { onDelete: 'SET NULL', nullable: true },
     )
     @JoinColumn({ name: 'id_asb_komponen_bangunan' })
     komponenBangunan: AsbKomponenBangunanOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL', nullable: true })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

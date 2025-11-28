@@ -52,6 +52,9 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
             if (dto.spec !== undefined) {
                 updateData.spec = dto.spec;
             }
+            if (dto.idAsb !== undefined) {
+                updateData.idAsb = dto.idAsb;
+            }
             if (filename !== undefined) {
                 updateData.filename = filename;
             }

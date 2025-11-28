@@ -46,6 +46,23 @@ export class AsbLogServiceImpl extends AsbLogService {
         }
     }
 
+    async getAsbLogs(
+        idAsb: number,
+        page: number,
+        amount: number,
+    ): Promise<{ data: AsbLog[]; total: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(
+                idAsb,
+                page,
+                amount,
+            );
+            return { data, total };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async getAllLogs(
         page: number,
         amount: number,

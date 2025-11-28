@@ -11,6 +11,7 @@ import {
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { AsbBipekNonStdOrmEntity } from '../../asb_bipek_non_std/orm/asb_bipek_non_std.orm_entity';
 import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
+import { AsbOrmEntity } from 'src/infrastructure/asb/orm/asb.orm_entity';
 
 @Entity('asb_bipek_non_std_reviews')
 export class AsbBipekNonStdReviewOrmEntity {
@@ -26,6 +27,9 @@ export class AsbBipekNonStdReviewOrmEntity {
         nullable: true,
     })
     idAsbKomponenBangunan: number | null;
+
+    @Column({ name: 'id_asb', type: 'int', nullable: true })
+    idAsb: number | null;
 
     @Column({
         type: 'varchar',
@@ -63,4 +67,8 @@ export class AsbBipekNonStdReviewOrmEntity {
     @ManyToOne(() => AsbKomponenBangunanOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_komponen_bangunan' })
     asbKomponenBangunan: AsbKomponenBangunanOrmEntity;
+
+    @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb' })
+    asb: AsbOrmEntity;
 }

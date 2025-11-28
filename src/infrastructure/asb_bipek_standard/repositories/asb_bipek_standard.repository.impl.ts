@@ -41,6 +41,9 @@ export class AsbBipekStandardRepositoryImpl extends AsbBipekStandardRepository {
             if (dto.files !== undefined) {
                 updateData.files = dto.files;
             }
+            if (dto.idAsb !== undefined) {
+                updateData.idAsb = dto.idAsb;
+            }
             if (dto.idAsbKomponenBangunan !== undefined) {
                 updateData.idAsbKomponenBangunan = dto.idAsbKomponenBangunan;
             }

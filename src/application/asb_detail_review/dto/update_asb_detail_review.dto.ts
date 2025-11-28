@@ -6,6 +6,9 @@ export class UpdateAsbDetailReviewDto {
     id: number;
 
     @IsInt()
+    idAsb: number;
+
+    @IsInt()
     @IsOptional()
     idAsbDetail: number;
 

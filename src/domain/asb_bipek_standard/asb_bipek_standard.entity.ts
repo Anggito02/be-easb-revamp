@@ -3,6 +3,7 @@ import { CalculationMethod } from './calculation_method.enum';
 
 export class AsbBipekStandard {
     id: number;
+    idAsb: number | null;
     files: Files;
     idAsbKomponenBangunan: number | null;
     bobotInput: number | null;
