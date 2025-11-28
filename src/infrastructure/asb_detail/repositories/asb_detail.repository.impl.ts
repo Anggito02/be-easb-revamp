@@ -1,0 +1,106 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { plainToInstance } from 'class-transformer';
+import { AsbDetail } from '../../../domain/asb_detail/asb_detail.entity';
+import { AsbDetailRepository } from '../../../domain/asb_detail/asb_detail.repository';
+import { AsbDetailOrmEntity } from '../orm/asb_detail.orm_entity';
+import { Files } from '../../../domain/asb_detail/files.enum';
+import { CreateAsbDetailDto } from '../../../application/asb_detail/dto/create_asb_detail.dto';
+import { UpdateAsbDetailDto } from '../../../application/asb_detail/dto/update_asb_detail.dto';
+
+@Injectable()
+export class AsbDetailRepositoryImpl extends AsbDetailRepository {
+    constructor(
+        @InjectRepository(AsbDetailOrmEntity)
+        private readonly repository: Repository<AsbDetailOrmEntity>,
+    ) {
+        super();
+    }
+
+    async create(dto: CreateAsbDetailDto): Promise<AsbDetail> {
+        try {
+            const ormEntity = this.repository.create({
+                files: dto.files ?? Files.ORIGIN,
+                idAsbLantai: dto.idAsbLantai ?? null,
+                idAsbFungsiRuang: dto.idAsbFungsiRuang ?? null,
+                asbFungsiRuangKoef: dto.asbFungsiRuangKoef ?? null,
+                lantaiKoef: dto.lantaiKoef ?? null,
+                luas: dto.luas ?? null,
+            });
+
+            const saved = await this.repository.save(ormEntity);
+            return plainToInstance(AsbDetail, saved);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async update(dto: UpdateAsbDetailDto): Promise<AsbDetail> {
+        try {
+            const existing = await this.repository.findOne({ where: { id: dto.id } });
+            if (!existing) {
+                throw new Error(`AsbDetail with id ${dto.id} not found`);
+            }
+
+            const updateData: Partial<AsbDetailOrmEntity> = {};
+
+            if (dto.files !== undefined) {
+                updateData.files = dto.files;
+            }
+            if (dto.idAsbLantai !== undefined) {
+                updateData.idAsbLantai = dto.idAsbLantai;
+            }
+            if (dto.idAsbFungsiRuang !== undefined) {
+                updateData.idAsbFungsiRuang = dto.idAsbFungsiRuang;
+            }
+            if (dto.asbFungsiRuangKoef !== undefined) {
+                updateData.asbFungsiRuangKoef = dto.asbFungsiRuangKoef;
+            }
+            if (dto.lantaiKoef !== undefined) {
+                updateData.lantaiKoef = dto.lantaiKoef;
+            }
+            if (dto.luas !== undefined) {
+                updateData.luas = dto.luas;
+            }
+
+            await this.repository.update(dto.id, updateData);
+
+            const updated = await this.repository.findOne({ where: { id: dto.id } });
+            return plainToInstance(AsbDetail, updated);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async delete(id: number): Promise<void> {
+        try {
+            const result = await this.repository.softDelete(id);
+            if (result.affected === 0) {
+                throw new Error(`AsbDetail with id ${id} not found`);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findById(id: number): Promise<AsbDetail | null> {
+        try {
+            const entity = await this.repository.findOne({ where: { id } });
+            return entity ? plainToInstance(AsbDetail, entity) : null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByFileType(files: Files): Promise<AsbDetail[]> {
+        try {
+            const entities = await this.repository.find({
+                where: { files },
+            });
+            return entities.map((e) => plainToInstance(AsbDetail, e));
+        } catch (error) {
+            throw error;
+        }
+    }
+}

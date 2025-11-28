@@ -25,6 +25,7 @@ import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
 import { AsbBpsGalleryModule } from './presentation/asb_bps_gallery/asb_bps_gallery.module';
 import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
 import { AsbLogModule } from './presentation/asb_log/asb_log.module';
+import { AsbDetailModule } from './presentation/asb_detail/asb_detail.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -73,7 +74,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbJakonModule,
         AsbBpsGalleryModule,
         AsbDocumentModule,
-        AsbLogModule
+        AsbLogModule,
+        AsbDetailModule
         // other modules...
     ],
     providers: [
