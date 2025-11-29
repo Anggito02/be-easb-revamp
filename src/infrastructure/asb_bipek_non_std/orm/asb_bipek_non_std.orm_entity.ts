@@ -9,7 +9,7 @@ import {
     DeleteDateColumn,
 } from 'typeorm';
 import { Files } from '../../../domain/asb_detail/files.enum';
-import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
+import { AsbKomponenBangunanNonstdOrmEntity } from '../../asb_komponen_bangunan_nonstd/orm/asb_komponen_bangunan_nonstd.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_bipek_non_stds')
@@ -56,9 +56,9 @@ export class AsbBipekNonStdOrmEntity {
     })
     deletedAt: Date | null;
 
-    @ManyToOne(() => AsbKomponenBangunanOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_asb_komponen_bangunan' })
-    asbKomponenBangunan: AsbKomponenBangunanOrmEntity;
+    @ManyToOne(() => AsbKomponenBangunanNonstdOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_asb_komponen_bangunan_nonstd' })
+    asbKomponenBangunanNonstd: AsbKomponenBangunanNonstdOrmEntity;
 
     @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb' })

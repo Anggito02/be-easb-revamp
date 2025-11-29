@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { AsbJenisOrmEntity } from 'src/infrastructure/asb_jenis/orm/asb_jenis.orm_entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm'; import { AsbKomponenBangunanNonStdFiles } from 'src/domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd_files.enum';
+
 
 @Entity('asb_komponen_bangunan_nonstd')
 export class AsbKomponenBangunanNonstdOrmEntity {
@@ -8,14 +10,15 @@ export class AsbKomponenBangunanNonstdOrmEntity {
     @Column({ type: 'varchar', length: 255 })
     komponen!: string;
 
-    @Column({ name: 'bobot_min', type: 'double precision' })
-    bobotMin!: number;
+    @Column({ type: 'enum', enum: AsbKomponenBangunanNonStdFiles })
+    files!: AsbKomponenBangunanNonStdFiles;
 
-    @Column({ type: 'double precision' })
-    bobot!: number;
+    @Column({ name: 'id_asb_jenis', type: 'integer' })
+    idAsbJenis!: number;
 
-    @Column({ name: 'bobot_max', type: 'double precision' })
-    bobotMax!: number;
+    @ManyToOne(() => AsbJenisOrmEntity)
+    @JoinColumn({ name: 'id_asb_jenis' })
+    asbJenis?: AsbJenisOrmEntity;
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;

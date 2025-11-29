@@ -9,7 +9,7 @@ export class CreateAsbBipekNonStd1764312099486 implements MigrationInterface {
             CREATE TABLE "asb_bipek_non_stds" (
                 "id" SERIAL NOT NULL,
                 "files" VARCHAR(10) NOT NULL DEFAULT 'ORIGIN',
-                "id_asb_komponen_bangunan" INTEGER,
+                "id_asb_komponen_bangunan_nonstd" INTEGER,
                 "bobot_input" DOUBLE PRECISION,
                 "jumlah_bobot" DOUBLE PRECISION,
                 "rincian_harga" DOUBLE PRECISION,
@@ -23,15 +23,15 @@ export class CreateAsbBipekNonStd1764312099486 implements MigrationInterface {
 
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_stds_files" ON "asb_bipek_non_stds" ("files")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_stds_komponen_bangunan" ON "asb_bipek_non_stds" ("id_asb_komponen_bangunan")`);
+        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_stds_komponen_bangunan_nonstd" ON "asb_bipek_non_stds" ("id_asb_komponen_bangunan_nonstd")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_stds_deleted_at" ON "asb_bipek_non_stds" ("deleted_at")`);
 
-        // Add foreign key to asb_komponen_bangunan
+        // Add foreign key to asb_komponen_bangunan_nonstd
         await queryRunner.query(`
             ALTER TABLE "asb_bipek_non_stds"
-            ADD CONSTRAINT "fk_asb_bipek_non_stds_komponen_bangunan"
-            FOREIGN KEY ("id_asb_komponen_bangunan")
-            REFERENCES "asb_komponen_bangunan"("id")
+            ADD CONSTRAINT "fk_asb_bipek_non_stds_komponen_bangunan_nonstd"
+            FOREIGN KEY ("id_asb_komponen_bangunan_nonstd")
+            REFERENCES "asb_komponen_bangunan_nonstd"("id")
             ON DELETE SET NULL
         `);
 
@@ -60,11 +60,11 @@ export class CreateAsbBipekNonStd1764312099486 implements MigrationInterface {
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_bipek_non_stds_updated_at`);
 
         // Drop foreign key
-        await queryRunner.query(`ALTER TABLE "asb_bipek_non_stds" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_stds_komponen_bangunan"`);
+        await queryRunner.query(`ALTER TABLE "asb_bipek_non_stds" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_stds_komponen_bangunan_nonstd"`);
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_stds_deleted_at"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_stds_komponen_bangunan"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_stds_komponen_bangunan_nonstd"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_stds_files"`);
 
         // Drop table

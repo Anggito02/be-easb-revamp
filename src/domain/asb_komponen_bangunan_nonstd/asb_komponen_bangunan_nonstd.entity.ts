@@ -1,7 +1,8 @@
+import { AsbKomponenBangunanNonStdFiles } from "./asb_komponen_bangunan_nonstd_files.enum";
+
 export class AsbKomponenBangunanNonstd {
     id!: number;
     komponen!: string;
-    bobotMin!: number;
-    bobot!: number;
-    bobotMax!: number;
+    files!: AsbKomponenBangunanNonStdFiles;
+    idAsbJenis!: number;
 }

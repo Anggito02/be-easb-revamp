@@ -14,7 +14,7 @@ export class UpdateAsbBipekNonStdDto {
 
     @IsInt()
     @IsOptional()
-    idAsbKomponenBangunan: number;
+    idAsbKomponenBangunanNonStd: number;
 
     @IsNumber()
     @IsOptional()

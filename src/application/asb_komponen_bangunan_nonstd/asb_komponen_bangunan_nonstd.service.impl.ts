@@ -15,17 +15,6 @@ export class AsbKomponenBangunanNonstdServiceImpl implements AsbKomponenBangunan
 
     async create(dto: CreateAsbKomponenBangunanNonstdDto): Promise<AsbKomponenBangunanNonstd> {
         try {
-            // Validate range: bobotMin <= bobot <= bobotMax
-            if (dto.bobotMin > dto.bobot) {
-                throw new BadRequestException(`bobotMin (${dto.bobotMin}) cannot be greater than bobot (${dto.bobot})`);
-            }
-            if (dto.bobot > dto.bobotMax) {
-                throw new BadRequestException(`bobot (${dto.bobot}) cannot be greater than bobotMax (${dto.bobotMax})`);
-            }
-            if (dto.bobotMin > dto.bobotMax) {
-                throw new BadRequestException(`bobotMin (${dto.bobotMin}) cannot be greater than bobotMax (${dto.bobotMax})`);
-            }
-
             const entity = await this.repository.create(dto);
             return entity;
         } catch (error) {
@@ -40,27 +29,10 @@ export class AsbKomponenBangunanNonstdServiceImpl implements AsbKomponenBangunan
                 throw new NotFoundException(`AsbKomponenBangunanNonstd with id ${dto.id} not found`);
             }
 
-            // Prepare updated values (use existing if not provided)
-            const newBobotMin = dto.bobotMin !== undefined ? dto.bobotMin : existing.bobotMin;
-            const newBobot = dto.bobot !== undefined ? dto.bobot : existing.bobot;
-            const newBobotMax = dto.bobotMax !== undefined ? dto.bobotMax : existing.bobotMax;
-
-            // Validate range with potentially updated values
-            if (newBobotMin > newBobot) {
-                throw new BadRequestException(`bobotMin (${newBobotMin}) cannot be greater than bobot (${newBobot})`);
-            }
-            if (newBobot > newBobotMax) {
-                throw new BadRequestException(`bobot (${newBobot}) cannot be greater than bobotMax (${newBobotMax})`);
-            }
-            if (newBobotMin > newBobotMax) {
-                throw new BadRequestException(`bobotMin (${newBobotMin}) cannot be greater than bobotMax (${newBobotMax})`);
-            }
-
             const updateData: Partial<AsbKomponenBangunanNonstd> = {
                 komponen: dto.komponen,
-                bobotMin: dto.bobotMin,
-                bobot: dto.bobot,
-                bobotMax: dto.bobotMax,
+                files: dto.files,
+                idAsbJenis: dto.idAsbJenis,
             };
 
             // Remove undefined values

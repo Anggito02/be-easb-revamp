@@ -9,7 +9,7 @@ export class CreateAsbBipekNonStdReview1764337043412 implements MigrationInterfa
             CREATE TABLE "asb_bipek_non_std_reviews" (
                 "id" SERIAL NOT NULL,
                 "id_asb_bipek_non_std" INTEGER NOT NULL,
-                "id_asb_komponen_bangunan" INTEGER,
+                "id_asb_komponen_bangunan_nonstd" INTEGER,
                 "files" VARCHAR(10) NOT NULL DEFAULT 'ORIGIN',
                 "bobot_input" DOUBLE PRECISION,
                 "jumlah_bobot" DOUBLE PRECISION,
@@ -25,7 +25,7 @@ export class CreateAsbBipekNonStdReview1764337043412 implements MigrationInterfa
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_std_reviews_files" ON "asb_bipek_non_std_reviews" ("files")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_std_reviews_bipek_non_std" ON "asb_bipek_non_std_reviews" ("id_asb_bipek_non_std")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_std_reviews_komponen_bangunan" ON "asb_bipek_non_std_reviews" ("id_asb_komponen_bangunan")`);
+        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd" ON "asb_bipek_non_std_reviews" ("id_asb_komponen_bangunan_nonstd")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_non_std_reviews_deleted_at" ON "asb_bipek_non_std_reviews" ("deleted_at")`);
 
         // Add foreign key to asb_bipek_non_std
@@ -37,12 +37,12 @@ export class CreateAsbBipekNonStdReview1764337043412 implements MigrationInterfa
             ON DELETE SET NULL
         `);
 
-        // Add foreign key to asb_komponen_bangunan
+        // Add foreign key to asb_komponen_bangunan_nonstd
         await queryRunner.query(`
             ALTER TABLE "asb_bipek_non_std_reviews"
-            ADD CONSTRAINT "fk_asb_bipek_non_std_reviews_komponen_bangunan"
-            FOREIGN KEY ("id_asb_komponen_bangunan")
-            REFERENCES "asb_komponen_bangunan"("id")
+            ADD CONSTRAINT "fk_asb_bipek_non_std_reviews_komponen_bangunan_nonstd"
+            FOREIGN KEY ("id_asb_komponen_bangunan_nonstd")
+            REFERENCES "asb_komponen_bangunan_nonstd"("id")
             ON DELETE SET NULL
         `);
 
@@ -71,12 +71,12 @@ export class CreateAsbBipekNonStdReview1764337043412 implements MigrationInterfa
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_bipek_non_std_reviews_updated_at`);
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_bipek_non_std_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_std_reviews_komponen_bangunan"`);
+        await queryRunner.query(`ALTER TABLE "asb_bipek_non_std_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_std_reviews_komponen_bangunan_nonstd"`);
         await queryRunner.query(`ALTER TABLE "asb_bipek_non_std_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_std_reviews_bipek_non_std"`);
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_deleted_at"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_komponen_bangunan"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_komponen_bangunan_nonstd"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_bipek_non_std"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_files"`);
 

@@ -1,4 +1,5 @@
-import { IsNumber, IsString, IsOptional } from 'class-validator';
+import { IsNumber, IsString, IsOptional, IsEnum } from 'class-validator';
+import { AsbKomponenBangunanNonStdFiles } from 'src/domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd_files.enum';
 
 export class UpdateAsbKomponenBangunanNonstdDto {
     @IsNumber()
@@ -8,15 +9,11 @@ export class UpdateAsbKomponenBangunanNonstdDto {
     @IsOptional()
     komponen?: string;
 
-    @IsNumber()
+    @IsEnum(AsbKomponenBangunanNonStdFiles)
     @IsOptional()
-    bobotMin?: number;
+    files?: AsbKomponenBangunanNonStdFiles;
 
     @IsNumber()
     @IsOptional()
-    bobot?: number;
-
-    @IsNumber()
-    @IsOptional()
-    bobotMax?: number;
+    idAsbJenis?: number;
 }
