@@ -8,24 +8,24 @@ import {
     HttpStatus,
     HttpException,
 } from '@nestjs/common';
-import { AsbKomponenBangunanService } from '../../domain/asb_komponen_bangunan/asb_komponen_bangunan.service';
+import { AsbKomponenBangunanStdService } from '../../domain/asb_komponen_bangunan/asb_komponen_bangunan_std.service';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { CreateAsbKomponenBangunanDto } from './dto/create_asb_komponen_bangunan.dto';
-import { UpdateAsbKomponenBangunanDto } from './dto/update_asb_komponen_bangunan.dto';
-import { DeleteAsbKomponenBangunanDto } from './dto/delete_asb_komponen_bangunan.dto';
-import { GetAsbKomponenBangunansDto } from './dto/get_asb_komponen_bangunans.dto';
-import { GetAsbKomponenBangunanDetailDto } from './dto/get_asb_komponen_bangunan_detail.dto';
+import { CreateAsbKomponenBangunanStdDto } from './dto/create_asb_komponen_bangunan_std.dto';
+import { UpdateAsbKomponenBangunanStdDto } from './dto/update_asb_komponen_bangunan_std.dto';
+import { DeleteAsbKomponenBangunanStdDto } from './dto/delete_asb_komponen_bangunan_std.dto';
+import { GetAsbKomponenBangunanStdsDto } from './dto/get_asb_komponen_bangunan_stds.dto';
+import { GetAsbKomponenBangunanStdDetailDto } from './dto/get_asb_komponen_bangunan_std_detail.dto';
 import { ResponseDto } from '../../common/dto/response.dto';
 import { Role } from '../../domain/user/user_role.enum';
 
 @Controller('asb-komponen-bangunans')
 @Roles(Role.SUPERADMIN)
 export class AsbKomponenBangunanController {
-    constructor(private readonly service: AsbKomponenBangunanService) { }
+    constructor(private readonly service: AsbKomponenBangunanStdService) { }
 
     @Post()
     @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbKomponenBangunanDto): Promise<ResponseDto> {
+    async create(@Body() dto: CreateAsbKomponenBangunanStdDto): Promise<ResponseDto> {
         try {
             const result = await this.service.create(dto);
             return {
@@ -41,7 +41,7 @@ export class AsbKomponenBangunanController {
 
     @Put()
     @Roles(Role.SUPERADMIN)
-    async update(@Body() dto: UpdateAsbKomponenBangunanDto): Promise<ResponseDto> {
+    async update(@Body() dto: UpdateAsbKomponenBangunanStdDto): Promise<ResponseDto> {
         try {
             const result = await this.service.update(dto);
             return {
@@ -57,7 +57,7 @@ export class AsbKomponenBangunanController {
 
     @Delete()
     @Roles(Role.SUPERADMIN)
-    async delete(@Body() dto: DeleteAsbKomponenBangunanDto): Promise<ResponseDto> {
+    async delete(@Body() dto: DeleteAsbKomponenBangunanStdDto): Promise<ResponseDto> {
         try {
             const result = await this.service.delete(dto);
             return {
@@ -73,7 +73,7 @@ export class AsbKomponenBangunanController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAll(@Body() dto: GetAsbKomponenBangunansDto): Promise<ResponseDto> {
+    async getAll(@Body() dto: GetAsbKomponenBangunanStdsDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
             return {
@@ -89,7 +89,7 @@ export class AsbKomponenBangunanController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getDetail(@Body() dto: GetAsbKomponenBangunanDetailDto): Promise<ResponseDto> {
+    async getDetail(@Body() dto: GetAsbKomponenBangunanStdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
             return {

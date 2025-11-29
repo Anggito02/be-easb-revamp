@@ -12,7 +12,7 @@ import { GenerateFilenameUseCase } from '../../application/asb_bps_gallery/use_c
 import { SaveFileUseCase } from '../../application/asb_bps_gallery/use_cases/save_file.use_case';
 import { DeleteFileUseCase } from '../../application/asb_bps_gallery/use_cases/delete_file.use_case';
 import { AsbBpsGalleryController } from './asb_bps_gallery.controller';
-import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen_bangunan.module';
+import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan/asb_komponen_bangunan_std.module';
 
 @Module({
     imports: [
@@ -36,7 +36,7 @@ import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen
                 }
             },
         }),
-        AsbKomponenBangunanModule,
+        AsbKomponenBangunanStdModule,
     ],
     controllers: [AsbBpsGalleryController],
     providers: [

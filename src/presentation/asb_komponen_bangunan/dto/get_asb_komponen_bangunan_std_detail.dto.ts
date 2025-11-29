@@ -1,6 +1,6 @@
 import { IsNumber } from 'class-validator';
 
-export class DeleteAsbKomponenBangunanDto {
+export class GetAsbKomponenBangunanStdDetailDto {
     @IsNumber()
     id!: number;
 }

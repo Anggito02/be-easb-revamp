@@ -1,17 +1,17 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { AsbKomponenBangunanFiles } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan_files.enum';
+import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan_std_files.enum';
 import { AsbJenisOrmEntity } from '../../asb_jenis/orm/asb_jenis.orm_entity';
 
 @Entity('asb_komponen_bangunan')
-export class AsbKomponenBangunanOrmEntity {
+export class AsbKomponenBangunanStdOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
     @Column({ type: 'varchar', length: 255 })
     komponen!: string;
 
-    @Column({ type: 'enum', enum: AsbKomponenBangunanFiles })
-    files!: AsbKomponenBangunanFiles;
+    @Column({ type: 'enum', enum: AsbKomponenBangunanStdFiles })
+    files!: AsbKomponenBangunanStdFiles;
 
     @Column({ name: 'id_asb_jenis', type: 'integer' })
     idAsbJenis!: number;

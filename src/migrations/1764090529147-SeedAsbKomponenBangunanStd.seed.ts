@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedAsbKomponenBangunan1764090529147 implements MigrationInterface {
-    name = 'SeedAsbKomponenBangunan1764090529147';
+export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterface {
+    name = 'SeedAsbKomponenBangunanStd1764090529147';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Seed data for asb_jenis id = 1
         await queryRunner.query(`
-            INSERT INTO asb_komponen_bangunan (komponen, files, id_asb_jenis) VALUES
+            INSERT INTO asb_komponen_bangunan_stds (komponen, files, id_asb_jenis) VALUES
             ('Pondasi', 'ORIGIN', 1),
             ('Struktur', 'ORIGIN', 1),
             ('Lantai', 'ORIGIN', 1),
@@ -19,7 +19,7 @@ export class SeedAsbKomponenBangunan1764090529147 implements MigrationInterface 
 
         // Seed data for asb_jenis id = 2
         await queryRunner.query(`
-            INSERT INTO asb_komponen_bangunan (komponen, files, id_asb_jenis) VALUES
+            INSERT INTO asb_komponen_bangunan_stds (komponen, files, id_asb_jenis) VALUES
             ('Pondasi', 'ORIGIN', 2),
             ('Struktur (Kolom, Balok & Ring Balk)', 'ORIGIN', 2),
             ('Struktur (Plesteran)', 'ORIGIN', 2),
@@ -46,7 +46,7 @@ export class SeedAsbKomponenBangunan1764090529147 implements MigrationInterface 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Delete seeded data
         await queryRunner.query(`
-            DELETE FROM asb_komponen_bangunan 
+            DELETE FROM asb_komponen_bangunan_stds 
             WHERE komponen IN (
                 'Pondasi', 'Struktur', 'Lantai', 'Dinding', 'Plafon', 'Atap', 'Utilitas', 'Finishing',
                 'Struktur (Kolom, Balok & Ring Balk)', 'Struktur (Plesteran)',

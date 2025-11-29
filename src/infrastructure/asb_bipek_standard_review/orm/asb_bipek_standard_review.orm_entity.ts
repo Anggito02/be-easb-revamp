@@ -11,8 +11,8 @@ import {
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
 import { AsbBipekStandardOrmEntity } from '../../asb_bipek_standard/orm/asb_bipek_standard.orm_entity';
-import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
 
 @Entity('asb_bipek_standard_reviews')
 export class AsbBipekStandardReviewOrmEntity {
@@ -27,11 +27,11 @@ export class AsbBipekStandardReviewOrmEntity {
     idAsbBipekStandard: number | null;
 
     @Column({
-        name: 'id_asb_komponen_bangunan',
+        name: 'id_asb_komponen_bangunan_std',
         type: 'int',
         nullable: true,
     })
-    idAsbKomponenBangunan: number | null;
+    idAsbKomponenBangunanStd: number | null;
 
     @Column({ name: 'id_asb', type: 'int', nullable: true })
     idAsb: number | null;
@@ -77,9 +77,9 @@ export class AsbBipekStandardReviewOrmEntity {
     @JoinColumn({ name: 'id_asb_bipek_standard' })
     asbBipekStandard: AsbBipekStandardOrmEntity;
 
-    @ManyToOne(() => AsbKomponenBangunanOrmEntity, { onDelete: 'SET NULL' })
+    @ManyToOne(() => AsbKomponenBangunanStdOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_komponen_bangunan' })
-    asbKomponenBangunan: AsbKomponenBangunanOrmEntity;
+    asbKomponenBangunan: AsbKomponenBangunanStdOrmEntity;
 
     @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb' })

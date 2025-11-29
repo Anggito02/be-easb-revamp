@@ -18,7 +18,7 @@ import { JenisStandarModule } from './presentation/jenis_standar/jenis_standar.m
 import { AsbTipeBangunanModule } from './presentation/asb_tipe_bangunan/asb_tipe_bangunan.module';
 import { AsbKlasifikasiModule } from './presentation/asb_klasifikasi/asb_klasifikasi.module';
 import { ShstModule } from './presentation/shst/shst.module';
-import { AsbKomponenBangunanModule } from './presentation/asb_komponen_bangunan/asb_komponen_bangunan.module';
+import { AsbKomponenBangunanStdModule } from './presentation/asb_komponen_bangunan/asb_komponen_bangunan_std.module';
 import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
 import { AsbKomponenBangunanProsModule } from './presentation/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.module';
 import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
@@ -75,7 +75,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbTipeBangunanModule,
         AsbKlasifikasiModule,
         ShstModule,
-        AsbKomponenBangunanModule,
+        AsbKomponenBangunanStdModule,
         AsbKomponenBangunanNonstdModule,
         AsbKomponenBangunanProsModule,
         AsbJakonModule,

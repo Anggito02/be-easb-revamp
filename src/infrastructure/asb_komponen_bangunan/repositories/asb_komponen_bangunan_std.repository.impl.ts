@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, ILike } from 'typeorm';
-import { AsbKomponenBangunanRepository } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan.repository';
-import { AsbKomponenBangunan } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan.entity';
-import { AsbKomponenBangunanOrmEntity } from '../orm/asb_komponen_bangunan.orm_entity';
-import { CreateAsbKomponenBangunanDto } from '../../../presentation/asb_komponen_bangunan/dto/create_asb_komponen_bangunan.dto';
-import { GetAsbKomponenBangunansDto } from '../../../presentation/asb_komponen_bangunan/dto/get_asb_komponen_bangunans.dto';
+import { AsbKomponenBangunanStdRepository } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan_std.repository';
+import { AsbKomponenBangunanStd } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan_std.entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../orm/asb_komponen_bangunan_std.orm_entity';
+import { CreateAsbKomponenBangunanStdDto } from '../../../presentation/asb_komponen_bangunan/dto/create_asb_komponen_bangunan_std.dto';
+import { GetAsbKomponenBangunanStdsDto } from '../../../presentation/asb_komponen_bangunan/dto/get_asb_komponen_bangunan_stds.dto';
 import { plainToInstance } from 'class-transformer';
 
 @Injectable()
-export class AsbKomponenBangunanRepositoryImpl implements AsbKomponenBangunanRepository {
+export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunanStdRepository {
     constructor(
-        @InjectRepository(AsbKomponenBangunanOrmEntity)
-        private readonly repo: Repository<AsbKomponenBangunanOrmEntity>
+        @InjectRepository(AsbKomponenBangunanStdOrmEntity)
+        private readonly repo: Repository<AsbKomponenBangunanStdOrmEntity>
     ) { }
 
-    async create(data: CreateAsbKomponenBangunanDto): Promise<AsbKomponenBangunan> {
+    async create(data: CreateAsbKomponenBangunanStdDto): Promise<AsbKomponenBangunanStd> {
         try {
-            const entity = plainToInstance(AsbKomponenBangunanOrmEntity, data);
+            const entity = plainToInstance(AsbKomponenBangunanStdOrmEntity, data);
             const saved = await this.repo.save(entity);
             return saved;
         } catch (error) {
@@ -25,7 +25,7 @@ export class AsbKomponenBangunanRepositoryImpl implements AsbKomponenBangunanRep
         }
     }
 
-    async update(id: number, data: Partial<AsbKomponenBangunan>): Promise<AsbKomponenBangunan> {
+    async update(id: number, data: Partial<AsbKomponenBangunanStd>): Promise<AsbKomponenBangunanStd> {
         try {
             await this.repo.update(id, data);
             const updated = await this.repo.findOne({ where: { id } });
@@ -45,7 +45,7 @@ export class AsbKomponenBangunanRepositoryImpl implements AsbKomponenBangunanRep
         }
     }
 
-    async findById(id: number): Promise<AsbKomponenBangunan | null> {
+    async findById(id: number): Promise<AsbKomponenBangunanStd | null> {
         try {
             const entity = await this.repo.findOne({ where: { id } });
             return entity || null;
@@ -54,7 +54,7 @@ export class AsbKomponenBangunanRepositoryImpl implements AsbKomponenBangunanRep
         }
     }
 
-    async findByKomponen(komponen: string): Promise<AsbKomponenBangunan | null> {
+    async findByKomponen(komponen: string): Promise<AsbKomponenBangunanStd | null> {
         try {
             const entity = await this.repo.findOne({
                 where: { komponen: ILike(`%${komponen}%`) }
@@ -65,7 +65,7 @@ export class AsbKomponenBangunanRepositoryImpl implements AsbKomponenBangunanRep
         }
     }
 
-    async findAll(pagination: GetAsbKomponenBangunansDto): Promise<{ data: AsbKomponenBangunan[], total: number }> {
+    async findAll(pagination: GetAsbKomponenBangunanStdsDto): Promise<{ data: AsbKomponenBangunanStd[], total: number }> {
         try {
             const [items, total] = await this.repo.findAndCount({
                 skip: (pagination.page - 1) * pagination.amount,

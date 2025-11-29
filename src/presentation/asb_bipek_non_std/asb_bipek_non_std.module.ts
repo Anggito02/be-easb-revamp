@@ -5,7 +5,7 @@ import { AsbBipekNonStdRepository } from '../../domain/asb_bipek_non_std/asb_bip
 import { AsbBipekNonStdRepositoryImpl } from '../../infrastructure/asb_bipek_non_std/repositories/asb_bipek_non_std.repository.impl';
 import { AsbBipekNonStdService } from '../../domain/asb_bipek_non_std/asb_bipek_non_std.service';
 import { AsbBipekNonStdServiceImpl } from '../../application/asb_bipek_non_std/asb_bipek_non_std.service.impl';
-import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen_bangunan.module';
+import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen_bangunan_std.module';
 
 @Module({
     imports: [

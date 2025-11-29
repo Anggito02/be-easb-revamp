@@ -8,7 +8,7 @@ export class CreateAsbBpsGallery1764113593234 implements MigrationInterface {
         await queryRunner.query(`
             CREATE TABLE "asb_bps_gallery" (
                 "id" SERIAL NOT NULL,
-                "id_asb_komponen_bangunan" INTEGER,
+                "id_asb_komponen_bangunan_std" INTEGER,
                 "filename" TEXT NOT NULL,
                 "jumlah_bobot" DOUBLE PRECISION,
                 "rincian_harga" DOUBLE PRECISION,
@@ -20,15 +20,15 @@ export class CreateAsbBpsGallery1764113593234 implements MigrationInterface {
         `);
 
         // Create indexes
-        await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_komponen_bangunan" ON "asb_bps_gallery" ("id_asb_komponen_bangunan")`);
+        await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_komponen_bangunan_std" ON "asb_bps_gallery" ("id_asb_komponen_bangunan_std")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_deleted_at" ON "asb_bps_gallery" ("deleted_at")`);
 
         // Add foreign key with CASCADE
         await queryRunner.query(`
             ALTER TABLE "asb_bps_gallery"
-            ADD CONSTRAINT "fk_asb_bps_gallery_komponen_bangunan"
-            FOREIGN KEY ("id_asb_komponen_bangunan")
-            REFERENCES "asb_komponen_bangunan"("id")
+            ADD CONSTRAINT "fk_asb_bps_gallery_komponen_bangunan_std"
+            FOREIGN KEY ("id_asb_komponen_bangunan_std")
+            REFERENCES "asb_komponen_bangunan_std"("id")
             ON DELETE CASCADE
         `);
 
@@ -57,11 +57,11 @@ export class CreateAsbBpsGallery1764113593234 implements MigrationInterface {
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_bps_gallery_updated_at`);
 
         // Drop foreign key
-        await queryRunner.query(`ALTER TABLE "asb_bps_gallery" DROP CONSTRAINT IF EXISTS "fk_asb_bps_gallery_komponen_bangunan"`);
+        await queryRunner.query(`ALTER TABLE "asb_bps_gallery" DROP CONSTRAINT IF EXISTS "fk_asb_bps_gallery_komponen_bangunan_std"`);
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_deleted_at"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_komponen_bangunan"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_komponen_bangunan_std"`);
 
         // Drop table
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_bps_gallery"`);

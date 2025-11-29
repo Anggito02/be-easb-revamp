@@ -9,7 +9,7 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
             CREATE TABLE "asb_bipek_standard_reviews" (
                 "id" SERIAL NOT NULL,
                 "id_asb_bipek_standard" INTEGER,
-                "id_asb_komponen_bangunan" INTEGER,
+                "id_asb_komponen_bangunan_std" INTEGER,
                 "files" VARCHAR(10) NOT NULL DEFAULT 'ORIGIN',
                 "bobot_input" DOUBLE PRECISION,
                 "calculation_method" VARCHAR(20),
@@ -27,7 +27,7 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
         // Create indexes
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_files" ON "asb_bipek_standard_reviews" ("files")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_bipek_standard" ON "asb_bipek_standard_reviews" ("id_asb_bipek_standard")`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_komponen_bangunan" ON "asb_bipek_standard_reviews" ("id_asb_komponen_bangunan")`);
+        await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_komponen_bangunan_std" ON "asb_bipek_standard_reviews" ("id_asb_komponen_bangunan_std")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_calculation_method" ON "asb_bipek_standard_reviews" ("calculation_method")`);
         await queryRunner.query(`CREATE INDEX "idx_asb_bipek_standard_reviews_deleted_at" ON "asb_bipek_standard_reviews" ("deleted_at")`);
 
@@ -40,12 +40,12 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
             ON DELETE SET NULL
         `);
 
-        // Add foreign key to asb_komponen_bangunan
+        // Add foreign key to asb_komponen_bangunan_std
         await queryRunner.query(`
             ALTER TABLE "asb_bipek_standard_reviews"
-            ADD CONSTRAINT "fk_asb_bipek_standard_reviews_komponen_bangunan"
-            FOREIGN KEY ("id_asb_komponen_bangunan")
-            REFERENCES "asb_komponen_bangunan"("id")
+            ADD CONSTRAINT "fk_asb_bipek_standard_reviews_komponen_bangunan_std"
+            FOREIGN KEY ("id_asb_komponen_bangunan_std")
+            REFERENCES "asb_komponen_bangunan_std"("id")
             ON DELETE SET NULL
         `);
 
@@ -74,13 +74,13 @@ export class CreateAsbBipekStandardReview1764321020213 implements MigrationInter
         await queryRunner.query(`DROP FUNCTION IF EXISTS set_asb_bipek_standard_reviews_updated_at`);
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_komponen_bangunan"`);
+        await queryRunner.query(`ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_komponen_bangunan_std"`);
         await queryRunner.query(`ALTER TABLE "asb_bipek_standard_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standard_reviews_bipek_standard"`);
 
         // Drop indexes
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_deleted_at"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_calculation_method"`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_komponen_bangunan"`);
+        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_komponen_bangunan_std"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_bipek_standard"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standard_reviews_files"`);
 

@@ -5,7 +5,7 @@ export class AsbBipekStandardReview {
     id: number;
     idAsb: number | null;
     idAsbBipekStandard: number | null;
-    idAsbKomponenBangunan: number | null;
+    idAsbKomponenBangunanStd: number | null;
     files: Files;
     bobotInput: number | null;
     calculationMethod: CalculationMethod | null;

@@ -8,7 +8,7 @@ import {
     UpdateDateColumn,
     DeleteDateColumn,
 } from 'typeorm';
-import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan.orm_entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_bps_gallery')
@@ -16,7 +16,7 @@ export class AsbBpsGalleryOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'id_asb_komponen_bangunan', type: 'int', nullable: true })
+    @Column({ name: 'id_asb_komponen_bangunan_std', type: 'int', nullable: true })
     idAsbKomponenBangunan: number | null;
 
     @Column({ name: 'id_asb', type: 'int', nullable: true })
@@ -41,11 +41,11 @@ export class AsbBpsGalleryOrmEntity {
     deletedAt: Date | null;
 
     @ManyToOne(
-        () => AsbKomponenBangunanOrmEntity,
+        () => AsbKomponenBangunanStdOrmEntity,
         { onDelete: 'SET NULL', nullable: true },
     )
-    @JoinColumn({ name: 'id_asb_komponen_bangunan' })
-    komponenBangunan: AsbKomponenBangunanOrmEntity;
+    @JoinColumn({ name: 'id_asb_komponen_bangunan_std' })
+    komponenBangunan: AsbKomponenBangunanStdOrmEntity;
 
     @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL', nullable: true })
     @JoinColumn({ name: 'id_asb' })

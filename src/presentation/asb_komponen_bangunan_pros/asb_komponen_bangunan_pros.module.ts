@@ -7,7 +7,7 @@ import { AsbKomponenBangunanProsOrmEntity } from '../../infrastructure/asb_kompo
 import { AsbKomponenBangunanProsService } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.service';
 import { AsbKomponenBangunanProsRepository } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.repository';
 import { ValidateStatisticalRangeUseCase } from '../../application/asb_komponen_bangunan_pros/use_cases/validate_statistical_range.use_case';
-import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen_bangunan.module';
+import { AsbKomponenBangunanModule } from '../asb_komponen_bangunan/asb_komponen_bangunan_std.module';
 import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.module';
 
 @Module({
