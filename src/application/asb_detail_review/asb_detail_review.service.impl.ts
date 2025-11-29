@@ -4,6 +4,7 @@ import { AsbDetailReviewService } from '../../domain/asb_detail_review/asb_detai
 import { AsbDetailReviewRepository } from '../../domain/asb_detail_review/asb_detail_review.repository';
 import { CreateAsbDetailReviewDto } from './dto/create_asb_detail_review.dto';
 import { UpdateAsbDetailReviewDto } from './dto/update_asb_detail_review.dto';
+import { GetAsbDetailReviewByAsbDto } from '../../presentation/asb_detail_review/dto/get_asb_detail_review_by_asb.dto';
 import { CalculateKoefLantaiUseCase } from './use_cases/calculate_koef_lantai.use_case';
 import { CalculateKoefFungsiBangunanUseCase } from './use_cases/calculate_koef_fungsi_bangunan.use_case';
 
@@ -84,6 +85,21 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
                 );
             }
             return detailReview;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbDetailReviewByAsbDto): Promise<{ data: AsbDetailReview[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }

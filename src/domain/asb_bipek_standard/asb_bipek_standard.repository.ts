@@ -7,4 +7,5 @@ export abstract class AsbBipekStandardRepository {
     abstract update(dto: UpdateAsbBipekStandardDto): Promise<AsbBipekStandard>;
     abstract delete(id: number): Promise<void>;
     abstract findById(id: number): Promise<AsbBipekStandard | null>;
+    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBipekStandard[], number]>;
 }

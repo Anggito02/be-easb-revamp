@@ -21,4 +21,5 @@ export abstract class AsbBpsGalleryRepository {
         filters?: GetAsbBpsGalleryListFilterDto,
     ): Promise<[AsbBpsGallery[], number]>;
     abstract findByKomponenBangunanId(id: number): Promise<AsbBpsGallery[]>;
+    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGallery[], number]>;
 }

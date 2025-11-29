@@ -22,4 +22,5 @@ export abstract class AsbDocumentRepository {
         filters?: GetAsbDocumentListFilterDto,
     ): Promise<[AsbDocument[], number]>;
     abstract findBySpec(spec: DocumentSpec): Promise<AsbDocument[]>;
+    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDocument[], number]>;
 }

@@ -11,4 +11,5 @@ export abstract class AsbBipekNonStdReviewRepository {
     ): Promise<AsbBipekNonStdReview>;
     abstract delete(id: number): Promise<void>;
     abstract findById(id: number): Promise<AsbBipekNonStdReview | null>;
+    abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBipekNonStdReview[], number]>;
 }

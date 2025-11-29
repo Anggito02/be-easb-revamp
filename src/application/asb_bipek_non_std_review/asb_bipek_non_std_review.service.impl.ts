@@ -4,6 +4,7 @@ import { AsbBipekNonStdReviewService } from '../../domain/asb_bipek_non_std_revi
 import { AsbBipekNonStdReviewRepository } from '../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.repository';
 import { CreateAsbBipekNonStdReviewDto } from './dto/create_asb_bipek_non_std_review.dto';
 import { UpdateAsbBipekNonStdReviewDto } from './dto/update_asb_bipek_non_std_review.dto';
+import { GetAsbBipekNonStdReviewByAsbDto } from '../../presentation/asb_bipek_non_std_review/dto/get_asb_bipek_non_std_review_by_asb.dto';
 
 @Injectable()
 export class AsbBipekNonStdReviewServiceImpl extends AsbBipekNonStdReviewService {
@@ -64,6 +65,21 @@ export class AsbBipekNonStdReviewServiceImpl extends AsbBipekNonStdReviewService
                 );
             }
             return bipekNonStdReview;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<{ data: AsbBipekNonStdReview[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }

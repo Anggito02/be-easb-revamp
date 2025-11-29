@@ -13,6 +13,7 @@ import { DeleteDocumentUseCase } from './use_cases/delete_document.use_case';
 import { CreateAsbDocumentDto } from '../../presentation/asb_document/dto/create_asb_document.dto';
 import { UpdateAsbDocumentDto } from '../../presentation/asb_document/dto/update_asb_document.dto';
 import { GetAsbDocumentListFilterDto } from '../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
+import { GetAsbDocumentByAsbDto } from '../../presentation/asb_document/dto/get_asb_document_by_asb.dto';
 
 @Injectable()
 export class AsbDocumentServiceImpl extends AsbDocumentService {
@@ -133,6 +134,21 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
     async findBySpec(spec: DocumentSpec): Promise<AsbDocument[]> {
         try {
             return await this.repository.findBySpec(spec);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbDocumentByAsbDto): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }

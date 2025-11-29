@@ -14,4 +14,5 @@ export abstract class AsbKomponenBangunanProsService {
     abstract getDetail(data: GetAsbKomponenBangunanProsDetailDto): Promise<AsbKomponenBangunanPros>;
     abstract findByKomponenBangunanId(id: number): Promise<AsbKomponenBangunanPros[]>;
     abstract findByTipeBangunanId(id: number): Promise<AsbKomponenBangunanPros[]>;
+    abstract findByKomponenBangunanIdAndTipeBangunanId(id: number, idTipeBangunan: number): Promise<AsbKomponenBangunanPros[]>;
 }

@@ -121,4 +121,12 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
             throw error;
         }
     }
+
+    async findByKomponenBangunanIdAndTipeBangunanId(id: number, idTipeBangunan: number): Promise<AsbKomponenBangunanPros[]> {
+        try {
+            return await this.repository.findByKomponenBangunanIdAndTipeBangunanId(id, idTipeBangunan);
+        } catch (error) {
+            throw error;
+        }
+    }
 }

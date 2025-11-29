@@ -4,6 +4,7 @@ import { AsbBipekStandardReviewService } from '../../domain/asb_bipek_standard_r
 import { AsbBipekStandardReviewRepository } from '../../domain/asb_bipek_standard_review/asb_bipek_standard_review.repository';
 import { CreateAsbBipekStandardReviewDto } from './dto/create_asb_bipek_standard_review.dto';
 import { UpdateAsbBipekStandardReviewDto } from './dto/update_asb_bipek_standard_review.dto';
+import { GetAsbBipekStandardReviewByAsbDto } from '../../presentation/asb_bipek_standard_review/dto/get_asb_bipek_standard_review_by_asb.dto';
 
 @Injectable()
 export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewService {
@@ -64,6 +65,21 @@ export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewSer
                 );
             }
             return bipekStandardReview;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: AsbBipekStandardReview[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }

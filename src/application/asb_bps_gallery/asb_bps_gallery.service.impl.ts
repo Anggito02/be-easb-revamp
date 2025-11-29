@@ -12,6 +12,7 @@ import { DeleteFileUseCase } from './use_cases/delete_file.use_case';
 import { CreateAsbBpsGalleryDto } from '../../presentation/asb_bps_gallery/dto/create_asb_bps_gallery.dto';
 import { UpdateAsbBpsGalleryDto } from '../../presentation/asb_bps_gallery/dto/update_asb_bps_gallery.dto';
 import { GetAsbBpsGalleryListFilterDto } from '../../presentation/asb_bps_gallery/dto/get_asb_bps_gallery_list_filter.dto';
+import { GetAsbBpsGalleryByAsbDto } from '../../presentation/asb_bps_gallery/dto/get_asb_bps_gallery_by_asb.dto';
 
 @Injectable()
 export class AsbBpsGalleryServiceImpl extends AsbBpsGalleryService {
@@ -131,6 +132,21 @@ export class AsbBpsGalleryServiceImpl extends AsbBpsGalleryService {
     async findByKomponenBangunanId(id: number): Promise<AsbBpsGallery[]> {
         try {
             return await this.repository.findByKomponenBangunanId(id);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbBpsGalleryByAsbDto): Promise<{ data: AsbBpsGallery[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }

@@ -152,4 +152,19 @@ export class AsbBpsGalleryRepositoryImpl extends AsbBpsGalleryRepository {
             throw error;
         }
     }
+
+    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbBpsGallery[], number]> {
+        try {
+            const [entities, total] = await this.repository.findAndCount({
+                where: { idAsb },
+                skip: (page - 1) * amount,
+                take: amount,
+                order: { id: 'DESC' }
+            });
+            const domainEntities = entities.map((e) => plainToInstance(AsbBpsGallery, e));
+            return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
 }

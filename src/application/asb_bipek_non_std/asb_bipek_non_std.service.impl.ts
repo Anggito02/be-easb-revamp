@@ -4,6 +4,7 @@ import { AsbBipekNonStdService } from '../../domain/asb_bipek_non_std/asb_bipek_
 import { AsbBipekNonStdRepository } from '../../domain/asb_bipek_non_std/asb_bipek_non_std.repository';
 import { CreateAsbBipekNonStdDto } from './dto/create_asb_bipek_non_std.dto';
 import { UpdateAsbBipekNonStdDto } from './dto/update_asb_bipek_non_std.dto';
+import { GetAsbBipekNonStdByAsbDto } from '../../presentation/asb_bipek_non_std/dto/get_asb_bipek_non_std_by_asb.dto';
 
 @Injectable()
 export class AsbBipekNonStdServiceImpl extends AsbBipekNonStdService {
@@ -58,6 +59,21 @@ export class AsbBipekNonStdServiceImpl extends AsbBipekNonStdService {
                 );
             }
             return bipekNonStd;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getByAsb(dto: GetAsbBipekNonStdByAsbDto): Promise<{ data: AsbBipekNonStd[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
         } catch (error) {
             throw error;
         }
