@@ -13,6 +13,7 @@ import { SaveFileUseCase } from '../../application/asb_bps_gallery_std/use_cases
 import { DeleteFileUseCase } from '../../application/asb_bps_gallery_std/use_cases/delete_file.use_case';
 import { AsbBpsGalleryStdController } from './asb_bps_gallery_std.controller';
 import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
+import { Express } from 'express';
 
 @Module({
     imports: [

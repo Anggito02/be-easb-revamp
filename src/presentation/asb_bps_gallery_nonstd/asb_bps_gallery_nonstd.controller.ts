@@ -25,6 +25,7 @@ import { GetAsbBpsGalleryNonstdListDto } from './dto/get_asb_bps_gallery_nonstd_
 import { GetAsbBpsGalleryNonstdListFilterDto } from './dto/get_asb_bps_gallery_nonstd_list_filter.dto';
 import { GetAsbBpsGalleryNonstdDetailDto } from './dto/get_asb_bps_gallery_nonstd_detail.dto';
 import { AsbBpsGalleryNonstdPaginationResultDto } from './dto/asb_bps_gallery_nonstd_pagination_result.dto';
+import type { Express } from 'express';
 
 @Controller('asb-bps-gallery-nonstd')
 @UseGuards(JwtAuthGuard, RolesGuard)

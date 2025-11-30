@@ -3,6 +3,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import { GenerateFilenameUseCase } from './generate_filename.use_case';
 import { EnsureUploadDirectoryUseCase } from './ensure_upload_directory.use_case';
+import { Express } from 'express';
 
 @Injectable()
 export class SaveFileUseCase {

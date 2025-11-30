@@ -25,6 +25,7 @@ import { GetAsbBpsGalleryStdListDto } from './dto/get_asb_bps_gallery_std_list.d
 import { GetAsbBpsGalleryStdListFilterDto } from './dto/get_asb_bps_gallery_std_list_filter.dto';
 import { GetAsbBpsGalleryStdDetailDto } from './dto/get_asb_bps_gallery_std_detail.dto';
 import { AsbBpsGalleryStdPaginationResultDto } from './dto/asb_bps_gallery_std_pagination_result.dto';
+import type { Express } from 'express';
 
 @Controller('asb-bps-gallery-std')
 @UseGuards(JwtAuthGuard, RolesGuard)

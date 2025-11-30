@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { DocumentSpec } from '../../../domain/asb_document/document_spec.enum';
 import { GenerateDocumentFilenameUseCase } from './generate_document_filename.use_case';
 import { EnsureDocumentDirectoryUseCase } from './ensure_document_directory.use_case';
+import { Express } from 'express';
 
 @Injectable()
 export class SaveDocumentUseCase {

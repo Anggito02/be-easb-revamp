@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import { AsbBpsGalleryStd } from './asb_bps_gallery_std.entity';
 import { CreateAsbBpsGalleryStdDto } from '../../presentation/asb_bps_gallery_std/dto/create_asb_bps_gallery_std.dto';
 import { UpdateAsbBpsGalleryStdDto } from '../../presentation/asb_bps_gallery_std/dto/update_asb_bps_gallery_std.dto';

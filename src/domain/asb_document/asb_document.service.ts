@@ -1,3 +1,4 @@
+import { Express } from 'express';
 import { AsbDocument } from './asb_document.entity';
 import { DocumentSpec } from './document_spec.enum';
 import { CreateAsbDocumentDto } from '../../presentation/asb_document/dto/create_asb_document.dto';

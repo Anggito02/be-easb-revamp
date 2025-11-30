@@ -13,6 +13,7 @@ import { CreateAsbBpsGalleryStdDto } from '../../presentation/asb_bps_gallery_st
 import { UpdateAsbBpsGalleryStdDto } from '../../presentation/asb_bps_gallery_std/dto/update_asb_bps_gallery_std.dto';
 import { GetAsbBpsGalleryStdListFilterDto } from '../../presentation/asb_bps_gallery_std/dto/get_asb_bps_gallery_std_list_filter.dto';
 import { GetAsbBpsGalleryStdByAsbDto } from '../../presentation/asb_bps_gallery_std/dto/get_asb_bps_gallery_std_by_asb.dto';
+import { Express } from 'express';
 
 @Injectable()
 export class AsbBpsGalleryStdServiceImpl extends AsbBpsGalleryStdService {

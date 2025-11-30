@@ -13,6 +13,7 @@ import { GetAsbBpsGalleryNonstdByAsbDto } from '../../presentation/asb_bps_galle
 import { AsbBpsGalleryNonstd } from '../../domain/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.entity';
 import { AsbBpsGalleryNonstdRepository } from '../../domain/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.repository';
 import { AsbBpsGalleryNonstdService } from '../../domain/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.service';
+import { Express } from 'express';
 
 @Injectable()
 export class AsbBpsGalleryNonstdServiceImpl extends AsbBpsGalleryNonstdService {
