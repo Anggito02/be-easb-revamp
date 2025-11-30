@@ -8,32 +8,23 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
             CREATE TABLE IF NOT EXISTS "asb_komponen_bangunan_pros_std" (
                 "id" SERIAL PRIMARY KEY,
                 "id_asb_komponen_bangunan_std" INTEGER NOT NULL,
-                "id_asb_tipe_bangunan" INTEGER NOT NULL,
-                "min" DOUBLE PRECISION NOT NULL,
-                "avg_min" DOUBLE PRECISION NOT NULL,
-                "avg" DOUBLE PRECISION NOT NULL,
-                "avg_max" DOUBLE PRECISION NOT NULL,
-                "max" DOUBLE PRECISION NOT NULL,
+                "min" DOUBLE PRECISION,
+                "avg_min" DOUBLE PRECISION,
+                "avg" DOUBLE PRECISION,
+                "avg_max" DOUBLE PRECISION,
+                "max" DOUBLE PRECISION,
                 "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
                 "deleted_at" TIMESTAMPTZ NULL,
                 CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen" 
                     FOREIGN KEY ("id_asb_komponen_bangunan_std") 
                     REFERENCES "asb_komponen_bangunan_std"("id") 
-                    ON DELETE CASCADE,
-                CONSTRAINT "fk_asb_komponen_bangunan_pros_tipe" 
-                    FOREIGN KEY ("id_asb_tipe_bangunan") 
-                    REFERENCES "asb_tipe_bangunan"("id") 
                     ON DELETE CASCADE
             );
         `);
 
         await queryRunner.query(`
             CREATE INDEX IF NOT EXISTS "idx_asb_komponen_bangunan_pros_std_komponen" ON "asb_komponen_bangunan_pros_std" ("id_asb_komponen_bangunan_std");
-        `);
-
-        await queryRunner.query(`
-            CREATE INDEX IF NOT EXISTS "idx_asb_komponen_bangunan_pros_std_tipe" ON "asb_komponen_bangunan_pros_std" ("id_asb_tipe_bangunan");
         `);
 
         await queryRunner.query(`
@@ -55,7 +46,6 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_pros_std_updated_at ON "asb_komponen_bangunan_pros_std";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_deleted";`);
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_tipe";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_komponen";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_komponen_bangunan_pros_std";`);
     }

@@ -10,10 +10,6 @@ export class UpdateAsbKomponenBangunanProsStdDto {
 
     @IsNumber()
     @IsOptional()
-    idAsbTipeBangunan?: number;
-
-    @IsNumber()
-    @IsOptional()
     min?: number;
 
     @IsNumber()

@@ -14,7 +14,7 @@ export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterfa
             ('Plafon', 'ORIGIN', 1, 1),
             ('Atap', 'ORIGIN', 1, 1),
             ('Utilitas', 'ORIGIN', 1, 1),
-            ('Finishing', 'ORIGIN', 1, 1);
+            ('Finishing', 'ORIGIN', 1, 1),
             ('Pondasi', 'ORIGIN', 1, 2),
             ('Struktur', 'ORIGIN', 1, 2),
             ('Lantai', 'ORIGIN', 1, 2),
@@ -47,7 +47,7 @@ export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterfa
             ('Finishing (Cat Struktur)', 'ORIGIN', 2, 1),
             ('Finishing (Cat Langit Langit)', 'ORIGIN', 2, 1),
             ('Finishing (Cat Dinding)', 'ORIGIN', 2, 1),
-            ('Finishing (Cat Pintu/Kosen)', 'ORIGIN', 2, 1);
+            ('Finishing (Cat Pintu/Kosen)', 'ORIGIN', 2, 1),
             ('Pondasi', 'ORIGIN', 2, 2),
             ('Struktur (Kolom, Balok & Ring Balk)', 'ORIGIN', 2, 2),
             ('Struktur (Plesteran)', 'ORIGIN', 2, 2),
@@ -68,6 +68,7 @@ export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterfa
             ('Finishing (Cat Langit Langit)', 'ORIGIN', 2, 2),
             ('Finishing (Cat Dinding)', 'ORIGIN', 2, 2),
             ('Finishing (Cat Pintu/Kosen)', 'ORIGIN', 2, 2);
+            ('Pintu', 'ORIGIN', 2, 2);
         `);
     }
 
@@ -84,7 +85,7 @@ export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterfa
                 'Dinding (Pintu)', 'Dinding (Kosen)',
                 'Lantai (Penutup Lantai)',
                 'Utilitas (Instalasi Listrik)', 'Utilitas (Instalasi Air)', 'Utilitas (Drainase Limbah)',
-                'Finishing (Cat Struktur)', 'Finishing (Cat Langit Langit)', 'Finishing (Cat Dinding)', 'Finishing (Cat Pintu/Kosen)'
+                'Finishing (Cat Struktur)', 'Finishing (Cat Langit Langit)', 'Finishing (Cat Dinding)', 'Finishing (Cat Pintu/Kosen)', 'Pintu'
             );
         `);
     }

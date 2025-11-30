@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan_std/orm/asb_komponen_bangunan_std.orm_entity';
-import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_bangunan.orm_entity';
 
 @Entity('asb_komponen_bangunan_pros_std')
 export class AsbKomponenBangunanProsStdOrmEntity {
@@ -9,9 +8,6 @@ export class AsbKomponenBangunanProsStdOrmEntity {
 
     @Column({ name: 'id_asb_komponen_bangunan_std', type: 'integer' })
     idAsbKomponenBangunanStd!: number;
-
-    @Column({ name: 'id_asb_tipe_bangunan', type: 'integer' })
-    idAsbTipeBangunan!: number;
 
     @Column({ type: 'double precision' })
     min!: number;
@@ -40,8 +36,4 @@ export class AsbKomponenBangunanProsStdOrmEntity {
     @ManyToOne(() => AsbKomponenBangunanStdOrmEntity)
     @JoinColumn({ name: 'id_asb_komponen_bangunan_std' })
     asbKomponenBangunanStd!: AsbKomponenBangunanStdOrmEntity;
-
-    @ManyToOne(() => AsbTipeBangunanOrmEntity)
-    @JoinColumn({ name: 'id_asb_tipe_bangunan' })
-    asbTipeBangunan!: AsbTipeBangunanOrmEntity;
 }

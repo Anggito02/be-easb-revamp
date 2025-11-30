@@ -45,7 +45,6 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
 
             const updateData: Partial<AsbKomponenBangunanProsStd> = {
                 idAsbKomponenBangunanStd: dto.idAsbKomponenBangunanStd,
-                idAsbTipeBangunan: dto.idAsbTipeBangunan,
                 min: dto.min,
                 avgMin: dto.avgMin,
                 avg: dto.avg,
@@ -109,22 +108,6 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
     async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
         try {
             return await this.repository.findByKomponenBangunanStdId(id);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findByTipeBangunanId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
-        try {
-            return await this.repository.findByTipeBangunanId(id);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findByKomponenBangunanStdIdAndTipeBangunanId(id: number, idTipeBangunan: number): Promise<AsbKomponenBangunanProsStd[]> {
-        try {
-            return await this.repository.findByKomponenBangunanStdIdAndTipeBangunanId(id, idTipeBangunan);
         } catch (error) {
             throw error;
         }
