@@ -46,7 +46,7 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
                 updateData.idAsb = dto.idAsb;
             }
             if (dto.idAsbKomponenBangunanNonStd !== undefined) {
-                updateData.idAsbKomponenBangunan = dto.idAsbKomponenBangunanNonStd;
+                updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonStd;
             }
             if (dto.bobotInput !== undefined) {
                 updateData.bobotInput = dto.bobotInput;

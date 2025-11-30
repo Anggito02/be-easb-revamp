@@ -15,11 +15,7 @@ export class CreateAsbKomponenBangunanProsNonstd1764093605425 implements Migrati
                 "max" DOUBLE PRECISION,
                 "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-                "deleted_at" TIMESTAMPTZ NULL,
-                CONSTRAINT "fk_asb_komponen_bangunan_pros_nonstd_komponen" 
-                    FOREIGN KEY ("id_asb_komponen_bangunan_nonstd") 
-                    REFERENCES "asb_komponen_bangunan_nonstd"("id") 
-                    ON DELETE CASCADE
+                "deleted_at" TIMESTAMPTZ NULL
             );
         `);
 
@@ -29,6 +25,14 @@ export class CreateAsbKomponenBangunanProsNonstd1764093605425 implements Migrati
 
         await queryRunner.query(`
             CREATE INDEX IF NOT EXISTS "idx_asb_komponen_bangunan_pros_nonstd_deleted" ON "asb_komponen_bangunan_pros_nonstd" ("deleted_at");
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "asb_komponen_bangunan_pros_nonstd"
+            ADD CONSTRAINT "fk_asb_komponen_bangunan_pros_nonstd_komponen"
+            FOREIGN KEY ("id_asb_komponen_bangunan_nonstd")
+            REFERENCES "asb_komponen_bangunan_nonstd"("id")
+            ON DELETE CASCADE;
         `);
 
         await queryRunner.query(`

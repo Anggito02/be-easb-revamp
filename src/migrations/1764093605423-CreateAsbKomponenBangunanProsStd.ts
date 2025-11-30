@@ -15,11 +15,7 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
                 "max" DOUBLE PRECISION,
                 "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMPTZ NOT NULL DEFAULT now(),
-                "deleted_at" TIMESTAMPTZ NULL,
-                CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen" 
-                    FOREIGN KEY ("id_asb_komponen_bangunan_std") 
-                    REFERENCES "asb_komponen_bangunan_std"("id") 
-                    ON DELETE CASCADE
+                "deleted_at" TIMESTAMPTZ NULL
             );
         `);
 
@@ -29,6 +25,14 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
 
         await queryRunner.query(`
             CREATE INDEX IF NOT EXISTS "idx_asb_komponen_bangunan_pros_std_deleted" ON "asb_komponen_bangunan_pros_std" ("deleted_at");
+        `);
+
+        await queryRunner.query(`
+            ALTER TABLE "asb_komponen_bangunan_pros_std"
+            ADD CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen"
+            FOREIGN KEY ("id_asb_komponen_bangunan_std")
+            REFERENCES "asb_komponen_bangunan_stds"("id")
+            ON DELETE CASCADE;
         `);
 
         await queryRunner.query(`
@@ -47,6 +51,7 @@ export class CreateAsbKomponenBangunanProsStd1764093605423 implements MigrationI
         await queryRunner.query(`DROP TRIGGER IF EXISTS set_asb_komponen_bangunan_pros_std_updated_at ON "asb_komponen_bangunan_pros_std";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_deleted";`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_komponen_bangunan_pros_std_komponen";`);
+        await queryRunner.query(`ALTER TABLE "asb_komponen_bangunan_pros_std" DROP CONSTRAINT "fk_asb_komponen_bangunan_pros_komponen";`);
         await queryRunner.query(`DROP TABLE IF EXISTS "asb_komponen_bangunan_pros_std";`);
     }
 }

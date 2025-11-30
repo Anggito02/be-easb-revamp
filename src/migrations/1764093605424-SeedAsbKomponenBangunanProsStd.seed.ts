@@ -65,14 +65,14 @@ export class SeedAsbKomponenBangunanProsStd1764093605424 implements MigrationInt
         ];
 
         for (const row of rows) {
-            const [idAsbKomponenBangunan, min, max, avg, avgMin, avgMax] = row;
+            const [idAsbKomponenBangunanStd, min, max, avg, avgMin, avgMax] = row;
 
             await queryRunner.query(
                 `INSERT INTO "asb_komponen_bangunan_pros_std"
                     ("id_asb_komponen_bangunan_std", "min", "max", "avg", "avg_min", "avg_max")
                  VALUES ($1, $2, $3, $4, $5, $6)
-                 ON CONFLICT ("id_asb_komponen_bangunan") DO NOTHING`,
-                [idAsbKomponenBangunan, min, max, avg, avgMin, avgMax],
+                `,
+                [idAsbKomponenBangunanStd, min, max, avg, avgMin, avgMax],
             );
         }
     }

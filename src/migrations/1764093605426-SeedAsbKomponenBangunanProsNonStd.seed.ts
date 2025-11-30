@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedAsbKomponenBangunanProsStd1764093605424 implements MigrationInterface {
-    name = 'SeedAsbKomponenBangunanProsStd1764093605424';
+export class SeedAsbKomponenBangunanProsNonStd1764093605426 implements MigrationInterface {
+    name = 'SeedAsbKomponenBangunanProsNonStd1764093605426';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const rows = [
@@ -60,10 +60,10 @@ export class SeedAsbKomponenBangunanProsStd1764093605424 implements MigrationInt
             ] = row;
 
             await queryRunner.query(
-                `INSERT INTO "asb_komponen_bangunan_pros_non_std"
+                `INSERT INTO "asb_komponen_bangunan_pros_nonstd"
                     ("id_asb_komponen_bangunan_nonstd", "min", "max", "avg", "avg_min", "avg_max")
                  VALUES ($1, $2, $3, $4, $5, $6)
-                 ON CONFLICT ("id_asb_komponen_bangunan_nonstd") DO NOTHING`,
+                `,
                 [idAsbKomponenBangunanNonstd, min, max, avg, avgMin, avgMax],
             );
         }
@@ -81,7 +81,7 @@ export class SeedAsbKomponenBangunanProsStd1764093605424 implements MigrationInt
         const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
 
         await queryRunner.query(
-            `DELETE FROM "asb_komponen_bangunan_pros_non_std"
+            `DELETE FROM "asb_komponen_bangunan_pros_nonstd"
              WHERE "id_asb_komponen_bangunan_nonstd" IN (${placeholders})`,
             ids,
         );

@@ -26,7 +26,7 @@ export class SeedAsbKomponenBangunanNonstd1764092569367 implements MigrationInte
             ('Perizinan selain IMB', 'ORIGIN', 1, 5),
             ('Penyiapan Pematangan Lahan', 'ORIGIN', 1, 5),
             ('Pemenuhan Persyaratan Bangunan Gedung Hijau', 'ORIGIN', 1, 5),
-            ('Penyambungan Utilitas', 'ORIGIN', 1, 5);
+            ('Penyambungan Utilitas', 'ORIGIN', 1, 5),
             ('Alat Pengkondisi Udara', 'ORIGIN', 2, 5),
             ('Elevator/Escalator', 'ORIGIN', 2, 5),
             ('Tata Suara (Sound System)', 'ORIGIN', 2, 5),

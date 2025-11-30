@@ -35,7 +35,7 @@ export class CreateAsbBipekStandard1764307674061 implements MigrationInterface {
             ALTER TABLE "asb_bipek_standards"
             ADD CONSTRAINT "fk_asb_bipek_standards_komponen_bangunan_std"
             FOREIGN KEY ("id_asb_komponen_bangunan_std")
-            REFERENCES "asb_komponen_bangunan_std"("id")
+            REFERENCES "asb_komponen_bangunan_stds"("id")
             ON DELETE SET NULL
         `);
 

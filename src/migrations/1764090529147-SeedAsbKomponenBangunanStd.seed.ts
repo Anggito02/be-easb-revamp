@@ -67,7 +67,7 @@ export class SeedAsbKomponenBangunanStd1764090529147 implements MigrationInterfa
             ('Finishing (Cat Struktur)', 'ORIGIN', 2, 2),
             ('Finishing (Cat Langit Langit)', 'ORIGIN', 2, 2),
             ('Finishing (Cat Dinding)', 'ORIGIN', 2, 2),
-            ('Finishing (Cat Pintu/Kosen)', 'ORIGIN', 2, 2);
+            ('Finishing (Cat Pintu/Kosen)', 'ORIGIN', 2, 2),
             ('Pintu', 'ORIGIN', 2, 2);
         `);
     }

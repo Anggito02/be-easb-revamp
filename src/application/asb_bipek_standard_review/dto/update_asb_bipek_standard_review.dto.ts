@@ -15,7 +15,7 @@ export class UpdateAsbBipekStandardReviewDto {
 
     @IsInt()
     @IsOptional()
-    idAsbKomponenBangunan?: number | null;
+    idAsbKomponenBangunanStd?: number | null;
 
     @IsEnum(Files)
     @IsOptional()

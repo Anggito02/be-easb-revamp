@@ -51,8 +51,8 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
             if (dto.idAsb !== undefined) {
                 updateData.idAsb = dto.idAsb;
             }
-            if (dto.idAsbKomponenBangunan !== undefined) {
-                updateData.idAsbKomponenBangunan = dto.idAsbKomponenBangunan;
+            if (dto.idAsbKomponenBangunanNonstd !== undefined) {
+                updateData.idAsbKomponenBangunanNonstd = dto.idAsbKomponenBangunanNonstd;
             }
             if (dto.files !== undefined) {
                 updateData.files = dto.files;

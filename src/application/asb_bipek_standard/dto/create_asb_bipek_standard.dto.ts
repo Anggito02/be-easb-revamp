@@ -8,7 +8,7 @@ export class CreateAsbBipekStandardDto {
     files: Files;
 
     @IsInt()
-    idAsbKomponenBangunan: number;
+    idAsbKomponenBangunanStd: number;
 
     @IsInt()
     idAsb: number;

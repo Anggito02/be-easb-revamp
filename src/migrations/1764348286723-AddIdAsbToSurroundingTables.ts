@@ -70,20 +70,11 @@ export class AddIdAsbToSurroundingTables1764348286723 implements MigrationInterf
             ADD CONSTRAINT "fk_asb_document_asb"
             FOREIGN KEY ("id_asb") REFERENCES "asb"("id") ON DELETE SET NULL
         `);
-        // 9. asb_bps_gallery
-        await queryRunner.query(`ALTER TABLE "asb_bps_gallery" ADD COLUMN "id_asb" INTEGER`);
-        await queryRunner.query(`CREATE INDEX "idx_asb_bps_gallery_asb" ON "asb_bps_gallery" ("id_asb")`);
-        await queryRunner.query(`
-            ALTER TABLE "asb_bps_gallery"
-            ADD CONSTRAINT "fk_asb_bps_gallery_asb"
-            FOREIGN KEY ("id_asb") REFERENCES "asb"("id") ON DELETE SET NULL
-        `);
     }
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Drop in reverse order
 
         // Drop foreign keys
-        await queryRunner.query(`ALTER TABLE "asb_bps_gallery" DROP CONSTRAINT IF EXISTS "fk_asb_bps_gallery_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_document" DROP CONSTRAINT IF EXISTS "fk_asb_document_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_log" DROP CONSTRAINT IF EXISTS "fk_asb_log_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_bipek_non_std_reviews" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_non_std_reviews_asb"`);
@@ -93,7 +84,6 @@ export class AddIdAsbToSurroundingTables1764348286723 implements MigrationInterf
         await queryRunner.query(`ALTER TABLE "asb_bipek_standards" DROP CONSTRAINT IF EXISTS "fk_asb_bipek_standards_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_detail" DROP CONSTRAINT IF EXISTS "fk_asb_detail_asb"`);
         // Drop indexes
-        await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bps_gallery_asb"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_document_asb"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_log_asb"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_non_std_reviews_asb"`);
@@ -103,7 +93,6 @@ export class AddIdAsbToSurroundingTables1764348286723 implements MigrationInterf
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_bipek_standards_asb"`);
         await queryRunner.query(`DROP INDEX IF EXISTS "idx_asb_detail_asb"`);
         // Drop columns
-        await queryRunner.query(`ALTER TABLE "asb_bps_gallery" DROP COLUMN "id_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_document" DROP COLUMN "id_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_log" DROP COLUMN "id_asb"`);
         await queryRunner.query(`ALTER TABLE "asb_bipek_non_std_reviews" DROP COLUMN "id_asb"`);

@@ -22,11 +22,11 @@ export class AsbBipekNonStdReviewOrmEntity {
     idAsbBipekNonStd: number;
 
     @Column({
-        name: 'id_asb_komponen_bangunan',
+        name: 'id_asb_komponen_bangunan_nonstd',
         type: 'int',
         nullable: true,
     })
-    idAsbKomponenBangunan: number | null;
+    idAsbKomponenBangunanNonstd: number | null;
 
     @Column({ name: 'id_asb', type: 'int', nullable: true })
     idAsb: number | null;

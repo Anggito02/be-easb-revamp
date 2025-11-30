@@ -15,7 +15,7 @@ export class UpdateAsbBipekStandardDto {
 
     @IsInt()
     @IsOptional()
-    idAsbKomponenBangunan?: number | null;
+    idAsbKomponenBangunanStd?: number | null;
 
     @IsNumber()
     @IsOptional()
