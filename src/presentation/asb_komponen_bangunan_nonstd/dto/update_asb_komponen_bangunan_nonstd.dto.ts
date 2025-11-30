@@ -16,4 +16,8 @@ export class UpdateAsbKomponenBangunanNonstdDto {
     @IsNumber()
     @IsOptional()
     idAsbJenis?: number;
+
+    @IsNumber()
+    @IsOptional()
+    idAsbTipeBangunan?: number;
 }

@@ -5,4 +5,5 @@ export class AsbKomponenBangunanNonstd {
     komponen!: string;
     files!: AsbKomponenBangunanNonStdFiles;
     idAsbJenis!: number;
+    idAsbTipeBangunan!: number;
 }

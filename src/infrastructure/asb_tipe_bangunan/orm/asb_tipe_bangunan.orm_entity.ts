@@ -3,25 +3,18 @@ import { AsbJenisOrmEntity } from "../../asb_jenis/orm/asb_jenis.orm_entity";
 
 @Entity("asb_tipe_bangunan")
 export class AsbTipeBangunanOrmEntity {
-  @PrimaryGeneratedColumn()
-  id!: number;
+    @PrimaryGeneratedColumn()
+    id!: number;
 
-  @Column({ type: "varchar", length: 255 })
-  tipe_bangunan!: string;
+    @Column({ type: "varchar", length: 255 })
+    tipe_bangunan!: string;
 
-  @Column({ name: "id_asb_jenis", type: "int" })
-  id_asb_jenis!: number;
+    @CreateDateColumn({ name: "created_at", type: "timestamptz" })
+    createdAt!: Date;
 
-  @ManyToOne(() => AsbJenisOrmEntity)
-  @JoinColumn({ name: "id_asb_jenis" })
-  asbJenis!: AsbJenisOrmEntity;
+    @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
+    updatedAt!: Date;
 
-  @CreateDateColumn({ name: "created_at", type: "timestamptz" })
-  createdAt!: Date;
-
-  @UpdateDateColumn({ name: "updated_at", type: "timestamptz" })
-  updatedAt!: Date;
-
-  @DeleteDateColumn({ name: "deleted_at", type: "timestamptz", nullable: true })
-  deletedAt?: Date;
+    @DeleteDateColumn({ name: "deleted_at", type: "timestamptz", nullable: true })
+    deletedAt?: Date;
 }

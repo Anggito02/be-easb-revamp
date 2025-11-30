@@ -13,4 +13,8 @@ export class CreateAsbKomponenBangunanStdDto {
     @IsNumber()
     @IsNotEmpty()
     idAsbJenis!: number;
+
+    @IsNumber()
+    @IsNotEmpty()
+    idAsbTipeBangunan!: number;
 }
