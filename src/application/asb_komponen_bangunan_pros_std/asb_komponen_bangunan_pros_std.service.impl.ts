@@ -19,7 +19,7 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
 
     async create(dto: CreateAsbKomponenBangunanProsStdDto): Promise<AsbKomponenBangunanProsStd> {
         try {
-            this.validateStatisticalRangeUseCase.execute(dto.min, dto.avgMin, dto.avg, dto.avgMax, dto.max);
+            this.validateStatisticalRangeUseCase.execute(dto.min || 0, dto.avgMin || 0, dto.avg || 0, dto.avgMax || 0, dto.max || 0);
             const entity = await this.repository.create(dto);
             return entity;
         } catch (error) {

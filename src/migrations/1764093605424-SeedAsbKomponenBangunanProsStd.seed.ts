@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedAsbKomponenBangunanRange1764093605424 implements MigrationInterface {
-    name = 'SeedAsbKomponenBangunanRange1764093605424';
+export class SeedAsbKomponenBangunanProsStd1764093605424 implements MigrationInterface {
+    name = 'SeedAsbKomponenBangunanProsStd1764093605424';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const rows: [number, number, number, number, number, number][] = [
@@ -68,8 +68,8 @@ export class SeedAsbKomponenBangunanRange1764093605424 implements MigrationInter
             const [idAsbKomponenBangunan, min, max, avg, avgMin, avgMax] = row;
 
             await queryRunner.query(
-                `INSERT INTO "asb_komponen_bangunan_range"
-                    ("id_asb_komponen_bangunan", "min", "max", "avg", "avg_min", "avg_max")
+                `INSERT INTO "asb_komponen_bangunan_pros_std"
+                    ("id_asb_komponen_bangunan_std", "min", "max", "avg", "avg_min", "avg_max")
                  VALUES ($1, $2, $3, $4, $5, $6)
                  ON CONFLICT ("id_asb_komponen_bangunan") DO NOTHING`,
                 [idAsbKomponenBangunan, min, max, avg, avgMin, avgMax],
@@ -90,8 +90,8 @@ export class SeedAsbKomponenBangunanRange1764093605424 implements MigrationInter
         const placeholders = ids.map((_, index) => `$${index + 1}`).join(', ');
 
         await queryRunner.query(
-            `DELETE FROM "asb_komponen_bangunan_range"
-             WHERE "id_asb_komponen_bangunan" IN (${placeholders})`,
+            `DELETE FROM "asb_komponen_bangunan_pros_std"
+             WHERE "id_asb_komponen_bangunan_std" IN (${placeholders})`,
             ids,
         );
     }

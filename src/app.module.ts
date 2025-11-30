@@ -21,6 +21,7 @@ import { ShstModule } from './presentation/shst/shst.module';
 import { AsbKomponenBangunanStdModule } from './presentation/asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
 import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
 import { AsbKomponenBangunanProsStdModule } from './presentation/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
+import { AsbKomponenBangunanProsNonstdModule } from './presentation/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
 import { AsbBpsGalleryModule } from './presentation/asb_bps_gallery/asb_bps_gallery.module';
 import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
@@ -78,6 +79,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbKomponenBangunanStdModule,
         AsbKomponenBangunanNonstdModule,
         AsbKomponenBangunanProsStdModule,
+        AsbKomponenBangunanProsNonstdModule,
         AsbJakonModule,
         AsbBpsGalleryModule,
         AsbDocumentModule,
