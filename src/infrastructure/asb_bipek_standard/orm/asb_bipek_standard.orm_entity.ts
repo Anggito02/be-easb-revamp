@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
-import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan_std/orm/asb_komponen_bangunan_std.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
 @Entity('asb_bipek_standard')

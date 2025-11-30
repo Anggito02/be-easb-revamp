@@ -23,7 +23,8 @@ import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_ban
 import { AsbKomponenBangunanProsStdModule } from './presentation/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
 import { AsbKomponenBangunanProsNonstdModule } from './presentation/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
-import { AsbBpsGalleryModule } from './presentation/asb_bps_gallery/asb_bps_gallery.module';
+import { AsbBpsGalleryStdModule } from './presentation/asb_bps_gallery_std/asb_bps_gallery_std.module';
+import { AsbBpsGalleryNonstdModule } from './presentation/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.module';
 import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
 import { AsbLogModule } from './presentation/asb_log/asb_log.module';
 import { AsbDetailModule } from './presentation/asb_detail/asb_detail.module';
@@ -81,7 +82,8 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         AsbKomponenBangunanProsStdModule,
         AsbKomponenBangunanProsNonstdModule,
         AsbJakonModule,
-        AsbBpsGalleryModule,
+        AsbBpsGalleryStdModule,
+        AsbBpsGalleryNonstdModule,
         AsbDocumentModule,
         AsbLogModule,
         AsbDetailModule,

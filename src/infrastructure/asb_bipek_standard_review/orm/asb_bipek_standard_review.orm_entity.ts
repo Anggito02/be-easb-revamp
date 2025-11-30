@@ -12,7 +12,7 @@ import { Files } from '../../../domain/asb_detail/files.enum';
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
 import { AsbBipekStandardOrmEntity } from '../../asb_bipek_standard/orm/asb_bipek_standard.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
-import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan_std/orm/asb_komponen_bangunan_std.orm_entity';
 
 @Entity('asb_bipek_standard_reviews')
 export class AsbBipekStandardReviewOrmEntity {
