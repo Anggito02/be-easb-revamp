@@ -6,22 +6,19 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 dotenv.config();
 
 export default new DataSource({
-  type: 'postgres',
-  // dev-style; only used when no DB_URL
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT ?? 5432),
+    type: 'postgres',
+    url: process.env.DB_URL,
 
-  // production-style
-  url: process.env.DB_URL,
+    // SESUAIKAN dengan penamaan file entity kamu (sudah kita sarankan pakai *.orm-entity.ts)
+    entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
 
-  username: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+    migrations: ['src/migrations/*{.ts,.js}'],
+    migrationsTableName: 'typeorm_migrations',
 
-  entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
-  migrations: ['src/migrations/*{.ts,.js}'],
-  migrationsTableName: 'typeorm_migrations',
-  namingStrategy: new SnakeNamingStrategy(),
-  synchronize: false,
-  logging: ['error', 'warn'],
+    // optional, tapi sangat disarankan agar snake_case konsisten
+    namingStrategy: new SnakeNamingStrategy(),
+
+    // Tidak pakai synchronize di CLI; migrasi yang handle
+    synchronize: false,
+    logging: ['error', 'warn'],
 });

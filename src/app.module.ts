@@ -18,6 +18,23 @@ import { JenisStandarModule } from './presentation/jenis_standar/jenis_standar.m
 import { AsbTipeBangunanModule } from './presentation/asb_tipe_bangunan/asb_tipe_bangunan.module';
 import { AsbKlasifikasiModule } from './presentation/asb_klasifikasi/asb_klasifikasi.module';
 import { ShstModule } from './presentation/shst/shst.module';
+import { AsbKomponenBangunanStdModule } from './presentation/asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
+import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
+import { AsbKomponenBangunanProsStdModule } from './presentation/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
+import { AsbKomponenBangunanProsNonstdModule } from './presentation/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
+import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
+import { AsbBpsGalleryStdModule } from './presentation/asb_bps_gallery_std/asb_bps_gallery_std.module';
+import { AsbBpsGalleryNonstdModule } from './presentation/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.module';
+import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
+import { AsbLogModule } from './presentation/asb_log/asb_log.module';
+import { AsbDetailModule } from './presentation/asb_detail/asb_detail.module';
+import { AsbBipekStandardModule } from './presentation/asb_bipek_standard/asb_bipek_standard.module';
+import { AsbBipekNonStdModule } from './presentation/asb_bipek_non_std/asb_bipek_non_std.module';
+import { AsbDetailReviewModule } from './presentation/asb_detail_review/asb_detail_review.module';
+import { AsbBipekStandardReviewModule } from './presentation/asb_bipek_standard_review/asb_bipek_standard_review.module';
+import { AsbBipekNonStdReviewModule } from './presentation/asb_bipek_non_std_review/asb_bipek_non_std_review.module';
+import { AsbModule } from './presentation/asb/asb.module';
+import { OpdModule } from './presentation/opd/opd.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -38,28 +55,24 @@ import { DataSourceOptions } from 'typeorm';
 
                 // If DB_URL is set (production) → use connection string
                 if (url) {
-                return {
-                    type: 'postgres',
-                    url,
-                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
-                    synchronize: false,
-                    migrationsRun: false,
-                    migrations: [__dirname + '/migrations/*{.js,.ts}'],
-                };
+                    return {
+                        type: 'postgres',
+                        url,
+                        entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
+                        synchronize: false,
+                        migrationsRun: false,
+                        migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                    };
                 }
 
                 // Otherwise (development) → use host/port/etc
                 return {
-                type: 'postgres',
-                host: config.get<string>('db.host'),
-                port: config.get<number>('db.port'),
-                username: config.get<string>('db.username'),
-                password: config.get<string>('db.password'),
-                database: config.get<string>('db.name'),
-                entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.js,.ts}'],
-                synchronize: false,
-                migrationsRun: false,
-                migrations: [__dirname + '/migrations/*{.js,.ts}'],
+                    type: 'postgres',
+                    url: config.get('db.url'),
+                    entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
+                    synchronize: false, // always false in production
+                    migrationsRun: false,
+                    migrations: [__dirname + '/migrations/*{.js,.ts}'],
                 };
             },
             inject: [ConfigService],
@@ -77,11 +90,28 @@ import { DataSourceOptions } from 'typeorm';
         JenisStandarModule,
         AsbTipeBangunanModule,
         AsbKlasifikasiModule,
-        ShstModule
+        ShstModule,
+        AsbKomponenBangunanStdModule,
+        AsbKomponenBangunanNonstdModule,
+        AsbKomponenBangunanProsStdModule,
+        AsbKomponenBangunanProsNonstdModule,
+        AsbJakonModule,
+        AsbBpsGalleryStdModule,
+        AsbBpsGalleryNonstdModule,
+        AsbDocumentModule,
+        AsbLogModule,
+        AsbDetailModule,
+        AsbBipekStandardModule,
+        AsbBipekNonStdModule,
+        AsbDetailReviewModule,
+        AsbBipekStandardReviewModule,
+        AsbBipekNonStdReviewModule,
+        AsbModule,
+        OpdModule
         // other modules...
     ],
     providers: [
         { provide: APP_INTERCEPTOR, useClass: ResponseCaptureInterceptor },
     ],
 })
-export class AppModule {}
+export class AppModule { }

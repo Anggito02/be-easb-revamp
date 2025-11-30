@@ -5,18 +5,19 @@ export class SeedAsbTipeBangunan1763875426252 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         const asbTipeBangunans = [
-            { tipe_bangunan: 'Gedung Negara', id_asb_jenis: 1 },
-            { tipe_bangunan: 'Rumah Negara', id_asb_jenis: 1 },
-            { tipe_bangunan: 'Pagar Gedung Negara', id_asb_jenis: 1 },
-            { tipe_bangunan: 'Pagar Rumah Negara', id_asb_jenis: 1 },
+            { tipe_bangunan: 'Gedung Negara' },
+            { tipe_bangunan: 'Rumah Negara' },
+            { tipe_bangunan: 'Pagar Gedung Negara' },
+            { tipe_bangunan: 'Pagar Rumah Negara' },
+            { tipe_bangunan: 'Bangunan Non-Standard' }
         ];
 
         for (const tipeBangunan of asbTipeBangunans) {
             await queryRunner.query(
-                `INSERT INTO "asb_tipe_bangunan" ("tipe_bangunan", "id_asb_jenis")
-                 VALUES ($1, $2)
+                `INSERT INTO "asb_tipe_bangunan" ("tipe_bangunan")
+                 VALUES ($1)
                  ON CONFLICT ("tipe_bangunan") DO NOTHING`,
-                [tipeBangunan.tipe_bangunan, tipeBangunan.id_asb_jenis],
+                [tipeBangunan.tipe_bangunan],
             );
         }
     }
@@ -27,6 +28,7 @@ export class SeedAsbTipeBangunan1763875426252 implements MigrationInterface {
             'Rumah Negara',
             'Pagar Gedung Negara',
             'Pagar Rumah Negara',
+            'Bangunan Non-Standard'
         ];
 
         const placeholders = tipeBangunanList.map((_, index) => `$${index + 1}`).join(', ');
