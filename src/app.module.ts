@@ -51,11 +51,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         TypeOrmModule.forRootAsync({
             useFactory: (config: ConfigService) => ({
                 type: 'postgres',
-                host: config.get('db.host'),
-                port: config.get<number>('db.port'),
-                username: config.get('db.username'),
-                password: config.get('db.password'),
-                database: config.get('db.name'),
+                url: config.get('db.url'),
                 entities: [__dirname + '/infrastructure/**/orm/*.orm_entity{.ts,.js}'],
                 synchronize: false, // always false in production
                 migrationsRun: false,
