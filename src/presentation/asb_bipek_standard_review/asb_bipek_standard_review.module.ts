@@ -6,7 +6,7 @@ import { AsbBipekStandardReviewRepositoryImpl } from '../../infrastructure/asb_b
 import { AsbBipekStandardReviewService } from '../../domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekStandardReviewServiceImpl } from '../../application/asb_bipek_standard_review/asb_bipek_standard_review.service.impl';
 import { AsbBipekStandardModule } from '../asb_bipek_standard/asb_bipek_standard.module';
-import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan/asb_komponen_bangunan_std.module';
+import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
 
 @Module({
     imports: [
