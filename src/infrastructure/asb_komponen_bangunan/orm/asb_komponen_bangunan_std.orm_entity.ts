@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangunan/asb_komponen_bangunan_std_files.enum';
 import { AsbJenisOrmEntity } from '../../asb_jenis/orm/asb_jenis.orm_entity';
 
-@Entity('asb_komponen_bangunan')
+@Entity('asb_komponen_bangunan_std')
 export class AsbKomponenBangunanStdOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;

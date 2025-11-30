@@ -1,12 +1,12 @@
 import { IsNumber, IsOptional } from 'class-validator';
 
-export class UpdateAsbKomponenBangunanProsDto {
+export class UpdateAsbKomponenBangunanProsStdDto {
     @IsNumber()
     id!: number;
 
     @IsNumber()
     @IsOptional()
-    idAsbKomponenBangunan?: number;
+    idAsbKomponenBangunanStd?: number;
 
     @IsNumber()
     @IsOptional()

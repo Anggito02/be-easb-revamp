@@ -1,23 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AsbKomponenBangunanProsService } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.service';
-import { AsbKomponenBangunanProsRepository } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.repository';
-import { AsbKomponenBangunanPros } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.entity';
-import { CreateAsbKomponenBangunanProsDto } from '../../presentation/asb_komponen_bangunan_pros/dto/create_asb_komponen_bangunan_pros.dto';
-import { UpdateAsbKomponenBangunanProsDto } from '../../presentation/asb_komponen_bangunan_pros/dto/update_asb_komponen_bangunan_pros.dto';
-import { DeleteAsbKomponenBangunanProsDto } from '../../presentation/asb_komponen_bangunan_pros/dto/delete_asb_komponen_bangunan_pros.dto';
-import { GetAsbKomponenBangunanProsListDto } from '../../presentation/asb_komponen_bangunan_pros/dto/get_asb_komponen_bangunan_pros_list.dto';
-import { GetAsbKomponenBangunanProsDetailDto } from '../../presentation/asb_komponen_bangunan_pros/dto/get_asb_komponen_bangunan_pros_detail.dto';
-import { AsbKomponenBangunanProsPaginationResult } from '../../presentation/asb_komponen_bangunan_pros/dto/asb_komponen_bangunan_pros_pagination_result.dto';
+import { AsbKomponenBangunanProsStdService } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros_std.service';
+import { AsbKomponenBangunanProsStdRepository } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros_std.repository';
+import { AsbKomponenBangunanProsStd } from '../../domain/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros_std.entity';
+import { CreateAsbKomponenBangunanProsStdDto } from '../../presentation/asb_komponen_bangunan_pros/dto/create_asb_komponen_bangunan_pros_std.dto';
+import { UpdateAsbKomponenBangunanProsStdDto } from '../../presentation/asb_komponen_bangunan_pros/dto/update_asb_komponen_bangunan_pros_std.dto';
+import { DeleteAsbKomponenBangunanProsStdDto } from '../../presentation/asb_komponen_bangunan_pros/dto/delete_asb_komponen_bangunan_pros_std.dto';
+import { GetAsbKomponenBangunanProsStdListDto } from '../../presentation/asb_komponen_bangunan_pros/dto/get_asb_komponen_bangunan_pros_std_list.dto';
+import { GetAsbKomponenBangunanProsStdDetailDto } from '../../presentation/asb_komponen_bangunan_pros/dto/get_asb_komponen_bangunan_pros_std_detail.dto';
+import { AsbKomponenBangunanProsStdPaginationResult } from '../../presentation/asb_komponen_bangunan_pros/dto/asb_komponen_bangunan_pros_std_pagination_result.dto';
 import { ValidateStatisticalRangeUseCase } from './use_cases/validate_statistical_range.use_case';
 
 @Injectable()
-export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanProsService {
+export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBangunanProsStdService {
     constructor(
-        private readonly repository: AsbKomponenBangunanProsRepository,
+        private readonly repository: AsbKomponenBangunanProsStdRepository,
         private readonly validateStatisticalRangeUseCase: ValidateStatisticalRangeUseCase
     ) { }
 
-    async create(dto: CreateAsbKomponenBangunanProsDto): Promise<AsbKomponenBangunanPros> {
+    async create(dto: CreateAsbKomponenBangunanProsStdDto): Promise<AsbKomponenBangunanProsStd> {
         try {
             this.validateStatisticalRangeUseCase.execute(dto.min, dto.avgMin, dto.avg, dto.avgMax, dto.max);
             const entity = await this.repository.create(dto);
@@ -27,11 +27,11 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async update(dto: UpdateAsbKomponenBangunanProsDto): Promise<AsbKomponenBangunanPros> {
+    async update(dto: UpdateAsbKomponenBangunanProsStdDto): Promise<AsbKomponenBangunanProsStd> {
         try {
             const existing = await this.repository.findById(dto.id);
             if (!existing) {
-                throw new NotFoundException(`AsbKomponenBangunanPros with id ${dto.id} not found`);
+                throw new NotFoundException(`AsbKomponenBangunanProsStd with id ${dto.id} not found`);
             }
 
             // Prepare updated values (use existing if not provided)
@@ -43,8 +43,8 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
 
             this.validateStatisticalRangeUseCase.execute(newMin, newAvgMin, newAvg, newAvgMax, newMax);
 
-            const updateData: Partial<AsbKomponenBangunanPros> = {
-                idAsbKomponenBangunan: dto.idAsbKomponenBangunan,
+            const updateData: Partial<AsbKomponenBangunanProsStd> = {
+                idAsbKomponenBangunanStd: dto.idAsbKomponenBangunanStd,
                 idAsbTipeBangunan: dto.idAsbTipeBangunan,
                 min: dto.min,
                 avgMin: dto.avgMin,
@@ -67,11 +67,11 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async delete(dto: DeleteAsbKomponenBangunanProsDto): Promise<boolean> {
+    async delete(dto: DeleteAsbKomponenBangunanProsStdDto): Promise<boolean> {
         try {
             const existing = await this.repository.findById(dto.id);
             if (!existing) {
-                throw new NotFoundException(`AsbKomponenBangunanPros with id ${dto.id} not found`);
+                throw new NotFoundException(`AsbKomponenBangunanProsStd with id ${dto.id} not found`);
             }
             return await this.repository.delete(dto.id);
         } catch (error) {
@@ -79,7 +79,7 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async getAll(pagination: GetAsbKomponenBangunanProsListDto): Promise<AsbKomponenBangunanProsPaginationResult> {
+    async getAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<AsbKomponenBangunanProsStdPaginationResult> {
         try {
             const result = await this.repository.findAll(pagination);
             return {
@@ -94,11 +94,11 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async getDetail(dto: GetAsbKomponenBangunanProsDetailDto): Promise<AsbKomponenBangunanPros> {
+    async getDetail(dto: GetAsbKomponenBangunanProsStdDetailDto): Promise<AsbKomponenBangunanProsStd> {
         try {
             const entity = await this.repository.findById(dto.id);
             if (!entity) {
-                throw new NotFoundException(`AsbKomponenBangunanPros with id ${dto.id} not found`);
+                throw new NotFoundException(`AsbKomponenBangunanProsStd with id ${dto.id} not found`);
             }
             return entity;
         } catch (error) {
@@ -106,15 +106,15 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async findByKomponenBangunanId(id: number): Promise<AsbKomponenBangunanPros[]> {
+    async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
         try {
-            return await this.repository.findByKomponenBangunanId(id);
+            return await this.repository.findByKomponenBangunanStdId(id);
         } catch (error) {
             throw error;
         }
     }
 
-    async findByTipeBangunanId(id: number): Promise<AsbKomponenBangunanPros[]> {
+    async findByTipeBangunanId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
         try {
             return await this.repository.findByTipeBangunanId(id);
         } catch (error) {
@@ -122,9 +122,9 @@ export class AsbKomponenBangunanProsServiceImpl implements AsbKomponenBangunanPr
         }
     }
 
-    async findByKomponenBangunanIdAndTipeBangunanId(id: number, idTipeBangunan: number): Promise<AsbKomponenBangunanPros[]> {
+    async findByKomponenBangunanStdIdAndTipeBangunanId(id: number, idTipeBangunan: number): Promise<AsbKomponenBangunanProsStd[]> {
         try {
-            return await this.repository.findByKomponenBangunanIdAndTipeBangunanId(id, idTipeBangunan);
+            return await this.repository.findByKomponenBangunanStdIdAndTipeBangunanId(id, idTipeBangunan);
         } catch (error) {
             throw error;
         }

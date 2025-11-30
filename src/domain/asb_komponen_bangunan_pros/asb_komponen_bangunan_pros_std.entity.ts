@@ -1,6 +1,6 @@
-export class AsbKomponenBangunanPros {
+export class AsbKomponenBangunanProsStd {
     id!: number;
-    idAsbKomponenBangunan!: number;
+    idAsbKomponenBangunanStd!: number;
     idAsbTipeBangunan!: number;
     min!: number;
     avgMin?: number;

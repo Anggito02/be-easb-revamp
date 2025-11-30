@@ -1,13 +1,13 @@
 import { IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateAsbKomponenBangunanProsDto {
+export class CreateAsbKomponenBangunanProsStdDto {
     @IsNumber()
     @IsNotEmpty()
     idAsbKomponenBangunan!: number;
 
     @IsNumber()
     @IsNotEmpty()
-    idAsbTipeBangunan!: number;
+    idAsbTipeBangunanStd!: number;
 
     @IsNumber()
     @IsNotEmpty()

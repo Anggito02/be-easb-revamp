@@ -20,7 +20,7 @@ import { AsbKlasifikasiModule } from './presentation/asb_klasifikasi/asb_klasifi
 import { ShstModule } from './presentation/shst/shst.module';
 import { AsbKomponenBangunanStdModule } from './presentation/asb_komponen_bangunan/asb_komponen_bangunan_std.module';
 import { AsbKomponenBangunanNonstdModule } from './presentation/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
-import { AsbKomponenBangunanProsModule } from './presentation/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros.module';
+import { AsbKomponenBangunanProsStdModule } from './presentation/asb_komponen_bangunan_pros/asb_komponen_bangunan_pros_std.module';
 import { AsbJakonModule } from './presentation/asb_jakon/asb_jakon.module';
 import { AsbBpsGalleryModule } from './presentation/asb_bps_gallery/asb_bps_gallery.module';
 import { AsbDocumentModule } from './presentation/asb_document/asb_document.module';
@@ -77,7 +77,7 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
         ShstModule,
         AsbKomponenBangunanStdModule,
         AsbKomponenBangunanNonstdModule,
-        AsbKomponenBangunanProsModule,
+        AsbKomponenBangunanProsStdModule,
         AsbJakonModule,
         AsbBpsGalleryModule,
         AsbDocumentModule,

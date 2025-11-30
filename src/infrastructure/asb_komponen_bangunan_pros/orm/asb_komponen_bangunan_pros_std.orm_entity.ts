@@ -1,14 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { AsbKomponenBangunanOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
+import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan/orm/asb_komponen_bangunan_std.orm_entity';
 import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_bangunan.orm_entity';
 
-@Entity('asb_komponen_bangunan_pros')
-export class AsbKomponenBangunanProsOrmEntity {
+@Entity('asb_komponen_bangunan_pros_std')
+export class AsbKomponenBangunanProsStdOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;
 
-    @Column({ name: 'id_asb_komponen_bangunan', type: 'integer' })
-    idAsbKomponenBangunan!: number;
+    @Column({ name: 'id_asb_komponen_bangunan_std', type: 'integer' })
+    idAsbKomponenBangunanStd!: number;
 
     @Column({ name: 'id_asb_tipe_bangunan', type: 'integer' })
     idAsbTipeBangunan!: number;
@@ -37,9 +37,9 @@ export class AsbKomponenBangunanProsOrmEntity {
     @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
     deletedAt?: Date;
 
-    @ManyToOne(() => AsbKomponenBangunanOrmEntity)
-    @JoinColumn({ name: 'id_asb_komponen_bangunan' })
-    asbKomponenBangunan!: AsbKomponenBangunanOrmEntity;
+    @ManyToOne(() => AsbKomponenBangunanStdOrmEntity)
+    @JoinColumn({ name: 'id_asb_komponen_bangunan_std' })
+    asbKomponenBangunanStd!: AsbKomponenBangunanStdOrmEntity;
 
     @ManyToOne(() => AsbTipeBangunanOrmEntity)
     @JoinColumn({ name: 'id_asb_tipe_bangunan' })
