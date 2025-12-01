@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class EnsureDocumentDirectoryUseCase {
-    private readonly UPLOAD_DIR = 'uploads/documents';
+    private readonly UPLOAD_DIR = path.join(process.env.UPLOAD_DIR || 'public', 'documents');
 
     execute(): void {
         if (!fs.existsSync(this.UPLOAD_DIR)) {
