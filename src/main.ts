@@ -6,6 +6,7 @@ import { LoggerMiddleware } from './common/middleware/request_logger.middleware'
 import { CorrelationIdMiddleware } from './common/middleware/correlation_id.middleware';
 import { HttpExceptionFilter } from './common/filters/http_exception.filter';
 import cookieParser from 'cookie-parser';
+import * as helmet from 'helmet';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule, {
@@ -14,6 +15,12 @@ async function bootstrap() {
     app.use(cookieParser());
 
     const config = app.get(ConfigService);
+
+    app.use(
+        helmet({
+            contentSecurityPolicy: false,
+        })
+    )
 
     // Global validation
     app.useGlobalPipes(

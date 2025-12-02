@@ -5,9 +5,12 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
 
 dotenv.config();
 
+const isRender = process.env.NODE_ENV === 'production' && process.env.DB_URL?.includes('render');
+
 export default new DataSource({
     type: 'postgres',
     url: process.env.DB_URL,
+    ssl: isRender ? { rejectUnauthorized: false } : false,
 
     // SESUAIKAN dengan penamaan file entity kamu (sudah kita sarankan pakai *.orm-entity.ts)
     entities: ['src/infrastructure/**/orm/*.orm_entity.ts'],
