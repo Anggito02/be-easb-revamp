@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { KabKotaService } from '../../domain/kabkota/kabkota.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -167,7 +168,7 @@ export class KabKotaController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getKabKotas(@Body() dto: GetKabKotasDto): Promise<ResponseDto> {
+    async getKabKotas(@Query() dto: GetKabKotasDto): Promise<ResponseDto> {
         try {
             const result = await this.kabKotaService.getKabKotas(dto);
 
@@ -214,7 +215,7 @@ export class KabKotaController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getKabKotaDetail(@Body() dto: GetKabKotaDetailDto): Promise<ResponseDto> {
+    async getKabKotaDetail(@Query() dto: GetKabKotaDetailDto): Promise<ResponseDto> {
         try {
             const kabkota = await this.kabKotaService.getKabKotaDetail(dto);
 

@@ -10,6 +10,7 @@ import {
     HttpException,
     Patch,
     Delete,
+    Query,
 } from '@nestjs/common';
 import { UserService } from '../../domain/user/user.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -313,7 +314,7 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Get('list')
-    async getUsers(@Body() dto: GetUsersDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async getUsers(@Query() dto: GetUsersDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         try {
             const result = await this.userService.getUsers(dto);
 
@@ -360,7 +361,7 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Get('detail')
-    async getUserDetail(@Body() dto: GetUserDetailDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async getUserDetail(@Query() dto: GetUserDetailDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
         try {
             const user = await this.userService.getUserDetail(dto);
 

@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from "@nestjs/common";
 import { AsbTipeBangunanService } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -167,7 +168,7 @@ export class AsbTipeBangunanController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAsbTipeBangunan(@Body() dto: GetAsbTipeBangunanDto): Promise<ResponseDto> {
+    async getAsbTipeBangunan(@Query() dto: GetAsbTipeBangunanDto): Promise<ResponseDto> {
         try {
             const result = await this.asbTipeBangunanService.findAll(dto);
 
@@ -214,7 +215,7 @@ export class AsbTipeBangunanController {
 
     @Get("detail")
     @Roles(Role.SUPERADMIN)
-    async getAsbTipeBangunanDetail(@Body() dto: GetAsbTipeBangunanDetailDto): Promise<ResponseDto> {
+    async getAsbTipeBangunanDetail(@Query() dto: GetAsbTipeBangunanDetailDto): Promise<ResponseDto> {
         try {
             const asbTipeBangunan = await this.asbTipeBangunanService.findById(dto);
 

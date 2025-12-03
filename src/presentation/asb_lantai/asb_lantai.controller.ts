@@ -7,6 +7,7 @@ import {
     Body,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { AsbLantaiService } from '../../domain/asb_lantai/asb_lantai.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -166,7 +167,7 @@ export class AsbLantaiController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAsbLantais(@Body() dto: GetAsbLantaisDto): Promise<ResponseDto> {
+    async getAsbLantais(@Query() dto: GetAsbLantaisDto): Promise<ResponseDto> {
         try {
             const result = await this.asbLantaiService.findAll(dto);
 
@@ -213,7 +214,7 @@ export class AsbLantaiController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getAsbLantaiDetail(@Body() dto: GetAsbLantaiDetailDto): Promise<ResponseDto> {
+    async getAsbLantaiDetail(@Query() dto: GetAsbLantaiDetailDto): Promise<ResponseDto> {
         try {
             const asbLantai = await this.asbLantaiService.findById(dto.id);
 

@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from "@nestjs/common";
 import { JenisStandarService } from "../../domain/jenis_standar/jenis_standar.service";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -167,7 +168,7 @@ export class JenisStandarController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getJenisStandars(@Body() dto: GetJenisStandarDto): Promise<ResponseDto> {
+    async getJenisStandars(@Query() dto: GetJenisStandarDto): Promise<ResponseDto> {
         try {
             const result = await this.jenisStandarService.findAll(dto);
 
@@ -214,7 +215,7 @@ export class JenisStandarController {
 
     @Get("detail")
     @Roles(Role.SUPERADMIN)
-    async getJenisStandarDetail(@Body() dto: GetJenisStandarDetailDto): Promise<ResponseDto> {
+    async getJenisStandarDetail(@Query() dto: GetJenisStandarDetailDto): Promise<ResponseDto> {
         try {
             const jenisStandar = await this.jenisStandarService.findById(dto.id);
 

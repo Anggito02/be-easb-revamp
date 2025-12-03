@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { OpdService } from '../../domain/opd/opd.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -166,7 +167,7 @@ export class OpdController {
 
     @Get()
     @Roles(Role.SUPERADMIN, Role.ADMIN)
-    async getOpds(@Body() dto: GetOpdsDto): Promise<ResponseDto> {
+    async getOpds(@Query() dto: GetOpdsDto): Promise<ResponseDto> {
         try {
             const result = await this.opdService.getOpds(dto);
 
@@ -213,7 +214,7 @@ export class OpdController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN, Role.ADMIN)
-    async getOpdDetail(@Body() dto: GetOpdDetailDto): Promise<ResponseDto> {
+    async getOpdDetail(@Query() dto: GetOpdDetailDto): Promise<ResponseDto> {
         try {
             const opd = await this.opdService.getOpdById(dto);
 

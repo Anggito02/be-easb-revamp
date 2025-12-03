@@ -7,6 +7,7 @@ import {
     Body,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { AsbKomponenBangunanProsStdService } from '../../domain/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -73,7 +74,7 @@ export class AsbKomponenBangunanProsStdController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAll(@Body() dto: GetAsbKomponenBangunanProsStdListDto): Promise<ResponseDto> {
+    async getAll(@Query() dto: GetAsbKomponenBangunanProsStdListDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
             return {
@@ -89,7 +90,7 @@ export class AsbKomponenBangunanProsStdController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getDetail(@Body() dto: GetAsbKomponenBangunanProsStdDetailDto): Promise<ResponseDto> {
+    async getDetail(@Query() dto: GetAsbKomponenBangunanProsStdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
             return {
