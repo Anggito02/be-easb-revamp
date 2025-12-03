@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { ProvinceService } from '../../domain/provinces/province.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -167,7 +168,7 @@ export class ProvinceController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getProvinces(@Body() dto: GetProvincesDto): Promise<ResponseDto> {
+    async getProvinces(@Query() dto: GetProvincesDto): Promise<ResponseDto> {
         try {
             const result = await this.provinceService.getProvinces(dto);
 
@@ -214,7 +215,7 @@ export class ProvinceController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getProvinceDetail(@Body() dto: GetProvinceDetailDto): Promise<ResponseDto> {
+    async getProvinceDetail(@Query() dto: GetProvinceDetailDto): Promise<ResponseDto> {
         try {
             const province = await this.provinceService.getProvinceDetail(dto);
 

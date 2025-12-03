@@ -7,6 +7,7 @@ import {
     Body,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { AsbKomponenBangunanProsNonstdService } from '../../domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -73,7 +74,7 @@ export class AsbKomponenBangunanProsNonstdController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAll(@Body() dto: GetAsbKomponenBangunanProsNonstdListDto): Promise<ResponseDto> {
+    async getAll(@Query() dto: GetAsbKomponenBangunanProsNonstdListDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
             return {
@@ -89,7 +90,7 @@ export class AsbKomponenBangunanProsNonstdController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getDetail(@Body() dto: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<ResponseDto> {
+    async getDetail(@Query() dto: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
             return {

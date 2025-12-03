@@ -7,6 +7,7 @@ import {
     Body,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { RekeningService } from '../../domain/rekening/rekening.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -166,7 +167,7 @@ export class RekeningController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getRekenings(@Body() dto: GetRekeningsDto): Promise<ResponseDto> {
+    async getRekenings(@Query() dto: GetRekeningsDto): Promise<ResponseDto> {
         try {
             const result = await this.rekeningService.findAll(dto);
 
@@ -213,7 +214,7 @@ export class RekeningController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getRekeningDetail(@Body() dto: GetRekeningDetailDto): Promise<ResponseDto> {
+    async getRekeningDetail(@Query() dto: GetRekeningDetailDto): Promise<ResponseDto> {
         try {
             const rekening = await this.rekeningService.findById(dto.id);
 

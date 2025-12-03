@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from "@nestjs/common";
 import { AsbStatusService } from "../../domain/asb_status/asb_status.service";
 import { Roles } from "../../common/decorators/roles.decorator";
@@ -167,7 +168,7 @@ export class AsbStatusController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAsbStatuses(@Body() dto: GetAsbStatusDto): Promise<ResponseDto> {
+    async getAsbStatuses(@Query() dto: GetAsbStatusDto): Promise<ResponseDto> {
         try {
             const result = await this.asbStatusService.findAll(dto);
 
@@ -214,7 +215,7 @@ export class AsbStatusController {
 
     @Get("detail")
     @Roles(Role.SUPERADMIN)
-    async getAsbStatusDetail(@Body() dto: GetAsbStatusDetailDto): Promise<ResponseDto> {
+    async getAsbStatusDetail(@Query() dto: GetAsbStatusDetailDto): Promise<ResponseDto> {
         try {
             const asbStatus = await this.asbStatusService.findById(dto.id);
 

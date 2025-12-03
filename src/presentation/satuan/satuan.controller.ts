@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { SatuanService } from '../../domain/satuan/satuan.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -167,7 +168,7 @@ export class SatuanController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getSatuans(@Body() dto: GetSatuansDto): Promise<ResponseDto> {
+    async getSatuans(@Query() dto: GetSatuansDto): Promise<ResponseDto> {
         try {
             const result = await this.satuanService.getSatuans(dto);
 
@@ -214,7 +215,7 @@ export class SatuanController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getSatuanDetail(@Body() dto: GetSatuanDetailDto): Promise<ResponseDto> {
+    async getSatuanDetail(@Query() dto: GetSatuanDetailDto): Promise<ResponseDto> {
         try {
             const satuan = await this.satuanService.getSatuanDetail(dto);
 
