@@ -20,6 +20,7 @@ import { VerifyBpnsDto } from './dto/verify_bpns.dto';
 import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
+import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -91,6 +92,42 @@ export class AsbController {
             responseCode: HttpStatus.OK,
             message: 'ASB retrieved successfully',
             data: asb as unknown as AsbWithRelationsDto,
+        };
+    }
+
+    @Get('by-month-year')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbByMonthYear(
+        @Body() dto: GetAsbByMonthYearDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: { date: string; count: number }[] }> {
+        const user = req.user as UserContext;
+
+        const data = await this.asbService.getAsbByMonthYear(dto, user.idOpd, user.roles);
+
+        return {
+            status: 'success',
+            responseCode: HttpStatus.OK,
+            message: 'ASB retrieved successfully',
+            data,
+        };
+    }
+
+    @Get('by-month-year-status')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR)
+    async getAsbByMonthYearStatus(
+        @Body() dto: GetAsbByMonthYearDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: { asbStatus: string; amount: number }[] }> {
+        const user = req.user as UserContext;
+
+        const data = await this.asbService.getAsbByMonthYearStatus(dto, user.idOpd, user.roles);
+
+        return {
+            status: 'success',
+            responseCode: HttpStatus.OK,
+            message: 'ASB status summary retrieved successfully',
+            data,
         };
     }
 

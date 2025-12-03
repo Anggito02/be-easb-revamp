@@ -13,10 +13,13 @@ import { VerifyLantaiDto } from 'src/presentation/asb/dto/verify_lantai.dto';
 import { VerifyBpnsDto } from 'src/presentation/asb/dto/verify_bpns.dto';
 import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
+import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 
 export abstract class AsbService {
     abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null>;
     abstract findAll(dto: FindAllAsbDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbListResultDto>;
+    abstract getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]>;
+    abstract getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]>;
     abstract createIndex(dto: CreateAsbStoreIndexDto, files: Array<Express.Multer.File>, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;

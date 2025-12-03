@@ -32,6 +32,7 @@ import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto'
 import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use_cases/calculate_bobot_bpns_review.use_case';
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
+import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -122,6 +123,65 @@ export class AsbServiceImpl implements AsbService {
             amount: dto.amount,
             totalPages: Math.ceil(result.total / dto.amount),
         };
+    }
+
+    async getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]> {
+        try {
+            // 1. Check permissions
+            const isOpd = userRoles.includes(Role.OPD);
+
+            if (isOpd && userIdOpd) {
+                // Get only asb with idOpd
+                const data = await this.repository.getAllByMonthYear(dto, userIdOpd);
+
+                return data;
+            }
+
+            return await this.repository.getAllByMonthYear(dto);
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]> {
+        try {
+            // 1. Check permissions
+            const isOpd = userRoles.includes(Role.OPD);
+            let data: { idAsbStatus: number; count: number }[];
+
+            if (isOpd && userIdOpd) {
+                // Get only asb with idOpd
+                data = await this.repository.getAsbStatusCountsByMonthYear(dto, userIdOpd);
+            } else {
+                data = await this.repository.getAsbStatusCountsByMonthYear(dto);
+            }
+
+            // 2. Map status to labels
+            const result = [
+                { asbStatus: 'Sukses', amount: 0 },
+                { asbStatus: 'Gagal', amount: 0 },
+                { asbStatus: 'Menunggu Verifikasi', amount: 0 },
+                { asbStatus: 'Sedang dalam Pengisian', amount: 0 },
+            ];
+
+            data.forEach(item => {
+                if (item.idAsbStatus === 8) {
+                    result[0].amount += item.count;
+                } else if (item.idAsbStatus === 7) {
+                    result[1].amount += item.count;
+                } else if (item.idAsbStatus === 6) {
+                    result[2].amount += item.count;
+                } else {
+                    result[3].amount += item.count;
+                }
+            });
+
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
     }
 
     async createIndex(dto: CreateAsbStoreIndexDto, files: Array<Express.Multer.File>, userRoles: Role[]): Promise<{ id: number; status: any }> {

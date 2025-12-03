@@ -6,6 +6,7 @@ import { AsbRepository } from '../../../domain/asb/asb.repository';
 import { AsbOrmEntity } from '../orm/asb.orm_entity';
 import { AsbWithRelationsDto } from 'src/application/asb/dto/asb_with_relations.dto';
 import { FindAllAsbDto } from 'src/application/asb/dto/find_all_asb.dto';
+import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 
 @Injectable()
 export class AsbRepositoryImpl implements AsbRepository {
@@ -70,6 +71,57 @@ export class AsbRepositoryImpl implements AsbRepository {
         const data = entities.map(entity => plainToInstance(AsbWithRelationsDto, entity));
 
         return { data, total };
+    }
+
+    async getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]> {
+        const whereClause: any = {};
+
+        // Add OPD filter if provided (for OPD users)
+        if (idOpd) {
+            whereClause.idOpd = idOpd;
+        }
+
+        // Count id and group by date(created_at), between month/year
+        const qb = this.repo
+            .createQueryBuilder('e')
+            .select("DATE(e.created_at)", "date")
+            .addSelect("COUNT(e.id)", "count")
+            .where("MONTH(e.created_at) = :month", { month: dto.month })
+            .andWhere("YEAR(e.created_at) = :year", { year: dto.year })
+            .groupBy("DATE(e.created_at)")
+            .orderBy("DATE(e.created_at)", "ASC");
+
+        if (idOpd) {
+            qb.andWhere("e.id_opd = :idOpd", { idOpd });
+        }
+
+        const rows = await qb.getRawMany<{ date: string; count: string }>();
+
+        return rows.map(r => ({
+            date: r.date,
+            count: Number(r.count),
+        }));
+    }
+
+    async getAsbStatusCountsByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ idAsbStatus: number; count: number }[]> {
+        const qb = this.repo
+            .createQueryBuilder('e')
+            .select("e.id_asb_status", "idAsbStatus")
+            .addSelect("COUNT(e.id)", "count")
+            .where("MONTH(e.created_at) = :month", { month: dto.month })
+            .andWhere("YEAR(e.created_at) = :year", { year: dto.year })
+            .groupBy("e.id_asb_status");
+
+        if (idOpd) {
+            qb.andWhere("e.id_opd = :idOpd", { idOpd });
+        }
+
+        const rows = await qb.getRawMany<{ idAsbStatus: number; count: string }>();
+
+        return rows.map(r => ({
+            idAsbStatus: Number(r.idAsbStatus),
+            count: Number(r.count),
+        }));
     }
 
     async create(data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
