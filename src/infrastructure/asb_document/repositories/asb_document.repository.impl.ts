@@ -147,4 +147,15 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
             throw error;
         }
     }
+
+    async findByAsbIdAll(idAsb: number): Promise<AsbDocument[]> {
+        try {
+            const entities = await this.repository.find({
+                where: { idAsb }
+            });
+            return entities.map((e) => plainToInstance(AsbDocument, e));
+        } catch (error) {
+            throw error;
+        }
+    }
 }

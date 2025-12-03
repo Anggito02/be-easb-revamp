@@ -154,4 +154,18 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             throw error;
         }
     }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            // Get all documents for this ASB
+            const documents = await this.repository.findByAsbIdAll(idAsb);
+
+            // Delete each document (this handles both file and DB deletion)
+            for (const doc of documents) {
+                await this.delete(doc.id);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
 }

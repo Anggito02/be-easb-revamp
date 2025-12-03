@@ -25,4 +25,5 @@ export abstract class AsbDocumentService {
     ): Promise<{ data: AsbDocument[]; total: number }>;
     abstract findBySpec(spec: DocumentSpec): Promise<AsbDocument[]>;
     abstract getByAsb(dto: GetAsbDocumentByAsbDto): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
 }

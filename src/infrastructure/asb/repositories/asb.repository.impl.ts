@@ -86,4 +86,8 @@ export class AsbRepositoryImpl implements AsbRepository {
         });
         return plainToInstance(AsbWithRelationsDto, updatedEntity);
     }
+
+    async delete(id: number): Promise<void> {
+        await this.repo.softDelete(id);
+    }
 }

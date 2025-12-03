@@ -8,4 +8,5 @@ export abstract class AsbRepository {
     abstract findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }>;
     abstract create(data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;
     abstract update(id: number, data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;
+    abstract delete(id: number): Promise<void>;
 }

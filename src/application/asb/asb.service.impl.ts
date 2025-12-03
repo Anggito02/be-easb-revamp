@@ -149,4 +149,37 @@ export class AsbServiceImpl implements AsbService {
 
         return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
+
+    async deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {
+        // Check permissions
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isOpd = userRoles.includes(Role.OPD);
+
+        // Verify existence and ownership
+        let existingAsb: AsbWithRelationsDto | null = null;
+
+        if (isAdmin || isSuperAdmin) {
+            existingAsb = await this.repository.findById(id);
+        } else if (isOpd) {
+            if (!userIdOpd) {
+                throw new ForbiddenException('OPD user has no associated OPD');
+            }
+            existingAsb = await this.repository.findById(id, userIdOpd);
+        } else {
+            throw new ForbiddenException('User is not authorized to delete this ASB');
+        }
+
+        if (!existingAsb) {
+            throw new NotFoundException(`ASB with id ${id} not found or access denied`);
+        }
+
+        // Delete all related documents (files and DB records)
+        await this.asbDocumentService.deleteByAsbId(id);
+
+        // Delete the ASB record
+        await this.repository.delete(id);
+
+        return { id };
+    }
 }
