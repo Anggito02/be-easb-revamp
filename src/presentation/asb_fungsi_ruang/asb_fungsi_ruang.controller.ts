@@ -8,6 +8,8 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Param,
+    Query,
 } from '@nestjs/common';
 import { AsbFungsiRuangService } from '../../domain/asb_fungsi_ruang/asb_fungsi_ruang.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -16,7 +18,7 @@ import { UpdateAsbFungsiRuangDto } from './dto/update_asb_fungsi_ruang.dto';
 import { DeleteAsbFungsiRuangDto } from './dto/delete_asb_fungsi_ruang.dto';
 import { GetAsbFungsiRuangsDto } from './dto/get_asb_fungsi_ruangs.dto';
 import { GetAsbFungsiRuangDetailDto } from './dto/get_asb_fungsi_ruang_detail.dto';
-import { ResponseDto } from '../../common/dto/response.dto';
+import { ResponseDto } from 'src/common/dto/response.dto';
 import { Role } from '../../domain/user/user_role.enum';
 
 @Controller('asb-fungsi-ruangs')
@@ -167,7 +169,7 @@ export class AsbFungsiRuangController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAsbFungsiRuangs(@Body() dto: GetAsbFungsiRuangsDto): Promise<ResponseDto> {
+    async getAsbFungsiRuangs(@Query() dto: GetAsbFungsiRuangsDto): Promise<ResponseDto> {
         try {
             const result = await this.asbFungsiRuangService.findAll(dto);
 
@@ -214,7 +216,7 @@ export class AsbFungsiRuangController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getAsbFungsiRuangDetail(@Body() dto: GetAsbFungsiRuangDetailDto): Promise<ResponseDto> {
+    async getAsbFungsiRuangDetail(@Query() dto: GetAsbFungsiRuangDetailDto): Promise<ResponseDto> {
         try {
             const asbFungsiRuang = await this.asbFungsiRuangService.findById(dto.id);
 

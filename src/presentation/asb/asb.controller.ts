@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards, Req, HttpStatus, HttpException, Body, Post, Put, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, UseGuards, Req, HttpStatus, HttpException, Body, Post, Put, Delete, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
 import type { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
@@ -31,7 +31,7 @@ export class AsbController {
     @Get()
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async findAll(
-        @Body() dto: FindAllAsbDto,
+        @Query() dto: FindAllAsbDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
@@ -99,7 +99,7 @@ export class AsbController {
     @Get('by-month-year')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async getAsbByMonthYear(
-        @Body() dto: GetAsbByMonthYearDto,
+        @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: { date: string; count: number }[] }> {
         const user = req.user as UserContext;
@@ -117,7 +117,7 @@ export class AsbController {
     @Get('by-month-year-status')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR)
     async getAsbByMonthYearStatus(
-        @Body() dto: GetAsbByMonthYearDto,
+        @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: { asbStatus: string; amount: number }[] }> {
         const user = req.user as UserContext;
@@ -733,4 +733,6 @@ export class AsbController {
             };
         }
     }
+
+
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Put, Delete, Get, Body, HttpStatus, HttpException } from '@nestjs/common';
+import { Controller, Post, Put, Delete, Get, Body, HttpStatus, HttpException, Query } from '@nestjs/common';
 import { AsbJakonService } from '../../domain/asb_jakon/asb_jakon.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
@@ -45,7 +45,7 @@ export class AsbJakonController {
     }
 
     @Get()
-    async getAll(@Body() dto: GetAsbJakonListDto): Promise<ResponseDto> {
+    async getAll(@Query() dto: GetAsbJakonListDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
             return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon list retrieved', data: result };
@@ -55,7 +55,7 @@ export class AsbJakonController {
     }
 
     @Get('detail')
-    async getDetail(@Body() dto: GetAsbJakonDetailDto): Promise<ResponseDto> {
+    async getDetail(@Query() dto: GetAsbJakonDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
             return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon detail retrieved', data: result };

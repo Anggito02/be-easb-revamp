@@ -8,6 +8,7 @@ import {
     UseGuards,
     HttpStatus,
     HttpException,
+    Query,
 } from '@nestjs/common';
 import { AsbKlasifikasiService } from '../../domain/asb_klasifikasi/asb_klasifikasi.service';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -167,7 +168,7 @@ export class AsbKlasifikasiController {
 
     @Get()
     @Roles(Role.SUPERADMIN)
-    async getAsbKlasifikasis(@Body() dto: GetAsbKlasifikasisDto): Promise<ResponseDto> {
+    async getAsbKlasifikasis(@Query() dto: GetAsbKlasifikasisDto): Promise<ResponseDto> {
         try {
             const result = await this.asbKlasifikasiService.findAll(dto);
 
@@ -214,7 +215,7 @@ export class AsbKlasifikasiController {
 
     @Get('detail')
     @Roles(Role.SUPERADMIN)
-    async getAsbKlasifikasiDetail(@Body() dto: GetAsbKlasifikasiDetailDto): Promise<ResponseDto> {
+    async getAsbKlasifikasiDetail(@Query() dto: GetAsbKlasifikasiDetailDto): Promise<ResponseDto> {
         try {
             const asbKlasifikasi = await this.asbKlasifikasiService.findById(dto.id);
 
