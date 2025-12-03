@@ -7,6 +7,8 @@ export class AsbBipekNonStdReview {
     idAsbKomponenBangunanNonstd: number | null;
     files: Files;
     bobotInput: number | null;
+    calculationMethod: string | null;
+    bobotInputProsentase: number | null;
     jumlahBobot: number | null;
     rincianHarga: number | null;
 }

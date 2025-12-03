@@ -12,6 +12,8 @@ export class CreateAsbBipekNonStdReview1764337043412 implements MigrationInterfa
                 "id_asb_komponen_bangunan_nonstd" INTEGER,
                 "files" VARCHAR(10) NOT NULL DEFAULT 'ORIGIN',
                 "bobot_input" DOUBLE PRECISION,
+                "calculation_method" VARCHAR(20),
+                "bobot_input_prosentase" DOUBLE PRECISION,
                 "jumlah_bobot" DOUBLE PRECISION,
                 "rincian_harga" DOUBLE PRECISION,
                 "created_at" TIMESTAMPTZ NOT NULL DEFAULT now(),

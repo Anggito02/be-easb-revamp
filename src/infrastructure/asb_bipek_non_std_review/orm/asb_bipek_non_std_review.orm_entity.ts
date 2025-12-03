@@ -41,6 +41,12 @@ export class AsbBipekNonStdReviewOrmEntity {
     @Column({ name: 'bobot_input', type: 'float', nullable: true })
     bobotInput: number | null;
 
+    @Column({ name: 'calculation_method', type: 'varchar', length: 20, nullable: true })
+    calculationMethod: string | null;
+
+    @Column({ name: 'bobot_input_prosentase', type: 'float', nullable: true })
+    bobotInputProsentase: number | null;
+
     @Column({ name: 'jumlah_bobot', type: 'float', nullable: true })
     jumlahBobot: number | null;
 

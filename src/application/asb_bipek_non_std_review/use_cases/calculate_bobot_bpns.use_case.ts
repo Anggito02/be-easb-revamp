@@ -5,10 +5,12 @@ import { AsbBipekNonStdService } from '../../../domain/asb_bipek_non_std/asb_bip
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
 import { Files } from 'src/domain/asb_detail/files.enum';
 import { AsbKomponenBangunanProsNonstd } from 'src/domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.entity';
+import { AsbBipekNonStdReviewRepository } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.repository';
 
 @Injectable()
 export class CalculateBobotBPNSReviewUseCase {
     constructor(
+        private readonly asbBipekNonStdReviewRepository: AsbBipekNonStdReviewRepository,
         private readonly asbKomponenBangunanProsNonstdRepository: AsbKomponenBangunanProsNonstdRepository,
         private readonly asbDetailService: AsbDetailService,
         private readonly asbBipekNonStdService: AsbBipekNonStdService
@@ -16,6 +18,7 @@ export class CalculateBobotBPNSReviewUseCase {
 
     async execute(
         idAsb: number,
+        idAsbBipekNonStd: number,
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
@@ -101,6 +104,7 @@ export class CalculateBobotBPNSReviewUseCase {
 
                 const asbBipekNonStd = {
                     idAsb,
+                    idAsbBipekNonStd,
                     idAsbKomponenBangunanNonStd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
