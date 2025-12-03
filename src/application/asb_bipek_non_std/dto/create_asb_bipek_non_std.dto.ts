@@ -16,6 +16,13 @@ export class CreateAsbBipekNonStdDto {
     bobotInput: number;
 
     @IsNumber()
+    @IsOptional()
+    bobotInputProsentase: number;
+
+    @IsOptional()
+    calculationMethod: string;
+
+    @IsNumber()
     jumlahBobot: number;
 
     @IsNumber()

@@ -67,9 +67,9 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
         }
     }
 
-    async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
+    async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         try {
-            return await this.repo.find({ where: { idAsbKomponenBangunanStd: id } });
+            return await this.repo.findOne({ where: { idAsbKomponenBangunanStd: id } });
         } catch (error) {
             throw error;
         }

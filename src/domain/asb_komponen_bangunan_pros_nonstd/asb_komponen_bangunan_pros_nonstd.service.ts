@@ -12,5 +12,5 @@ export abstract class AsbKomponenBangunanProsNonstdService {
     abstract delete(data: DeleteAsbKomponenBangunanProsNonstdDto): Promise<boolean>;
     abstract getAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<AsbKomponenBangunanProsNonstdPaginationResult>;
     abstract getDetail(data: GetAsbKomponenBangunanProsNonstdDetailDto): Promise<AsbKomponenBangunanProsNonstd>;
-    abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd[]>;
+    abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null>;
 }

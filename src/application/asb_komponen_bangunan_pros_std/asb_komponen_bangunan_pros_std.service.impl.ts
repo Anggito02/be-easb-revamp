@@ -105,7 +105,7 @@ export class AsbKomponenBangunanProsStdServiceImpl implements AsbKomponenBanguna
         }
     }
 
-    async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd[]> {
+    async findByKomponenBangunanStdId(id: number): Promise<AsbKomponenBangunanProsStd | null> {
         try {
             return await this.repository.findByKomponenBangunanStdId(id);
         } catch (error) {

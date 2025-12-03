@@ -12,6 +12,8 @@ import { AsbJenisModule } from '../asb_jenis/asb_jenis.module';
 import { OpdModule } from '../opd/opd.module';
 import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.module';
 import { RekeningModule } from '../rekening/rekening.module';
+import { AsbDetailModule } from '../asb_detail/asb_detail.module';
+import { AsbDocumentModule } from '../asb_document/asb_document.module';
 
 @Module({
     imports: [
@@ -21,7 +23,9 @@ import { RekeningModule } from '../rekening/rekening.module';
         AsbJenisModule,
         OpdModule,
         AsbTipeBangunanModule,
-        RekeningModule
+        RekeningModule,
+        AsbDetailModule,
+        AsbDocumentModule,
     ],
     providers: [
         {

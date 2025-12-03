@@ -105,7 +105,7 @@ export class AsbKomponenBangunanProsNonstdServiceImpl implements AsbKomponenBang
         }
     }
 
-    async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd[]> {
+    async findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null> {
         try {
             return await this.repository.findByKomponenBangunanNonstdId(id);
         } catch (error) {

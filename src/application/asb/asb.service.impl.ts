@@ -238,7 +238,6 @@ export class AsbServiceImpl implements AsbService {
             createDetailDto.idAsbFungsiRuang = dto.id_asb_fungsi_ruang[i];
             createDetailDto.idAsbTipeBangunan = existingAsb.idAsbTipeBangunan;
             createDetailDto.luas = dto.luas_lantai[i];
-            dto.
 
             // The service will calculate koef values automatically
             await this.asbDetailService.create(createDetailDto);

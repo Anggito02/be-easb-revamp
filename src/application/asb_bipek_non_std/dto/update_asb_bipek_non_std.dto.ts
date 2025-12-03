@@ -22,6 +22,13 @@ export class UpdateAsbBipekNonStdDto {
 
     @IsNumber()
     @IsOptional()
+    bobotInputProsentase: number;
+
+    @IsOptional()
+    calculationMethod: string;
+
+    @IsNumber()
+    @IsOptional()
     jumlahBobot: number;
 
     @IsNumber()

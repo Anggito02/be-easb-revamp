@@ -8,5 +8,5 @@ export abstract class AsbKomponenBangunanProsNonstdRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<AsbKomponenBangunanProsNonstd | null>;
     abstract findAll(pagination: GetAsbKomponenBangunanProsNonstdListDto): Promise<{ data: AsbKomponenBangunanProsNonstd[], total: number }>;
-    abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd[]>;
+    abstract findByKomponenBangunanNonstdId(id: number): Promise<AsbKomponenBangunanProsNonstd | null>;
 }
