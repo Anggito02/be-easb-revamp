@@ -2,6 +2,7 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
+import * as fs from 'fs';
 import { AsbDocument } from '../../domain/asb_document/asb_document.entity';
 import { AsbDocumentService } from '../../domain/asb_document/asb_document.service';
 import { AsbDocumentRepository } from '../../domain/asb_document/asb_document.repository';
@@ -15,6 +16,9 @@ import { UpdateAsbDocumentDto } from '../../presentation/asb_document/dto/update
 import { GetAsbDocumentListFilterDto } from '../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
 import { GetAsbDocumentByAsbDto } from '../../presentation/asb_document/dto/get_asb_document_by_asb.dto';
 import { Express } from 'express';
+import { KertasKerjaUseCase } from './use_cases/kertas_kerja.use_case';
+import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto';
+import { Readable } from 'typeorm/platform/PlatformTools.js';
 
 @Injectable()
 export class AsbDocumentServiceImpl extends AsbDocumentService {
@@ -24,6 +28,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         private readonly ensureDocumentDir: EnsureDocumentDirectoryUseCase,
         private readonly saveDocument: SaveDocumentUseCase,
         private readonly deleteDocument: DeleteDocumentUseCase,
+        private readonly kertasKerjaUseCase: KertasKerjaUseCase
     ) {
         super();
         // Ensure upload directory exists on service initialization
@@ -164,6 +169,29 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             for (const doc of documents) {
                 await this.delete(doc.id);
             }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async generateAsbKertasKerja(dto: KertasKerjaDto): Promise<boolean> {
+        try {
+            const asbDoc = await this.kertasKerjaUseCase.execute(dto)
+            const file: Express.Multer.File = {
+                buffer: asbDoc,
+                originalname: 'asb_kertas_kerja.pdf',
+                size: asbDoc.length,
+                encoding: '7bit',
+                mimetype: 'application/pdf',
+                destination: '',
+                filename: '',
+                path: '',
+                fieldname: '',
+                stream: Readable.from(asbDoc),
+            };
+
+            this.saveDocument.execute(file, DocumentSpec.KERTAS_KERJA);
+            return true;
         } catch (error) {
             throw error;
         }

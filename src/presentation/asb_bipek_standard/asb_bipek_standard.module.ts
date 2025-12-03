@@ -9,13 +9,15 @@ import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_k
 import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
 import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
+import { AsbDocumentModule } from '../asb_document/asb_document.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbBipekStandardOrmEntity]),
         AsbKomponenBangunanStdModule,
         AsbKomponenBangunanProsStdModule,
-        AsbDetailModule
+        AsbDetailModule,
+        AsbDocumentModule,
     ],
     providers: [
         {

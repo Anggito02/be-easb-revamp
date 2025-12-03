@@ -42,4 +42,9 @@ export class AsbWithRelationsDto {
         opd: string;
         alias: string;
     };
+
+    tipeBangunan?: {
+        id: number;
+        tipeBangunan: string;
+    };
 }

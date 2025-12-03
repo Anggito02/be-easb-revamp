@@ -33,6 +33,9 @@ import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto'
 import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use_cases/calculate_bobot_bpns_review.use_case';
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
+import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
+import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
+import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -43,6 +46,8 @@ export class AsbServiceImpl implements AsbService {
         private readonly shstService: ShstService,
         private readonly asbBipekStandardService: AsbBipekStandardService,
         private readonly asbBipekNonStdService: AsbBipekNonStdService,
+        private readonly asbBipekStandardReviewService: AsbBipekStandardReviewService,
+        private readonly asbBipekNonStdReviewService: AsbBipekNonStdReviewService,
         private readonly calculateBobotBPSUseCase: CalculateBobotBPSUseCase,
         private readonly calculateBobotBPNSUseCase: CalculateBobotBPNSUseCase,
         private readonly asbDetailReviewService: AsbDetailReviewService,
@@ -123,6 +128,65 @@ export class AsbServiceImpl implements AsbService {
             amount: dto.amount,
             totalPages: Math.ceil(result.total / dto.amount),
         };
+    }
+
+    async getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]> {
+        try {
+            // 1. Check permissions
+            const isOpd = userRoles.includes(Role.OPD);
+
+            if (isOpd && userIdOpd) {
+                // Get only asb with idOpd
+                const data = await this.repository.getAllByMonthYear(dto, userIdOpd);
+
+                return data;
+            }
+
+            return await this.repository.getAllByMonthYear(dto);
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]> {
+        try {
+            // 1. Check permissions
+            const isOpd = userRoles.includes(Role.OPD);
+            let data: { idAsbStatus: number; count: number }[];
+
+            if (isOpd && userIdOpd) {
+                // Get only asb with idOpd
+                data = await this.repository.getAsbStatusCountsByMonthYear(dto, userIdOpd);
+            } else {
+                data = await this.repository.getAsbStatusCountsByMonthYear(dto);
+            }
+
+            // 2. Map status to labels
+            const result = [
+                { asbStatus: 'Sukses', amount: 0 },
+                { asbStatus: 'Gagal', amount: 0 },
+                { asbStatus: 'Menunggu Verifikasi', amount: 0 },
+                { asbStatus: 'Sedang dalam Pengisian', amount: 0 },
+            ];
+
+            data.forEach(item => {
+                if (item.idAsbStatus === 8) {
+                    result[0].amount += item.count;
+                } else if (item.idAsbStatus === 7) {
+                    result[1].amount += item.count;
+                } else if (item.idAsbStatus === 6) {
+                    result[2].amount += item.count;
+                } else {
+                    result[3].amount += item.count;
+                }
+            });
+
+            return result;
+
+        } catch (error) {
+            throw error;
+        }
     }
 
     async createIndex(dto: CreateAsbStoreIndexDto, files: Array<Express.Multer.File>, userRoles: Role[]): Promise<{ id: number; status: any }> {
@@ -622,6 +686,104 @@ export class AsbServiceImpl implements AsbService {
                 managementKonstruksi: dto.management_konstruksi,
                 pengelolaanKegiatan: dto.pengelolaan_kegiatan,
                 idAsbStatus: 13
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verify(id_asb: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 2. Update ASB idAsbStatus to 14
+            const updatedAsb = await this.repository.update(id_asb, {
+                idAsbStatus: 14
+            });
+
+            // 3. Get data for kertas kerja
+            const asbData = await this.repository.findById(id_asb);
+            if (!asbData) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            const dataBps = await this.asbBipekStandardReviewService.getBpsWithRelationByAsb({
+                idAsb: id_asb,
+                page: 1,
+                amount: 10000
+            })
+
+            const dataBpns = await this.asbBipekNonStdReviewService.getBpnsWithRelationByAsb({
+                idAsb: id_asb,
+                page: 1,
+                amount: 10000
+            })
+
+            const dataBpsKomponen = dataBps.data.map((data) => {
+                return {
+                    komponen: data.asbKomponenBangunanStd?.komponen,
+                    asb: {
+                        bobot_input: data.bobotInput,
+                        jumlah_bobot: data.jumlahBobot,
+                        rincian_harga: data.rincianHarga
+                    }
+                }
+            });
+
+            const dataBpnsKomponen = dataBpns.data.map((data) => {
+                return {
+                    komponen: data.asbKomponenBangunanNonstd?.komponen,
+                    asb: {
+                        bobot_input: data.bobotInput,
+                        jumlah_bobot: data.jumlahBobot,
+                        rincian_harga: data.rincianHarga
+                    }
+                }
+            });
+
+            const kertasKerjaDto = {
+                title: `Kertas KerjaAnalisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
+                tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
+                tanggal_cetak: new Date().toISOString(),
+                dataAsb: asbData,
+                shst: asbData.shst,
+                dataBps: dataBpsKomponen,
+                dataBpns: dataBpnsKomponen,
+            }
+
+            // 4. Generate kertas kerja
+            const kertasKerja = await this.asbDocumentService.generateAsbKertasKerja(kertasKerjaDto);
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async reject(id_asb: number, rejectReason: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 2. Update ASB idAsbStatus to 15
+            const updatedAsb = await this.repository.update(id_asb, {
+                idAsbStatus: 15,
+                rejectReason: rejectReason
             });
 
             return {

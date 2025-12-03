@@ -1,5 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards, Req, HttpStatus, HttpException, Body, Post, Put, Delete, UseInterceptors, UploadedFiles } from '@nestjs/common';
-import type { Express, Request } from 'express';
+import { Controller, Get, Param, ParseIntPipe, UseGuards, Req, HttpStatus, HttpException, Body, Post, Put, Delete, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
+import type { Request } from 'express';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -20,6 +20,8 @@ import { VerifyBpnsDto } from './dto/verify_bpns.dto';
 import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
+import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { VerifyBpsDto } from './dto/verify_bps.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -29,7 +31,7 @@ export class AsbController {
     @Get()
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async findAll(
-        @Body() dto: FindAllAsbDto,
+        @Query() dto: FindAllAsbDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
@@ -91,6 +93,42 @@ export class AsbController {
             responseCode: HttpStatus.OK,
             message: 'ASB retrieved successfully',
             data: asb as unknown as AsbWithRelationsDto,
+        };
+    }
+
+    @Get('by-month-year')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbByMonthYear(
+        @Query() dto: GetAsbByMonthYearDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: { date: string; count: number }[] }> {
+        const user = req.user as UserContext;
+
+        const data = await this.asbService.getAsbByMonthYear(dto, user.idOpd, user.roles);
+
+        return {
+            status: 'success',
+            responseCode: HttpStatus.OK,
+            message: 'ASB retrieved successfully',
+            data,
+        };
+    }
+
+    @Get('by-month-year-status')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR)
+    async getAsbByMonthYearStatus(
+        @Query() dto: GetAsbByMonthYearDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: { asbStatus: string; amount: number }[] }> {
+        const user = req.user as UserContext;
+
+        const data = await this.asbService.getAsbByMonthYearStatus(dto, user.idOpd, user.roles);
+
+        return {
+            status: 'success',
+            responseCode: HttpStatus.OK,
+            message: 'ASB status summary retrieved successfully',
+            data,
         };
     }
 
@@ -549,12 +587,12 @@ export class AsbController {
     @Put('verify-bps')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyBps(
-        @Body() dto: VerifyBpnsDto,
+        @Body() dto: VerifyBpsDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBpns(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBps(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -695,4 +733,6 @@ export class AsbController {
             };
         }
     }
+
+
 }

@@ -13,6 +13,7 @@ import { GenerateDocumentFilenameUseCase } from '../../application/asb_document/
 import { SaveDocumentUseCase } from '../../application/asb_document/use_cases/save_document.use_case';
 import { DeleteDocumentUseCase } from '../../application/asb_document/use_cases/delete_document.use_case';
 import { AsbDocumentController } from './asb_document.controller';
+import { KertasKerjaUseCase } from 'src/application/asb_document/use_cases/kertas_kerja.use_case';
 
 @Module({
     imports: [
@@ -50,6 +51,7 @@ import { AsbDocumentController } from './asb_document.controller';
         GenerateDocumentFilenameUseCase,
         SaveDocumentUseCase,
         DeleteDocumentUseCase,
+        KertasKerjaUseCase,
     ],
     exports: [AsbDocumentService],
 })

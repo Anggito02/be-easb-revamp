@@ -7,6 +7,8 @@ import { AsbBipekNonStdReviewRepository } from '../../../domain/asb_bipek_non_st
 import { AsbBipekNonStdReviewOrmEntity } from '../orm/asb_bipek_non_std_review.orm_entity';
 import { CreateAsbBipekNonStdReviewDto } from '../../../application/asb_bipek_non_std_review/dto/create_asb_bipek_non_std_review.dto';
 import { UpdateAsbBipekNonStdReviewDto } from '../../../application/asb_bipek_non_std_review/dto/update_asb_bipek_non_std_review.dto';
+import { GetAsbBipekNonStdReviewByAsbDto } from 'src/presentation/asb_bipek_non_std_review/dto/get_asb_bipek_non_std_review_by_asb.dto';
+import { BpnsReviewWithRelationsDto } from 'src/application/asb_bipek_non_std/dto/bpns_review_with_relations.dto';
 
 @Injectable()
 export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepository {
@@ -111,6 +113,22 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
                 order: { id: 'DESC' }
             });
             const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStdReview, e));
+            return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBpnsWithRelationByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<[BpnsReviewWithRelationsDto[], number]> {
+        try {
+            const [entities, total] = await this.repository.findAndCount({
+                where: { idAsb: dto.idAsb },
+                skip: (dto.page - 1) * dto.amount,
+                take: dto.amount,
+                order: { id: 'DESC' },
+                relations: ['idAsbKomponenBangunanNonstd']
+            });
+            const domainEntities = entities.map((e) => plainToInstance(BpnsReviewWithRelationsDto, e));
             return [domainEntities, total];
         } catch (error) {
             throw error;

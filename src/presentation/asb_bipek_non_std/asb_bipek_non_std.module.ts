@@ -7,9 +7,9 @@ import { AsbBipekNonStdService } from '../../domain/asb_bipek_non_std/asb_bipek_
 import { AsbBipekNonStdServiceImpl } from '../../application/asb_bipek_non_std/asb_bipek_non_std.service.impl';
 import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
 import { CalculateBobotBPNSUseCase } from 'src/application/asb_bipek_non_std/use_cases/calculate_bobot_bpns.use_case';
-import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipek_non_std_review.module';
 import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
+import { AsbDocumentModule } from '../asb_document/asb_document.module';
 
 @Module({
     imports: [
@@ -17,7 +17,7 @@ import { AsbDetailModule } from '../asb_detail/asb_detail.module';
         AsbKomponenBangunanNonstdModule,
         AsbKomponenBangunanProsNonstdModule,
         AsbDetailModule,
-        forwardRef(() => AsbBipekNonStdReviewModule),
+        AsbDocumentModule,
     ],
     providers: [
         {
