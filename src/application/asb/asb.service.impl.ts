@@ -6,6 +6,7 @@ import { FindAllAsbDto } from '../../application/asb/dto/find_all_asb.dto';
 import { AsbListResultDto } from '../../application/asb/dto/asb_list_result.dto';
 import { Role } from '../../domain/user/user_role.enum';
 import { CreateAsbStoreIndexDto } from './dto/create_asb_store_index.dto';
+import { UpdateAsbStoreIndexDto } from './dto/update_asb_store_index.dto';
 import { CreateAsbDocumentDto } from 'src/presentation/asb_document/dto/create_asb_document.dto';
 import { DocumentSpec } from 'src/domain/asb_document/document_spec.enum';
 import { AsbDocumentService } from 'src/domain/asb_document/asb_document.service';
@@ -114,5 +115,38 @@ export class AsbServiceImpl implements AsbService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        // Check permissions
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isOpd = userRoles.includes(Role.OPD);
+
+        // Verify existence and ownership
+        let existingAsb: AsbWithRelationsDto | null = null;
+
+        if (isAdmin || isSuperAdmin) {
+            existingAsb = await this.repository.findById(dto.id);
+        } else if (isOpd) {
+            if (!userIdOpd) {
+                throw new ForbiddenException('OPD user has no associated OPD');
+            }
+            existingAsb = await this.repository.findById(dto.id, userIdOpd);
+        } else {
+            throw new ForbiddenException('User is not authorized to update this ASB');
+        }
+
+        if (!existingAsb) {
+            throw new NotFoundException(`ASB with id ${dto.id} not found or access denied`);
+        }
+
+        // Force status to 1
+        dto.idAsbStatus = 1;
+
+        // Update ASB
+        const updatedAsb = await this.repository.update(dto.id, dto);
+
+        return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
 }
