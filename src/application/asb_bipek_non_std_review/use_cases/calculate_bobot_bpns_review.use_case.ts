@@ -1,19 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { AsbKomponenBangunanProsNonstdRepository } from '../../../domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.repository';
 import { AsbDetailService } from '../../../domain/asb_detail/asb_detail.service';
-import { AsbBipekNonStdService } from '../../../domain/asb_bipek_non_std/asb_bipek_non_std.service';
+import { AsbBipekNonStdReviewService } from '../../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculation_method.enum';
 import { Files } from 'src/domain/asb_detail/files.enum';
 import { AsbKomponenBangunanProsNonstd } from 'src/domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.entity';
-import { AsbBipekNonStdReviewRepository } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.repository';
 
 @Injectable()
 export class CalculateBobotBPNSReviewUseCase {
     constructor(
-        private readonly asbBipekNonStdReviewRepository: AsbBipekNonStdReviewRepository,
         private readonly asbKomponenBangunanProsNonstdRepository: AsbKomponenBangunanProsNonstdRepository,
         private readonly asbDetailService: AsbDetailService,
-        private readonly asbBipekNonStdService: AsbBipekNonStdService
+        private readonly asbBipekNonStdReviewService: AsbBipekNonStdReviewService
     ) { }
 
     async execute(
@@ -102,19 +100,19 @@ export class CalculateBobotBPNSReviewUseCase {
 
                 const bobot = (bobotInputs[i] / 100) * (bobotAcuan / 100);
 
-                const asbBipekNonStd = {
-                    idAsb,
-                    idAsbBipekNonStd,
-                    idAsbKomponenBangunanNonStd: komponenIds[i],
+                const asbBipekNonStdReview = {
+                    idAsb: idAsb,
+                    idAsbBipekNonStd: idAsbBipekNonStd,
+                    idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
                     bobotInputProsentase: bobotInputs[i],
                     jumlahBobot: bobot,
                     rincianHarga: (bobot / jumlahBobot) * BPNSReview,
-                    files: Files.ORIGIN
-                };
+                    files: Files.ORIGIN,
+                }
 
-                await this.asbBipekNonStdService.create(asbBipekNonStd);
+                await this.asbBipekNonStdReviewService.create(asbBipekNonStdReview);
             }
         }
 
