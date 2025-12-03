@@ -5,10 +5,17 @@ import { AsbWithRelationsDto } from '../../application/asb/dto/asb_with_relation
 import { FindAllAsbDto } from '../../application/asb/dto/find_all_asb.dto';
 import { AsbListResultDto } from '../../application/asb/dto/asb_list_result.dto';
 import { Role } from '../../domain/user/user_role.enum';
+import { CreateAsbStoreIndexDto } from './dto/create_asb_store_index.dto';
+import { CreateAsbDocumentDto } from 'src/presentation/asb_document/dto/create_asb_document.dto';
+import { DocumentSpec } from 'src/domain/asb_document/document_spec.enum';
+import { AsbDocumentService } from 'src/domain/asb_document/asb_document.service';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
-    constructor(private readonly repository: AsbRepository) { }
+    constructor(
+        private readonly repository: AsbRepository,
+        private readonly asbDocumentService: AsbDocumentService
+    ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
         // Check if user is ADMIN or SUPERADMIN
@@ -84,5 +91,28 @@ export class AsbServiceImpl implements AsbService {
             amount: dto.amount,
             totalPages: Math.ceil(result.total / dto.amount),
         };
+    }
+
+    async createIndex(dto: CreateAsbStoreIndexDto, files: Array<Express.Multer.File>, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // Set status to 1
+            dto.idAsbStatus = 1;
+
+            // Create ASB
+            const asb = await this.repository.create(dto);
+
+            // Save documents
+            files.forEach(async file => {
+                const asbDocument = new CreateAsbDocumentDto();
+                asbDocument.idAsb = asb.id;
+                asbDocument.spec = DocumentSpec.SURAT_REKOMENDASI;
+
+                await this.asbDocumentService.create(asbDocument, file);
+            });
+
+            return { id: asb.id, status: asb.idAsbStatus };
+        } catch (error) {
+            throw error;
+        }
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike } from 'typeorm';
+import { Repository, ILike, DeepPartial, EntityManager } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { AsbRepository } from '../../../domain/asb/asb.repository';
 import { AsbOrmEntity } from '../orm/asb.orm_entity';
@@ -70,5 +70,11 @@ export class AsbRepositoryImpl implements AsbRepository {
         const data = entities.map(entity => plainToInstance(AsbWithRelationsDto, entity));
 
         return { data, total };
+    }
+
+    async create(data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
+        const entity = this.repo.create(data);
+        const savedEntity = await this.repo.save(entity);
+        return plainToInstance(AsbWithRelationsDto, savedEntity);
     }
 }
