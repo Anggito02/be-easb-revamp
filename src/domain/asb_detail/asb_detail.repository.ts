@@ -10,4 +10,6 @@ export abstract class AsbDetailRepository {
     abstract findById(id: number): Promise<AsbDetail | null>;
     abstract findByFileType(files: Files): Promise<AsbDetail[]>;
     abstract findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDetail[], number]>;
+    abstract deleteByIds(ids: number[]): Promise<void>;
+    abstract deleteByAsbId(idAsb: number): Promise<void>;
 }

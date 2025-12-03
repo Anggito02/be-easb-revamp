@@ -116,4 +116,22 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
             throw error;
         }
     }
+
+    async deleteByIds(ids: number[]): Promise<void> {
+        try {
+            if (ids.length > 0) {
+                await this.repository.softDelete(ids);
+            }
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.softDelete({ idAsb });
+        } catch (error) {
+            throw error;
+        }
+    }
 }

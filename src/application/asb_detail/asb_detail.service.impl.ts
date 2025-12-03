@@ -109,4 +109,20 @@ export class AsbDetailServiceImpl extends AsbDetailService {
             throw error;
         }
     }
+
+    async deleteByIds(ids: number[]): Promise<void> {
+        try {
+            await this.repository.deleteByIds(ids);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.deleteByAsbId(idAsb);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
