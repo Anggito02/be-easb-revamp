@@ -14,6 +14,7 @@ import { SaveDocumentUseCase } from '../../application/asb_document/use_cases/sa
 import { DeleteDocumentUseCase } from '../../application/asb_document/use_cases/delete_document.use_case';
 import { AsbDocumentController } from './asb_document.controller';
 import { KertasKerjaUseCase } from 'src/application/asb_document/use_cases/kertas_kerja.use_case';
+import { SuratPermohonanUseCase } from 'src/application/asb_document/use_cases/surat_permohonan.use_case';
 
 @Module({
     imports: [
@@ -52,6 +53,7 @@ import { KertasKerjaUseCase } from 'src/application/asb_document/use_cases/kerta
         SaveDocumentUseCase,
         DeleteDocumentUseCase,
         KertasKerjaUseCase,
+        SuratPermohonanUseCase
     ],
     exports: [AsbDocumentService],
 })

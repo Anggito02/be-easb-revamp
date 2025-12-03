@@ -19,6 +19,8 @@ import { Express } from 'express';
 import { KertasKerjaUseCase } from './use_cases/kertas_kerja.use_case';
 import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto';
 import { Readable } from 'typeorm/platform/PlatformTools.js';
+import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_permohonan,dto';
+import { SuratPermohonanUseCase } from './use_cases/surat_permohonan.use_case';
 
 @Injectable()
 export class AsbDocumentServiceImpl extends AsbDocumentService {
@@ -28,7 +30,8 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         private readonly ensureDocumentDir: EnsureDocumentDirectoryUseCase,
         private readonly saveDocument: SaveDocumentUseCase,
         private readonly deleteDocument: DeleteDocumentUseCase,
-        private readonly kertasKerjaUseCase: KertasKerjaUseCase
+        private readonly kertasKerjaUseCase: KertasKerjaUseCase,
+        private readonly suratPermohonanUseCase: SuratPermohonanUseCase
     ) {
         super();
         // Ensure upload directory exists on service initialization
@@ -191,6 +194,29 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             };
 
             this.saveDocument.execute(file, DocumentSpec.KERTAS_KERJA);
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async generateSuratPermohonan(dto: SuratPermohonanDto): Promise<boolean> {
+        try {
+            const asbDoc = await this.suratPermohonanUseCase.execute(dto)
+            const file: Express.Multer.File = {
+                buffer: asbDoc,
+                originalname: 'asb_surat_permohonan.pdf',
+                size: asbDoc.length,
+                encoding: '7bit',
+                mimetype: 'application/pdf',
+                destination: '',
+                filename: '',
+                path: '',
+                fieldname: '',
+                stream: Readable.from(asbDoc),
+            };
+
+            this.saveDocument.execute(file, DocumentSpec.SURAT_PERMOHONAN);
             return true;
         } catch (error) {
             throw error;

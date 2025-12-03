@@ -6,6 +6,7 @@ import { UpdateAsbDocumentDto } from '../../presentation/asb_document/dto/update
 import { GetAsbDocumentListFilterDto } from '../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
 import { GetAsbDocumentByAsbDto } from '../../presentation/asb_document/dto/get_asb_document_by_asb.dto';
 import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto';
+import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_permohonan,dto';
 
 export abstract class AsbDocumentService {
     abstract create(
@@ -28,4 +29,5 @@ export abstract class AsbDocumentService {
     abstract getByAsb(dto: GetAsbDocumentByAsbDto): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }>;
     abstract deleteByAsbId(idAsb: number): Promise<void>;
     abstract generateAsbKertasKerja(dto: KertasKerjaDto): Promise<boolean>;
+    abstract generateSuratPermohonan(dto: SuratPermohonanDto): Promise<boolean>;
 }
