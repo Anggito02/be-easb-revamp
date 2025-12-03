@@ -19,6 +19,13 @@ import { AsbBipekStandardModule } from '../asb_bipek_standard/asb_bipek_standard
 import { AsbBipekNonStdModule } from '../asb_bipek_non_std/asb_bipek_non_std.module';
 import { AsbBipekStandardReviewModule } from '../asb_bipek_standard_review/asb_bipek_standard_review.module';
 import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipek_non_std_review.module';
+import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
+import { CalculateBobotBPNSUseCase } from 'src/application/asb_bipek_non_std/use_cases/calculate_bobot_bpns.use_case';
+import { CalculateBobotBPSReviewUseCase } from 'src/application/asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
+import { CalculateBobotBPNSReviewUseCase } from 'src/application/asb_bipek_non_std_review/use_cases/calculate_bobot_bpns_review.use_case';
+import { AsbDetailReviewModule } from '../asb_detail_review/asb_detail_review.module';
+import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
+import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 
 @Module({
     imports: [
@@ -30,12 +37,15 @@ import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipe
         AsbTipeBangunanModule,
         RekeningModule,
         AsbDetailModule,
+        AsbDetailReviewModule,
         AsbDocumentModule,
         ShstModule,
         AsbBipekStandardModule,
         AsbBipekNonStdModule,
         AsbBipekStandardReviewModule,
         AsbBipekNonStdReviewModule,
+        AsbKomponenBangunanProsStdModule,
+        AsbKomponenBangunanProsNonstdModule
     ],
     providers: [
         {
@@ -46,6 +56,10 @@ import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipe
             provide: AsbService,
             useClass: AsbServiceImpl,
         },
+        CalculateBobotBPSUseCase,
+        CalculateBobotBPNSUseCase,
+        CalculateBobotBPSReviewUseCase,
+        CalculateBobotBPNSReviewUseCase,
     ],
     controllers: [AsbController],
     exports: [AsbService],

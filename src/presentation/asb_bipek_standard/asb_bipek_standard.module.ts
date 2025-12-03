@@ -6,10 +6,8 @@ import { AsbBipekStandardRepositoryImpl } from '../../infrastructure/asb_bipek_s
 import { AsbBipekStandardService } from '../../domain/asb_bipek_standard/asb_bipek_standard.service';
 import { AsbBipekStandardServiceImpl } from '../../application/asb_bipek_standard/asb_bipek_standard.service.impl';
 import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
-import { CalculateBobotBPSReviewUseCase } from '../../application/asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
 import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
-import { AsbBipekStandardReviewModule } from '../asb_bipek_standard_review/asb_bipek_standard_review.module';
 import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
 
 @Module({
@@ -17,8 +15,7 @@ import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use
         TypeOrmModule.forFeature([AsbBipekStandardOrmEntity]),
         AsbKomponenBangunanStdModule,
         AsbKomponenBangunanProsStdModule,
-        AsbDetailModule,
-        forwardRef(() => AsbBipekStandardReviewModule),
+        AsbDetailModule
     ],
     providers: [
         {

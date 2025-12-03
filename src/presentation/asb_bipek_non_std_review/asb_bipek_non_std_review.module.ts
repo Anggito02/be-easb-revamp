@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AsbBipekNonStdReviewOrmEntity } from '../../infrastructure/asb_bipek_non_std_review/orm/asb_bipek_non_std_review.orm_entity';
 import { AsbBipekNonStdReviewRepository } from '../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.repository';
@@ -11,7 +11,7 @@ import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbBipekNonStdReviewOrmEntity]),
-        AsbBipekNonStdModule,
+        forwardRef(() => AsbBipekNonStdModule),
         AsbKomponenBangunanNonstdModule,
     ],
     providers: [
