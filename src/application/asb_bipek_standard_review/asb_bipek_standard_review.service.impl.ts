@@ -5,6 +5,7 @@ import { AsbBipekStandardReviewRepository } from '../../domain/asb_bipek_standar
 import { CreateAsbBipekStandardReviewDto } from './dto/create_asb_bipek_standard_review.dto';
 import { UpdateAsbBipekStandardReviewDto } from './dto/update_asb_bipek_standard_review.dto';
 import { GetAsbBipekStandardReviewByAsbDto } from '../../presentation/asb_bipek_standard_review/dto/get_asb_bipek_standard_review_by_asb.dto';
+import { BpsReviewWithRelationsDto } from './dto/bps_review_with_relations.dto';
 
 @Injectable()
 export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewService {
@@ -73,6 +74,21 @@ export class AsbBipekStandardReviewServiceImpl extends AsbBipekStandardReviewSer
     async getByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: AsbBipekStandardReview[], total: number, page: number, amount: number, totalPages: number }> {
         try {
             const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBpsWithRelationByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<{ data: BpsReviewWithRelationsDto[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.getBpsWithRelationByAsb({ idAsb: dto.idAsb, page: dto.page, amount: dto.amount });
             return {
                 data,
                 total,

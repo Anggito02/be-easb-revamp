@@ -27,6 +27,11 @@ export class FindAllAsbDto {
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => (value ? Number(value) : undefined))
+    idTipeBangunan?: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => (value ? Number(value) : undefined))
     tahunAnggaran?: number;
 
     @IsOptional()

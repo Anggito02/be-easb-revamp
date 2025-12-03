@@ -5,6 +5,7 @@ import { AsbBipekNonStdReviewRepository } from '../../domain/asb_bipek_non_std_r
 import { CreateAsbBipekNonStdReviewDto } from './dto/create_asb_bipek_non_std_review.dto';
 import { UpdateAsbBipekNonStdReviewDto } from './dto/update_asb_bipek_non_std_review.dto';
 import { GetAsbBipekNonStdReviewByAsbDto } from '../../presentation/asb_bipek_non_std_review/dto/get_asb_bipek_non_std_review_by_asb.dto';
+import { BpnsReviewWithRelationsDto } from '../asb_bipek_non_std/dto/bpns_review_with_relations.dto';
 
 @Injectable()
 export class AsbBipekNonStdReviewServiceImpl extends AsbBipekNonStdReviewService {
@@ -73,6 +74,21 @@ export class AsbBipekNonStdReviewServiceImpl extends AsbBipekNonStdReviewService
     async getByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<{ data: AsbBipekNonStdReview[], total: number, page: number, amount: number, totalPages: number }> {
         try {
             const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            return {
+                data,
+                total,
+                page: dto.page,
+                amount: dto.amount,
+                totalPages: Math.ceil(total / dto.amount)
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBpnsWithRelationByAsb(dto: GetAsbBipekNonStdReviewByAsbDto): Promise<{ data: BpnsReviewWithRelationsDto[], total: number, page: number, amount: number, totalPages: number }> {
+        try {
+            const [data, total] = await this.repository.getBpnsWithRelationByAsb({ idAsb: dto.idAsb, page: dto.page, amount: dto.amount });
             return {
                 data,
                 total,

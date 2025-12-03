@@ -21,6 +21,7 @@ import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { VerifyBpsDto } from './dto/verify_bps.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -586,12 +587,12 @@ export class AsbController {
     @Put('verify-bps')
     @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async verifyBps(
-        @Body() dto: VerifyBpnsDto,
+        @Body() dto: VerifyBpsDto,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBpns(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBps(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',

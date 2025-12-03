@@ -33,6 +33,8 @@ import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
+import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
+import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -43,6 +45,8 @@ export class AsbServiceImpl implements AsbService {
         private readonly shstService: ShstService,
         private readonly asbBipekStandardService: AsbBipekStandardService,
         private readonly asbBipekNonStdService: AsbBipekNonStdService,
+        private readonly asbBipekStandardReviewService: AsbBipekStandardReviewService,
+        private readonly asbBipekNonStdReviewService: AsbBipekNonStdReviewService,
         private readonly calculateBobotBPSUseCase: CalculateBobotBPSUseCase,
         private readonly calculateBobotBPNSUseCase: CalculateBobotBPNSUseCase,
         private readonly asbDetailReviewService: AsbDetailReviewService,
@@ -681,6 +685,104 @@ export class AsbServiceImpl implements AsbService {
                 managementKonstruksi: dto.management_konstruksi,
                 pengelolaanKegiatan: dto.pengelolaan_kegiatan,
                 idAsbStatus: 13
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verify(id_asb: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 2. Update ASB idAsbStatus to 14
+            const updatedAsb = await this.repository.update(id_asb, {
+                idAsbStatus: 14
+            });
+
+            // 3. Get data for kertas kerja
+            const asbData = await this.repository.findById(id_asb);
+            if (!asbData) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            const dataBps = await this.asbBipekStandardReviewService.getBpsWithRelationByAsb({
+                idAsb: id_asb,
+                page: 1,
+                amount: 10000
+            })
+
+            const dataBpns = await this.asbBipekNonStdReviewService.getBpnsWithRelationByAsb({
+                idAsb: id_asb,
+                page: 1,
+                amount: 10000
+            })
+
+            const dataBpsKomponen = dataBps.data.map((data) => {
+                return {
+                    komponen: data.asbKomponenBangunanStd?.komponen,
+                    asb: {
+                        bobot_input: data.bobotInput,
+                        jumlah_bobot: data.jumlahBobot,
+                        rincian_harga: data.rincianHarga
+                    }
+                }
+            });
+
+            const dataBpnsKomponen = dataBpns.data.map((data) => {
+                return {
+                    komponen: data.asbKomponenBangunanNonstd?.komponen,
+                    asb: {
+                        bobot_input: data.bobotInput,
+                        jumlah_bobot: data.jumlahBobot,
+                        rincian_harga: data.rincianHarga
+                    }
+                }
+            });
+
+            const kertasKerjaDto = {
+                title: `Kertas KerjaAnalisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
+                tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
+                tanggal_cetak: new Date().toISOString(),
+                dataAsb: asbData,
+                shst: asbData.shst,
+                dataBps: dataBpsKomponen,
+                dataBpns: dataBpnsKomponen,
+            }
+
+            // 4. Generate kertas kerja
+            const kertasKerja = await this.asbDocumentService.generateAsbKertasKerja(kertasKerjaDto);
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus,
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async reject(id_asb: number, rejectReason: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // 2. Update ASB idAsbStatus to 15
+            const updatedAsb = await this.repository.update(id_asb, {
+                idAsbStatus: 15,
+                rejectReason: rejectReason
             });
 
             return {

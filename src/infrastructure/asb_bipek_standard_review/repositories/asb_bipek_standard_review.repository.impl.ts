@@ -7,6 +7,8 @@ import { AsbBipekStandardReviewRepository } from '../../../domain/asb_bipek_stan
 import { AsbBipekStandardReviewOrmEntity } from '../orm/asb_bipek_standard_review.orm_entity';
 import { CreateAsbBipekStandardReviewDto } from '../../../application/asb_bipek_standard_review/dto/create_asb_bipek_standard_review.dto';
 import { UpdateAsbBipekStandardReviewDto } from '../../../application/asb_bipek_standard_review/dto/update_asb_bipek_standard_review.dto';
+import { BpsReviewWithRelationsDto } from 'src/application/asb_bipek_standard_review/dto/bps_review_with_relations.dto';
+import { GetAsbBipekStandardReviewByAsbDto } from 'src/presentation/asb_bipek_standard_review/dto/get_asb_bipek_standard_review_by_asb.dto';
 
 @Injectable()
 export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReviewRepository {
@@ -114,6 +116,22 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
                 order: { id: 'DESC' }
             });
             const domainEntities = entities.map((e) => plainToInstance(AsbBipekStandardReview, e));
+            return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getBpsWithRelationByAsb(dto: GetAsbBipekStandardReviewByAsbDto): Promise<[BpsReviewWithRelationsDto[], number]> {
+        try {
+            const [entities, total] = await this.repository.findAndCount({
+                where: { idAsb: dto.idAsb },
+                skip: (dto.page - 1) * dto.amount,
+                take: dto.amount,
+                order: { id: 'DESC' },
+                relations: ['idAsbKomponenBangunanStd']
+            });
+            const domainEntities = entities.map((e) => plainToInstance(BpsReviewWithRelationsDto, e));
             return [domainEntities, total];
         } catch (error) {
             throw error;

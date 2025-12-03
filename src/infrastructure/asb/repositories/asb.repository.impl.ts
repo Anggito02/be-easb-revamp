@@ -60,6 +60,10 @@ export class AsbRepositoryImpl implements AsbRepository {
             whereClause.namaAsb = ILike(`%${dto.namaAsb}%`);
         }
 
+        if (dto.idTipeBangunan) {
+            whereClause.idTipeBangunan = dto.idTipeBangunan;
+        }
+
         const [entities, total] = await this.repo.findAndCount({
             where: whereClause,
             relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd'],
