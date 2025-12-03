@@ -16,7 +16,7 @@ export class CalculateBobotBPSReviewUseCase {
 
     async execute(
         idAsb: number,
-        idAsbBipekStandard: number,
+        idAsbBipekStandard: number[],
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
@@ -101,13 +101,13 @@ export class CalculateBobotBPSReviewUseCase {
 
                 const asbBipekReviewStandard = {
                     idAsb,
-                    idAsbBipekStandard,
+                    idAsbBipekStandard: idAsbBipekStandard[i],
                     idAsbKomponenBangunanStd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
                     jumlahBobot: bobot,
                     rincianHarga: (bobot / jumlahBobot) * BPSReview,
-                    files: Files.ORIGIN
+                    files: Files.REVIEW
                 };
 
                 await this.asbBipekStandardReviewService.create(asbBipekReviewStandard);

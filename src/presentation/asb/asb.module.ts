@@ -14,6 +14,11 @@ import { AsbTipeBangunanModule } from '../asb_tipe_bangunan/asb_tipe_bangunan.mo
 import { RekeningModule } from '../rekening/rekening.module';
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
 import { AsbDocumentModule } from '../asb_document/asb_document.module';
+import { ShstModule } from '../shst/shst.module';
+import { AsbBipekStandardModule } from '../asb_bipek_standard/asb_bipek_standard.module';
+import { AsbBipekNonStdModule } from '../asb_bipek_non_std/asb_bipek_non_std.module';
+import { AsbBipekStandardReviewModule } from '../asb_bipek_standard_review/asb_bipek_standard_review.module';
+import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipek_non_std_review.module';
 
 @Module({
     imports: [
@@ -26,6 +31,11 @@ import { AsbDocumentModule } from '../asb_document/asb_document.module';
         RekeningModule,
         AsbDetailModule,
         AsbDocumentModule,
+        ShstModule,
+        AsbBipekStandardModule,
+        AsbBipekNonStdModule,
+        AsbBipekStandardReviewModule,
+        AsbBipekNonStdReviewModule,
     ],
     providers: [
         {

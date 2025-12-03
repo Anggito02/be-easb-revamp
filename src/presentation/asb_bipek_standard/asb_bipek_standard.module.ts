@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AsbBipekStandardOrmEntity } from '../../infrastructure/asb_bipek_standard/orm/asb_bipek_standard.orm_entity';
 import { AsbBipekStandardRepository } from '../../domain/asb_bipek_standard/asb_bipek_standard.repository';
@@ -6,11 +6,19 @@ import { AsbBipekStandardRepositoryImpl } from '../../infrastructure/asb_bipek_s
 import { AsbBipekStandardService } from '../../domain/asb_bipek_standard/asb_bipek_standard.service';
 import { AsbBipekStandardServiceImpl } from '../../application/asb_bipek_standard/asb_bipek_standard.service.impl';
 import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_komponen_bangunan_std.module';
+import { CalculateBobotBPSReviewUseCase } from '../../application/asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
+import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
+import { AsbDetailModule } from '../asb_detail/asb_detail.module';
+import { AsbBipekStandardReviewModule } from '../asb_bipek_standard_review/asb_bipek_standard_review.module';
+import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbBipekStandardOrmEntity]),
         AsbKomponenBangunanStdModule,
+        AsbKomponenBangunanProsStdModule,
+        AsbDetailModule,
+        forwardRef(() => AsbBipekStandardReviewModule),
     ],
     providers: [
         {
@@ -21,6 +29,7 @@ import { AsbKomponenBangunanStdModule } from '../asb_komponen_bangunan_std/asb_k
             provide: AsbBipekStandardService,
             useClass: AsbBipekStandardServiceImpl,
         },
+        CalculateBobotBPSUseCase,
     ],
     exports: [AsbBipekStandardService],
 })

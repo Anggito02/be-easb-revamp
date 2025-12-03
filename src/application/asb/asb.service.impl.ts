@@ -27,6 +27,11 @@ import { AsbDetailReviewService } from 'src/domain/asb_detail_review/asb_detail_
 import { CreateAsbDetailReviewDto } from '../asb_detail_review/dto/create_asb_detail_review.dto';
 import { Files } from 'src/domain/asb_detail/files.enum';
 import { StoreRekeningDto } from 'src/presentation/asb/dto/store_rekening.dto';
+import { VerifyBpnsDto } from 'src/presentation/asb/dto/verify_bpns.dto';
+import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto';
+import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use_cases/calculate_bobot_bpns_review.use_case';
+import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
+import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -39,7 +44,8 @@ export class AsbServiceImpl implements AsbService {
         private readonly asbBipekNonStdService: AsbBipekNonStdService,
         private readonly calculateBobotBPSUseCase: CalculateBobotBPSUseCase,
         private readonly calculateBobotBPNSUseCase: CalculateBobotBPNSUseCase,
-        private readonly asbDetailReviewService: AsbDetailReviewService
+        private readonly asbDetailReviewService: AsbDetailReviewService,
+        private readonly calculateBobotBPNSReviewUseCase: CalculateBobotBPNSReviewUseCase,
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
@@ -447,6 +453,174 @@ export class AsbServiceImpl implements AsbService {
             // 3. Update ASB status to 9
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 9
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verifyBps(dto: VerifyBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Get SHST Nominal
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
+                throw new Error("ASB is missing required classification or location data for SHST lookup");
+            }
+            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
+            shstDto.id_kabkota = asb.idKabkota;
+            const shstNominal = await this.shstService.getNominal(shstDto);
+
+            // 3. Calculate AsbBipekStandard
+            const getAsbBipekStandardByAsbDto = {
+                idAsb: dto.id_asb,
+                page: 1,
+                amount: 10000
+            };
+            const asbBipekStandard = await this.asbBipekStandardService.getByAsb(getAsbBipekStandardByAsbDto);
+            if (!asbBipekStandard) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+            const asbBipekStandardIds = asbBipekStandard.data.map((asbBipekStandard) => asbBipekStandard.id);
+
+            // 4. Calculate BPS Review
+            if (!asb.totalLantai) {
+                throw new Error("ASB is missing totalLantai");
+            }
+
+            await this.calculateBobotBPNSReviewUseCase.execute(
+                dto.id_asb,
+                asbBipekStandardIds,
+                dto.verif_komponen_std,
+                dto.verif_bobot_acuan_std,
+                shstNominal,
+                asb.totalLantai
+            );
+
+            // 5. Update ASB status to 10
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 10
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    async verifyBpns(dto: VerifyBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Get SHST Nominal
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
+                throw new Error("ASB is missing required classification or location data for SHST lookup");
+            }
+            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
+            shstDto.id_kabkota = asb.idKabkota;
+
+            const shstNominal = await this.shstService.getNominal(shstDto);
+
+            // 3. Get AsbBipekNonstd
+            const getAsbBipekNonstdByAsbDto = {
+                idAsb: dto.id_asb,
+                page: 1,
+                amount: 10000
+            };
+
+            const asbBipekNonstd = await this.asbBipekNonStdService.getByAsb(getAsbBipekNonstdByAsbDto)
+            if (!asbBipekNonstd) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+            const asbBipekNonstdIds = asbBipekNonstd.data.map((asbBipekNonstd) => asbBipekNonstd.id);
+
+            // 4. Calculate BPNS Review
+            if (!asb.totalLantai) {
+                throw new Error("ASB is missing totalLantai");
+            }
+
+            await this.calculateBobotBPNSReviewUseCase.execute(
+                dto.id_asb,
+                asbBipekNonstdIds,
+                dto.verif_komponen_nonstd,
+                dto.verif_bobot_acuan_nonstd,
+                shstNominal,
+                asb.totalLantai
+            );
+
+            // 5. Update ASB status to 11
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 11
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verifyRekening(dto: VerifyRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Update ASB idRekeningReview and status to 12
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idRekeningReview: dto.id_rekening_review,
+                idAsbStatus: 12
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verifyPekerjaan(dto: VerifyPekerjaanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Update ASB data pekerjaan and status to 13
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                perencanaanKonstruksi: dto.perencanaan_konstruksi,
+                pengawasanKonstruksi: dto.pengawasan_konstruksi,
+                managementKonstruksi: dto.management_konstruksi,
+                pengelolaanKegiatan: dto.pengelolaan_kegiatan,
+                idAsbStatus: 13
             });
 
             return {

@@ -16,7 +16,7 @@ export class CalculateBobotBPNSReviewUseCase {
 
     async execute(
         idAsb: number,
-        idAsbBipekNonStd: number,
+        idAsbBipekNonStd: number[],
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
@@ -102,14 +102,14 @@ export class CalculateBobotBPNSReviewUseCase {
 
                 const asbBipekNonStdReview = {
                     idAsb: idAsb,
-                    idAsbBipekNonStd: idAsbBipekNonStd,
+                    idAsbBipekNonStd: idAsbBipekNonStd[i],
                     idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
                     bobotInputProsentase: bobotInputs[i],
                     jumlahBobot: bobot,
                     rincianHarga: (bobot / jumlahBobot) * BPNSReview,
-                    files: Files.ORIGIN,
+                    files: Files.REVIEW,
                 }
 
                 await this.asbBipekNonStdReviewService.create(asbBipekNonStdReview);

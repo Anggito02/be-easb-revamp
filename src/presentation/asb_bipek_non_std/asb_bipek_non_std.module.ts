@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AsbBipekNonStdOrmEntity } from '../../infrastructure/asb_bipek_non_std/orm/asb_bipek_non_std.orm_entity';
 import { AsbBipekNonStdRepository } from '../../domain/asb_bipek_non_std/asb_bipek_non_std.repository';
@@ -6,11 +6,14 @@ import { AsbBipekNonStdRepositoryImpl } from '../../infrastructure/asb_bipek_non
 import { AsbBipekNonStdService } from '../../domain/asb_bipek_non_std/asb_bipek_non_std.service';
 import { AsbBipekNonStdServiceImpl } from '../../application/asb_bipek_non_std/asb_bipek_non_std.service.impl';
 import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
+import { CalculateBobotBPNSUseCase } from 'src/application/asb_bipek_non_std/use_cases/calculate_bobot_bpns.use_case';
+import { AsbBipekNonStdReviewModule } from '../asb_bipek_non_std_review/asb_bipek_non_std_review.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbBipekNonStdOrmEntity]),
         AsbKomponenBangunanNonstdModule,
+        forwardRef(() => AsbBipekNonStdReviewModule)
     ],
     providers: [
         {
@@ -21,6 +24,7 @@ import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd
             provide: AsbBipekNonStdService,
             useClass: AsbBipekNonStdServiceImpl,
         },
+        CalculateBobotBPNSUseCase
     ],
     exports: [AsbBipekNonStdService],
 })
