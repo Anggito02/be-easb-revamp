@@ -134,15 +134,13 @@ export class AsbController {
 
     @Post('store-index')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
-    @UseInterceptors(FilesInterceptor('surat_rekomendasi'))
     async storeIndex(
         @Body() dto: CreateAsbStoreIndexDto,
-        @UploadedFiles() files: Array<Express.Multer.File>,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.createIndex(dto, files, user.roles);
+            const result = await this.asbService.createIndex(dto, user.roles);
 
             return {
                 status: 'success',

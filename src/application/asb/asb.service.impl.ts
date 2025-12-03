@@ -189,7 +189,7 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async createIndex(dto: CreateAsbStoreIndexDto, files: Array<Express.Multer.File>, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async createIndex(dto: CreateAsbStoreIndexDto, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Set status to 1
             dto.idAsbStatus = 1;
@@ -197,14 +197,23 @@ export class AsbServiceImpl implements AsbService {
             // Create ASB
             const asb = await this.repository.create(dto);
 
-            // Save documents
-            files.forEach(async file => {
-                const asbDocument = new CreateAsbDocumentDto();
-                asbDocument.idAsb = asb.id;
-                asbDocument.spec = DocumentSpec.SURAT_REKOMENDASI;
+            // Get ASB
+            const asbData = await this.repository.findById(asb.id);
 
-                await this.asbDocumentService.create(asbDocument, file);
-            });
+            if (!asbData) {
+                throw new NotFoundException(`ASB with id ${asb.id} not found`);
+            }
+
+            // Save documents
+            const suratPermohonanDto = {
+                opd: asbData.opd?.opd || "",
+                nama_asb: asbData.namaAsb || "",
+                asb_jenis: asbData.asbJenis?.jenis || "",
+                alamat: asbData.alamat || "",
+                alias: asbData.opd?.alias || ""
+            }
+
+            const asbDocs = await this.asbDocumentService.generateSuratPermohonan(suratPermohonanDto);
 
             return { id: asb.id, status: asb.idAsbStatus };
         } catch (error) {
