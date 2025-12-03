@@ -12,7 +12,12 @@ import { CreateAsbStoreIndexDto } from '../../application/asb/dto/create_asb_sto
 import { UpdateAsbStoreIndexDto } from '../../application/asb/dto/update_asb_store_index.dto';
 import { DeleteAsbDto } from '../../application/asb/dto/delete_asb.dto';
 import { UpdateAsbStoreLantaiDto } from '../../application/asb/dto/update_asb_store_lantai.dto';
+import { StoreBpsDto } from './dto/store_bps.dto';
+import { StoreBpnsDto } from './dto/store_bpns.dto';
+import { StoreRekeningDto } from './dto/store_rekening.dto';
+import { VerifyLantaiDto } from './dto/verify_lantai.dto';
 import { UserContext } from '../../common/types/user-context.type';
+import { StoreVerifDto } from './dto/store_verif.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -267,6 +272,256 @@ export class AsbController {
                     const resObj = response as any;
                     if (Array.isArray(resObj.message)) {
                         message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('store-bps')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storeBps(
+        @Body() dto: StoreBpsDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storeBps(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB BPS stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('store-bpns')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storeBpns(
+        @Body() dto: StoreBpnsDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storeBpns(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB BPNS stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('store-rekening')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storeRekening(
+        @Body() dto: StoreRekeningDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storeRekening(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB rekening stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('store-verif')
+    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    async storeVerif(
+        @Body() dto: StoreVerifDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.storeVerif(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB verif stored successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('verify-lantai')
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async verifyLantai(
+        @Body() dto: VerifyLantaiDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.verifyLantai(dto, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB lantai verified successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.jsonMessage.join(', ');
                     } else {
                         message = resObj.message ?? 'Error';
                     }

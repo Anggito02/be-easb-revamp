@@ -13,13 +13,33 @@ import { DocumentSpec } from 'src/domain/asb_document/document_spec.enum';
 import { AsbDocumentService } from 'src/domain/asb_document/asb_document.service';
 import { AsbDetailService } from 'src/domain/asb_detail/asb_detail.service';
 import { CreateAsbDetailDto } from 'src/application/asb_detail/dto/create_asb_detail.dto';
+import { StoreBpsDto } from '../../presentation/asb/dto/store_bps.dto';
+import { StoreBpnsDto } from '../../presentation/asb/dto/store_bpns.dto';
+import { ShstService } from '../../domain/shst/shst.service';
+import { AsbBipekStandardService } from '../../domain/asb_bipek_standard/asb_bipek_standard.service';
+import { AsbBipekNonStdService } from '../../domain/asb_bipek_non_std/asb_bipek_non_std.service';
+import { CalculateBobotBPSUseCase } from '../asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
+import { CalculateBobotBPNSUseCase } from '../asb_bipek_non_std/use_cases/calculate_bobot_bpns.use_case';
+import { GetShstNominalDto } from '../shst/dto/get_shst_nominal.dto';
+import { StoreVerifDto } from 'src/presentation/asb/dto/store_verif.dto';
+import { VerifyLantaiDto } from 'src/presentation/asb/dto/verify_lantai.dto';
+import { AsbDetailReviewService } from 'src/domain/asb_detail_review/asb_detail_review.service';
+import { CreateAsbDetailReviewDto } from '../asb_detail_review/dto/create_asb_detail_review.dto';
+import { Files } from 'src/domain/asb_detail/files.enum';
+import { StoreRekeningDto } from 'src/presentation/asb/dto/store_rekening.dto';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
     constructor(
         private readonly repository: AsbRepository,
         private readonly asbDocumentService: AsbDocumentService,
-        private readonly asbDetailService: AsbDetailService
+        private readonly asbDetailService: AsbDetailService,
+        private readonly shstService: ShstService,
+        private readonly asbBipekStandardService: AsbBipekStandardService,
+        private readonly asbBipekNonStdService: AsbBipekNonStdService,
+        private readonly calculateBobotBPSUseCase: CalculateBobotBPSUseCase,
+        private readonly calculateBobotBPNSUseCase: CalculateBobotBPNSUseCase,
+        private readonly asbDetailReviewService: AsbDetailReviewService
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
@@ -247,5 +267,194 @@ export class AsbServiceImpl implements AsbService {
         const updatedAsb = await this.repository.update(dto.id_asb, { idAsbStatus: 2 });
 
         return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
+    }
+
+
+    async storeBps(dto: StoreBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Delete old records if requested
+            if (dto.id_asb_bipek_standard) {
+                await this.asbBipekStandardService.delete(dto.id_asb_bipek_standard);
+            }
+
+            // 3. Get SHST Nominal
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            // Ensure optional fields are present or handle error
+            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
+                throw new Error("ASB is missing required classification or location data for SHST lookup");
+            }
+            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
+            shstDto.id_kabkota = asb.idKabkota;
+
+            const shstNominal = await this.shstService.getNominal(shstDto);
+
+            // 4. Calculate BPS
+            if (!asb.totalLantai) {
+                throw new Error("ASB is missing totalLantai");
+            }
+
+            await this.calculateBobotBPSUseCase.execute(
+                dto.id_asb,
+                dto.komponen_std,
+                dto.bobot_std,
+                shstNominal,
+                asb.totalLantai
+            );
+
+            // 5. Update ASB status
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 3
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Delete old records if requested
+            if (dto.id_asb_bipek_nonstd) {
+                await this.asbBipekNonStdService.delete(dto.id_asb_bipek_nonstd);
+            }
+
+            // 3. Get SHST Nominal using asb data
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            // Ensure optional fields are present or handle error
+            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
+                throw new Error("ASB is missing required classification or location data for SHST lookup");
+            }
+            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
+            shstDto.id_kabkota = asb.idKabkota;
+
+            const shstNominal = await this.shstService.getNominal(shstDto);
+
+            // 4. Calculate BPNS
+            if (!asb.totalLantai) {
+                throw new Error("ASB is missing totalLantai");
+            }
+
+            await this.calculateBobotBPNSUseCase.execute(
+                dto.id_asb,
+                dto.komponen_nonstd,
+                dto.bobot_nonstd,
+                shstNominal,
+                asb.totalLantai
+            );
+
+            // 5. Update ASB status to 4
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 4
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any; }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Update ASB status to 5
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 5
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any; }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            // 2. Update ASB status to 5
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 5
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async verifyLantai(dto: VerifyLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+        try {
+            // 1. Check permissions and existence
+            const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
+            }
+
+            if (!asb.totalLantai) {
+                throw new Error("ASB is missing totalLantai");
+            }
+
+            // 2. Create AsbDetailReview records for each lantai
+            for (let i = 0; i < asb.totalLantai; i++) {
+                const createDetailReviewDto = new CreateAsbDetailReviewDto();
+                createDetailReviewDto.idAsbDetail = 0; // Will be set by the service if needed
+                createDetailReviewDto.files = Files.ORIGIN;
+                createDetailReviewDto.idAsbLantai = dto.verif_id_asb_lantai[i];
+                createDetailReviewDto.idAsbFungsiRuang = dto.verif_id_asb_fungsi_ruang[i];
+                createDetailReviewDto.idAsbTipeBangunan = asb.idAsbTipeBangunan;
+                createDetailReviewDto.luas = dto.verif_luas_lantai[i];
+
+                await this.asbDetailReviewService.create(createDetailReviewDto);
+            }
+
+            // 3. Update ASB status to 9
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 9
+            });
+
+            return {
+                id: updatedAsb.id,
+                status: updatedAsb.asbStatus
+            };
+        } catch (error) {
+            throw error;
+        }
     }
 }

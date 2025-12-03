@@ -5,6 +5,11 @@ import { AsbListResultDto } from 'src/application/asb/dto/asb_list_result.dto';
 import { CreateAsbStoreIndexDto } from 'src/application/asb/dto/create_asb_store_index.dto';
 import { UpdateAsbStoreIndexDto } from 'src/application/asb/dto/update_asb_store_index.dto';
 import { UpdateAsbStoreLantaiDto } from 'src/application/asb/dto/update_asb_store_lantai.dto';
+import { StoreBpsDto } from 'src/presentation/asb/dto/store_bps.dto';
+import { StoreBpnsDto } from 'src/presentation/asb/dto/store_bpns.dto';
+import { StoreRekeningDto } from 'src/presentation/asb/dto/store_rekening.dto';
+import { StoreVerifDto } from 'src/presentation/asb/dto/store_verif.dto';
+import { VerifyLantaiDto } from 'src/presentation/asb/dto/verify_lantai.dto';
 
 export abstract class AsbService {
     abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null>;
@@ -13,4 +18,9 @@ export abstract class AsbService {
     abstract updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;
     abstract storeLantai(dto: UpdateAsbStoreLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storeBps(dto: StoreBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyLantai(dto: VerifyLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 }

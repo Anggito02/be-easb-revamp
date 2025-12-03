@@ -11,6 +11,7 @@ import { GetShstFileDto } from "../../presentation/shst/dto/get_shst_file.dto";
 import { ShstsPaginationResultDto } from "../../presentation/shst/dto/shsts_pagination_result.dto";
 import { ValidateShstForeignKeysUseCase } from "./use_cases/validate_shst_foreign_keys.use_case";
 import { HandleShstFileUseCase } from "./use_cases/handle_shst_file.use_case";
+import { GetShstNominalDto } from './dto/get_shst_nominal.dto';
 
 @Injectable()
 export class ShstServiceImpl extends ShstService {
@@ -155,6 +156,14 @@ export class ShstServiceImpl extends ShstService {
                 filePath,
                 downloadUrl: `/public${filePath}`
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getNominal(dto: GetShstNominalDto): Promise<number> {
+        try {
+            return await this.shstRepository.getNominal(dto);
         } catch (error) {
             throw error;
         }
