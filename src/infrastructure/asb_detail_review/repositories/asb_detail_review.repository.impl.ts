@@ -123,7 +123,7 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
             const domainEntities: AsbDetailReviewWithRelationDto[] = entities.map((e) => {
                 return {
                     id: e.id,
-                    id_asb_detail: e.asbDetail.id,
+                    id_asb_detail: e.idAsbDetail,
                     id_asb_lantai: e.idAsbLantai,
                     id_asb_fungsi_ruang: e.idAsbFungsiRuang,
                     asb_fungsi_ruang_koef: e.asbFungsiRuangKoef,
@@ -141,6 +141,7 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
                     }
                 }
             });
+            console.log("domainEntities", domainEntities);
             return domainEntities;
         } catch (error) {
             throw error;

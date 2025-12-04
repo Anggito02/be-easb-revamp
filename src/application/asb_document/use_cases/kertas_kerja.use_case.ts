@@ -425,7 +425,7 @@ export class KertasKerjaUseCase {
                     <td>:</td>
                     <td>${number_format(totalLuas)} m<sup>2</sup></td>
                 </tr>
-                <tr>
+                <tr class="highlight-row">
                     <td></td>
                     <td>Koefesien Tingkat Lantai</td>
                     <td>:</td>

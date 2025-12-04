@@ -31,7 +31,7 @@ export class AsbController {
     constructor(private readonly asbService: AsbService) { }
 
     @Get()
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findAll(
         @Query() dto: FindAllAsbDto,
         @Req() req: Request,
@@ -81,7 +81,7 @@ export class AsbController {
     }
 
     @Get('id')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findById(
         id: number,
         @Req() req: Request,
@@ -99,7 +99,7 @@ export class AsbController {
     }
 
     @Get('by-month-year')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getAsbByMonthYear(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
@@ -117,7 +117,7 @@ export class AsbController {
     }
 
     @Get('by-month-year-status')
-    @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN, Role.VERIFIKATOR)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getAsbByMonthYearStatus(
         @Query() dto: GetAsbByMonthYearDto,
         @Req() req: Request,
