@@ -30,7 +30,7 @@ export class CreateAsbStoreIndexDto {
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)
-    idKlasifikasi: number;
+    idAsbKlasifikasi: number;
 
     @IsInt()
     @IsNotEmpty()

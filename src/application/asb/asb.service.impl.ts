@@ -202,6 +202,7 @@ export class AsbServiceImpl implements AsbService {
             if (userIdOpd) {
                 dto.idOpd = userIdOpd;
             }
+            console.log("dto", dto);
 
             // Create ASB
             const asb = await this.repository.create(dto);
@@ -375,12 +376,15 @@ export class AsbServiceImpl implements AsbService {
             // 3. Get SHST Nominal
             const shstDto = new GetShstNominalDto();
             shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            console.log("asb:", asb);
             // Ensure optional fields are present or handle error
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
                 throw new Error("ASB is missing required classification or location data for SHST lookup");
             }
             shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
             shstDto.id_kabkota = asb.idKabkota;
+
+            console.log("Shst dto:", shstDto);
 
             const shstNominal = await this.shstService.getNominal(shstDto);
 
@@ -407,6 +411,7 @@ export class AsbServiceImpl implements AsbService {
                 status: updatedAsb.asbStatus
             };
         } catch (error) {
+            console.log("Error:", error);
             throw error;
         }
     }

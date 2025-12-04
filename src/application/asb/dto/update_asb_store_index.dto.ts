@@ -7,11 +7,11 @@ export class UpdateAsbStoreIndexDto {
 
     @IsInt()
     @IsNotEmpty()
-    tahun_anggaran: number;
+    tahunAnggaran: number;
 
     @IsString()
     @IsNotEmpty()
-    nama_asb: string;
+    namaAsb: string;
 
     @IsString()
     @IsNotEmpty()
@@ -19,24 +19,26 @@ export class UpdateAsbStoreIndexDto {
 
     @IsInt()
     @IsNotEmpty()
-    total_lantai: number;
+    totalLantai: number;
 
     @IsInt()
     @IsNotEmpty()
-    id_asb_tipe_bangunan: number;
+    idAsbTipeBangunan: number;
 
     @IsInt()
     @IsNotEmpty()
-    id_klasifikasi: number;
+    idAsbKlasifikasi: number;
 
     @IsInt()
     @IsNotEmpty()
-    id_kabkota: number;
+    idKabkota: number;
 
     @IsInt()
     @IsNotEmpty()
-    jumlah_kontraktor: number;
+    jumlahKontraktor: number;
 
     // Internal use
+    @IsInt()
+    @IsOptional()
     idAsbStatus?: number;
 }
