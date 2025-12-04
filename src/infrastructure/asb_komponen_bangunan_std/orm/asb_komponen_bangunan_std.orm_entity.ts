@@ -3,7 +3,7 @@ import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangun
 import { AsbJenisOrmEntity } from '../../asb_jenis/orm/asb_jenis.orm_entity';
 import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_bangunan.orm_entity';
 
-@Entity('asb_komponen_bangunan_std')
+@Entity('asb_komponen_bangunan_stds')
 export class AsbKomponenBangunanStdOrmEntity {
     @PrimaryGeneratedColumn()
     id!: number;

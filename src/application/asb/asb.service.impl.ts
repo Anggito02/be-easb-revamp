@@ -745,9 +745,9 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            // 2. Update ASB idAsbStatus to 14
+            // 2. Update ASB idAsbStatus to 8
             const updatedAsb = await this.repository.update(id_asb, {
-                idAsbStatus: 14
+                idAsbStatus: 8
             });
 
             // 3. Get data for kertas kerja
@@ -767,6 +767,9 @@ export class AsbServiceImpl implements AsbService {
                 page: 1,
                 amount: 10000
             })
+
+            console.log("Data BPS: ", dataBps);
+            console.log("Data BPNS: ", dataBpns);
 
             const dataBpsKomponen = dataBps.data.map((data) => {
                 return {
@@ -791,7 +794,7 @@ export class AsbServiceImpl implements AsbService {
             });
 
             const kertasKerjaDto = {
-                title: `Kertas KerjaAnalisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
+                title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
                 tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
                 tanggal_cetak: new Date().toISOString(),
                 dataAsb: asbData,
@@ -808,6 +811,7 @@ export class AsbServiceImpl implements AsbService {
                 status: updatedAsb.asbStatus,
             };
         } catch (error) {
+            console.log("Erorr: ", error);
             throw error;
         }
     }
@@ -820,9 +824,9 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            // 2. Update ASB idAsbStatus to 15
+            // 2. Update ASB idAsbStatus to 7
             const updatedAsb = await this.repository.update(id_asb, {
-                idAsbStatus: 15,
+                idAsbStatus: 7,
                 rejectReason: rejectReason
             });
 

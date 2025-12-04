@@ -126,7 +126,7 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
                 skip: (dto.page - 1) * dto.amount,
                 take: dto.amount,
                 order: { id: 'DESC' },
-                relations: ['idAsbKomponenBangunanNonstd']
+                relations: ['asbKomponenBangunanNonstd']
             });
             const domainEntities = entities.map((e) => plainToInstance(BpnsReviewWithRelationsDto, e));
             return [domainEntities, total];

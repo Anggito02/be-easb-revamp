@@ -130,7 +130,7 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
                 skip: (dto.page - 1) * dto.amount,
                 take: dto.amount,
                 order: { id: 'DESC' },
-                relations: ['idAsbKomponenBangunanStd']
+                relations: ['asbKomponenBangunanStd']
             });
             const domainEntities = entities.map((e) => plainToInstance(BpsReviewWithRelationsDto, e));
             return [domainEntities, total];

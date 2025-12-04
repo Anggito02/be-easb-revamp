@@ -22,6 +22,8 @@ import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 import { VerifyBpsDto } from './dto/verify_bps.dto';
+import { VerifyDto } from './dto/verify.dto';
+import { RejectDto } from './dto/reject.dto';
 
 @Controller('asb')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -732,5 +734,103 @@ export class AsbController {
         }
     }
 
+    @Put('verify')
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async verify(
+        @Body() dto: VerifyDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.verify(dto.id_asb, user.idOpd, user.roles);
 
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB verified successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('reject')
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async reject(
+        @Body() dto: RejectDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.reject(dto.id_asb, dto.reject_reason, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB rejected successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
 }
