@@ -98,6 +98,36 @@ export class AsbOrmEntity {
     })
     pengelolaanKegiatan: number | null;
 
+    @Column({
+        name: 'luas_total_bangunan',
+        type: 'float',
+        nullable: true,
+    })
+    luasTotalBangunan: number | null;
+
+    @Column({
+        name: 'koefisien_lantai_total',
+        type: 'float',
+        nullable: true,
+    })
+    koefisienLantaiTotal: number | null;
+
+    @Column({
+        name: 'koefisien_fungsi_ruang_total',
+        type: 'float',
+        nullable: true,
+    })
+    koefisienFungsiRuangTotal: number | null;
+
+    @Column({
+        name: 'total_biaya_pembangunan',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    totalBiayaPembangunan: number | null;
+
     // Timestamps
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt: Date;

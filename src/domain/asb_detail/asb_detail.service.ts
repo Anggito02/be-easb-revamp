@@ -15,4 +15,6 @@ export abstract class AsbDetailService {
     abstract getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]>;
     abstract deleteByIds(ids: number[]): Promise<void>;
     abstract deleteByAsbId(idAsb: number): Promise<void>;
+    abstract calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number>;
+    abstract calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number>;
 }

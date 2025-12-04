@@ -19,6 +19,10 @@ export class AsbWithRelationsDto {
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
+    luasTotalBangunan: number | null;
+    koefisienLantaiTotal: number | null;
+    koefisienFungsiRuangTotal: number | null;
+    totalBiayaPembangunan: number | null;
 
     // Related entities
     kabkota?: {

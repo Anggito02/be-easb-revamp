@@ -32,6 +32,10 @@ export class Asb {
     pengawasanKonstruksi: number | null;
     managementKonstruksi: number | null;
     pengelolaanKegiatan: number | null;
+    luasTotalBangunan: number | null;
+    koefisienLantaiTotal: number | null;
+    koefisienFungsiRuangTotal: number | null;
+    totalBiayaPembangunan: number | null;
 
     // Relations
     kabkota?: KabKota | null;

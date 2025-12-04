@@ -361,19 +361,34 @@ export class AsbServiceImpl implements AsbService {
         // Step 4: Set ASB Klasifikasi
         // REQUEST_TULUNGAGUNG //
         const totalLantaiExistingAsb = existingAsb.totalLantai || 0;
+        let totalLuasLantai = 0;
         if (existingAsb.idAsbTipeBangunan === 1) {
             existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
         } else {
-            const totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
+            totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
 
             existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
         }
 
-        await this.repository.update(dto.id_asb, { idAsbKlasifikasi: existingAsb.idAsbKlasifikasi });
         // REQUEST_TULUNGAGUNG //
 
-        // Step 5: Update ASB
-        const updatedAsb = await this.repository.update(dto.id_asb, { idAsbStatus: 2 });
+        // Step 6: Calculate Luas Total Bangunan
+        existingAsb.luasTotalBangunan = totalLuasLantai;
+
+        // Step 7: Calculate Koefisien Lantai Total
+        existingAsb.koefisienLantaiTotal = await this.asbDetailService.calculateKoefLantaiTotal(dto.id_asb, totalLuasLantai);
+
+        // Step 8: Calculate Koefisien Fungsi RuangTotal
+        existingAsb.koefisienFungsiRuangTotal = await this.asbDetailService.calculateKoefFungsiRuangTotal(dto.id_asb, totalLuasLantai);
+
+        // Step 9: Update ASB
+        const updatedAsb = await this.repository.update(dto.id_asb, {
+            idAsbStatus: 2,
+            idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
+            luasTotalBangunan: existingAsb.luasTotalBangunan,
+            koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
+            koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
+        });
 
         return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
