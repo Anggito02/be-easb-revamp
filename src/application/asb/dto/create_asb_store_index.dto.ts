@@ -30,11 +30,6 @@ export class CreateAsbStoreIndexDto {
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)
-    idAsbKlasifikasi: number;
-
-    @IsInt()
-    @IsNotEmpty()
-    @Type(() => Number)
     idKabkota: number;
 
     @IsInt()
