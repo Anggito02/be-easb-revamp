@@ -47,5 +47,13 @@ export class CreateAsbStoreIndexDto {
     @Type(() => Number)
     idAsbJenis: number;
 
+    @IsInt()
+    @IsOptional()
+    @Type(() => Number)
+    idOpd?: number;
+
+    @IsInt()
+    @IsOptional()
+    @Type(() => Number)
     idAsbStatus?: number;
 }

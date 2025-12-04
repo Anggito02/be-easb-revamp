@@ -195,10 +195,13 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async createIndex(dto: CreateAsbStoreIndexDto, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // Set status to 1
             dto.idAsbStatus = 1;
+            if (userIdOpd) {
+                dto.idOpd = userIdOpd;
+            }
 
             // Create ASB
             const asb = await this.repository.create(dto);

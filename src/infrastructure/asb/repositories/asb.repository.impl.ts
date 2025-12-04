@@ -129,9 +129,15 @@ export class AsbRepositoryImpl implements AsbRepository {
     }
 
     async create(data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
-        const entity = this.repo.create(data);
-        const savedEntity = await this.repo.save(entity);
-        return plainToInstance(AsbWithRelationsDto, savedEntity);
+        try {
+            const entity = this.repo.create(data);
+            console.log("Entity created:", entity);
+            const savedEntity = await this.repo.save(entity);
+            return plainToInstance(AsbWithRelationsDto, savedEntity);
+        } catch (error) {
+            console.log("Error creating ASB:", error);
+            throw error;
+        }
     }
 
     async update(id: number, data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {

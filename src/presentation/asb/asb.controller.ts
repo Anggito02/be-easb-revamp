@@ -140,7 +140,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.createIndex(dto, user.roles);
+            const result = await this.asbService.createIndex(dto, user.idOpd, user.roles);
 
             return {
                 status: 'success',
