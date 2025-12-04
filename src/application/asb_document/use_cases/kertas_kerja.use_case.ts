@@ -153,10 +153,6 @@ export class KertasKerjaUseCase {
         `).join('');
 
         const totalLuas = dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.luas || 0), 0);
-        // Avoid division by zero
-        const koefLantai = totalLuas ? (dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.lantai_koef || 0), 0) / totalLuas) : 0;
-        const koefFungsi = totalLuas ? (dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.fungsibangunan_koef || 0), 0) / totalLuas) : 0;
-
 
         return `
 <!DOCTYPE html>
@@ -429,7 +425,7 @@ export class KertasKerjaUseCase {
                     <td></td>
                     <td>Koefesien Tingkat Lantai</td>
                     <td>:</td>
-                    <td>${number_format(koefLantai, 2)}</td>
+                    <td>${dataAsb.koefisienLantaiTotal}</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -442,7 +438,7 @@ export class KertasKerjaUseCase {
                     <td></td>
                     <td>Koefesien Fungsi Bangunan</td>
                     <td>:</td>
-                    <td>${number_format(koefFungsi, 2)}</td>
+                    <td>${dataAsb.koefisienFungsiRuangTotal}</td>
                 </tr>
                 <tr>
                     <td></td>
@@ -573,7 +569,7 @@ export class KertasKerjaUseCase {
                     <td></td>
                     <td></td>
                     <td class="text-left" colspan="4">
-                        Biaya Pekerjaan Standar = ${jbobotKoef} x ${number_format(shst || 0)} m<sup>2</sup> x ${number_format(koefLantai, 2)} x ${number_format(koefFungsi, 2)} x ${number_format(totalLuas)} m<sup>2</sup>
+                        Biaya Pekerjaan Standar = ${dataAsb.} x ${number_format(shst || 0)} m<sup>2</sup> x ${dataAsb.koefisienLantaiTotal} x ${dataAsb.koefisienFungsiRuangTotal} x ${number_format(dataAsb.luasTotalBangunan || 0)} m<sup>2</sup>
                     </td>
                 </tr>
                 <tr>

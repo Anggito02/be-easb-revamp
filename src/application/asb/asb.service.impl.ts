@@ -108,10 +108,11 @@ export class AsbServiceImpl implements AsbService {
         // Check if user is ADMIN or SUPERADMIN
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
         let result: { data: AsbWithRelationsDto[]; total: number };
 
-        if (isAdmin || isSuperAdmin) {
+        if (isAdmin || isSuperAdmin || isVerifikator) {
             // ADMIN/SUPERADMIN can access ALL ASB without OPD filter
             result = await this.repository.findAll(dto);
         } else {
@@ -147,8 +148,9 @@ export class AsbServiceImpl implements AsbService {
             const isOpd = userRoles.includes(Role.OPD);
             const isAdmin = userRoles.includes(Role.ADMIN);
             const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
-            if (isAdmin || isSuperAdmin) {
+            if (isAdmin || isSuperAdmin || isVerifikator) {
                 return await this.repository.getAllByMonthYear(dto);
             }
 
@@ -170,9 +172,13 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions
             const isOpd = userRoles.includes(Role.OPD);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
             let data: { idAsbStatus: number; count: number }[];
 
-            if (isOpd && userIdOpd) {
+            if (isVerifikator) {
+                data = await this.repository.getAsbStatusCountsByMonthYear(dto);
+            }
+            else if (isOpd && userIdOpd) {
                 // Get only asb with idOpd
                 data = await this.repository.getAsbStatusCountsByMonthYear(dto, userIdOpd);
             } else {
