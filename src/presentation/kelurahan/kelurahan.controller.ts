@@ -5,57 +5,46 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
-    Param,
     Query,
 } from '@nestjs/common';
-import { AsbFungsiRuangService } from '../../domain/asb_fungsi_ruang/asb_fungsi_ruang.service';
+import { KelurahanService } from '../../domain/kelurahan/kelurahan.service';
 import { Roles } from '../../common/decorators/roles.decorator';
-import { CreateAsbFungsiRuangDto } from './dto/create_asb_fungsi_ruang.dto';
-import { UpdateAsbFungsiRuangDto } from './dto/update_asb_fungsi_ruang.dto';
-import { DeleteAsbFungsiRuangDto } from './dto/delete_asb_fungsi_ruang.dto';
-import { GetAsbFungsiRuangsDto } from './dto/get_asb_fungsi_ruangs.dto';
-import { GetAsbFungsiRuangDetailDto } from './dto/get_asb_fungsi_ruang_detail.dto';
-import { ResponseDto } from 'src/common/dto/response.dto';
+import { CreateKelurahanDto } from './dto/create_kelurahan.dto';
+import { UpdateKelurahanDto } from './dto/update_kelurahan.dto';
+import { DeleteKelurahanDto } from './dto/delete_kelurahan.dto';
+import { GetKelurahansDto } from './dto/get_kelurahans.dto';
+import { GetKelurahanDetailDto } from './dto/get_kelurahan_detail.dto';
+import { ResponseDto } from '../../common/dto/response.dto';
 import { Role } from '../../domain/user/user_role.enum';
 
-@Controller('asb-fungsi-ruangs')
-@Roles(Role.SUPERADMIN)
-export class AsbFungsiRuangController {
-    constructor(private readonly asbFungsiRuangService: AsbFungsiRuangService) { }
+@Controller('kelurahans')
+export class KelurahanController {
+    constructor(private readonly kelurahanService: KelurahanService) { }
 
     @Post()
     @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbFungsiRuangDto): Promise<ResponseDto> {
+    async create(@Body() dto: CreateKelurahanDto): Promise<ResponseDto> {
         try {
-            const asbFungsiRuang = await this.asbFungsiRuangService.create(dto);
-
+            const kelurahan = await this.kelurahanService.create(dto);
             return {
                 status: 'success',
                 responseCode: HttpStatus.CREATED,
-                message: 'AsbFungsiRuang created',
-                data: asbFungsiRuang,
+                message: 'Kelurahan created',
+                data: kelurahan,
             };
         } catch (error) {
             if (error instanceof HttpException) {
                 const status = error.getStatus();
                 const response = error.getResponse();
-
                 let message: string;
-
                 if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(', ');
-                    } else {
-                        message = resObj.message ?? 'Error';
-                    }
+                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
                 }
-
                 return {
                     status: 'error',
                     responseCode: status,
@@ -63,7 +52,6 @@ export class AsbFungsiRuangController {
                     data: null,
                 };
             }
-
             return {
                 status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -75,34 +63,26 @@ export class AsbFungsiRuangController {
 
     @Put()
     @Roles(Role.SUPERADMIN)
-    async updateAsbFungsiRuang(@Body() dto: UpdateAsbFungsiRuangDto): Promise<ResponseDto> {
+    async update(@Body() dto: UpdateKelurahanDto): Promise<ResponseDto> {
         try {
-            const asbFungsiRuang = await this.asbFungsiRuangService.update(dto);
-
+            const kelurahan = await this.kelurahanService.update(dto);
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
-                message: 'AsbFungsiRuang updated',
-                data: asbFungsiRuang,
+                message: 'Kelurahan updated',
+                data: kelurahan,
             };
         } catch (error) {
             if (error instanceof HttpException) {
                 const status = error.getStatus();
                 const response = error.getResponse();
-
                 let message: string;
-
                 if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(', ');
-                    } else {
-                        message = resObj.message ?? 'Error';
-                    }
+                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
                 }
-
                 return {
                     status: 'error',
                     responseCode: status,
@@ -110,7 +90,6 @@ export class AsbFungsiRuangController {
                     data: null,
                 };
             }
-
             return {
                 status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -122,34 +101,26 @@ export class AsbFungsiRuangController {
 
     @Delete()
     @Roles(Role.SUPERADMIN)
-    async deleteAsbFungsiRuang(@Body() dto: DeleteAsbFungsiRuangDto): Promise<ResponseDto> {
+    async deleteKelurahan(@Body() dto: DeleteKelurahanDto): Promise<ResponseDto> {
         try {
-            const deleted = await this.asbFungsiRuangService.delete(dto.id);
-
+            await this.kelurahanService.delete(dto);
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
-                message: 'AsbFungsiRuang deleted',
-                data: deleted,
+                message: 'Kelurahan deleted',
+                data: null,
             };
         } catch (error) {
             if (error instanceof HttpException) {
                 const status = error.getStatus();
                 const response = error.getResponse();
-
                 let message: string;
-
                 if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(', ');
-                    } else {
-                        message = resObj.message ?? 'Error';
-                    }
+                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
                 }
-
                 return {
                     status: 'error',
                     responseCode: status,
@@ -157,7 +128,6 @@ export class AsbFungsiRuangController {
                     data: null,
                 };
             }
-
             return {
                 status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -168,35 +138,27 @@ export class AsbFungsiRuangController {
     }
 
     @Get()
-    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getAsbFungsiRuangs(@Query() dto: GetAsbFungsiRuangsDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.ADMIN, Role.VERIFIKATOR, Role.SUPERADMIN)
+    async getKelurahans(@Query() dto: GetKelurahansDto): Promise<ResponseDto> {
         try {
-            const result = await this.asbFungsiRuangService.findAll(dto);
-
+            const result = await this.kelurahanService.getAll(dto);
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
-                message: 'AsbFungsiRuangs retrieved',
+                message: 'Kelurahans retrieved',
                 data: result,
             };
         } catch (error) {
             if (error instanceof HttpException) {
                 const status = error.getStatus();
                 const response = error.getResponse();
-
                 let message: string;
-
                 if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(', ');
-                    } else {
-                        message = resObj.message ?? 'Error';
-                    }
+                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
                 }
-
                 return {
                     status: 'error',
                     responseCode: status,
@@ -204,7 +166,6 @@ export class AsbFungsiRuangController {
                     data: null,
                 };
             }
-
             return {
                 status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -215,35 +176,27 @@ export class AsbFungsiRuangController {
     }
 
     @Get('detail')
-    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getAsbFungsiRuangDetail(@Query() dto: GetAsbFungsiRuangDetailDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.ADMIN, Role.VERIFIKATOR, Role.SUPERADMIN)
+    async getKelurahanDetail(@Query() dto: GetKelurahanDetailDto): Promise<ResponseDto> {
         try {
-            const asbFungsiRuang = await this.asbFungsiRuangService.findById(dto.id);
-
+            const kelurahan = await this.kelurahanService.getById(dto);
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
-                message: 'AsbFungsiRuang detail retrieved',
-                data: asbFungsiRuang,
+                message: 'Kelurahan detail retrieved',
+                data: kelurahan,
             };
         } catch (error) {
             if (error instanceof HttpException) {
                 const status = error.getStatus();
                 const response = error.getResponse();
-
                 let message: string;
-
                 if (typeof response === 'string') {
                     message = response;
                 } else {
                     const resObj = response as any;
-                    if (Array.isArray(resObj.message)) {
-                        message = resObj.message.join(', ');
-                    } else {
-                        message = resObj.message ?? 'Error';
-                    }
+                    message = Array.isArray(resObj.message) ? resObj.message.join(', ') : resObj.message ?? 'Error';
                 }
-
                 return {
                     status: 'error',
                     responseCode: status,
@@ -251,7 +204,6 @@ export class AsbFungsiRuangController {
                     data: null,
                 };
             }
-
             return {
                 status: 'error',
                 responseCode: HttpStatus.INTERNAL_SERVER_ERROR,

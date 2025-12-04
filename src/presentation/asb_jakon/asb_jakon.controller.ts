@@ -45,6 +45,7 @@ export class AsbJakonController {
     }
 
     @Get()
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getAll(@Query() dto: GetAsbJakonListDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
@@ -55,6 +56,7 @@ export class AsbJakonController {
     }
 
     @Get('detail')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getDetail(@Query() dto: GetAsbJakonDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
