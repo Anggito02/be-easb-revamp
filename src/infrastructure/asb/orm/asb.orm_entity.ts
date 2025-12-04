@@ -160,6 +160,24 @@ export class AsbOrmEntity {
     })
     bobotTotalBpns: number | null;
 
+    @Column({
+        name: 'rekapitulasi_biaya_konstruksi',
+        type: 'decimal',
+        precision: 10,
+        scale: 2,
+        nullable: true,
+    })
+    rekapitulasiBiayaKonstruksi: number | null;
+
+    @Column({
+        name: 'rekapitulasi_biaya_konstruksi_rounded',
+        type: 'decimal',
+        precision: 10,
+        scale: 2,
+        nullable: true,
+    })
+    rekapitulasiBiayaKonstruksiRounded: number | null;
+
     // Timestamps
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt: Date;

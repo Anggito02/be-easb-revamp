@@ -26,6 +26,7 @@ import { CalculateBobotBPNSReviewUseCase } from 'src/application/asb_bipek_non_s
 import { AsbDetailReviewModule } from '../asb_detail_review/asb_detail_review.module';
 import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
 import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
+import { AsbJakonModule } from '../asb_jakon/asb_jakon.module';
 
 @Module({
     imports: [
@@ -45,7 +46,8 @@ import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pr
         AsbBipekStandardReviewModule,
         AsbBipekNonStdReviewModule,
         AsbKomponenBangunanProsStdModule,
-        AsbKomponenBangunanProsNonstdModule
+        AsbKomponenBangunanProsNonstdModule,
+        AsbJakonModule
     ],
     providers: [
         {

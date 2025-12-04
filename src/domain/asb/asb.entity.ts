@@ -40,6 +40,8 @@ export class Asb {
     nominalBpns: number | null;
     bobotTotalBps: number | null;
     bobotTotalBpns: number | null;
+    rekapitulasiBiayaKonstruksi: number | null;
+    rekapitulasiBiayaKonstruksiRounded: number | null;
 
     // Relations
     kabkota?: KabKota | null;

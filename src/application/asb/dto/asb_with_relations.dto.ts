@@ -27,6 +27,8 @@ export class AsbWithRelationsDto {
     nominalBpns: number | null;
     bobotTotalBps: number | null;
     bobotTotalBpns: number | null;
+    rekapitulasiBiayaKonstruksi: number | null;
+    rekapitulasiBiayaKonstruksiRounded: number | null;
 
     // Related entities
     kabkota?: {
