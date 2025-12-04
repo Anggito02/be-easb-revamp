@@ -25,6 +25,7 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbDetail, saved);
         } catch (error) {
+            console.log("Error ASB Detail: ", error);
             throw error;
         }
     }
@@ -78,6 +79,7 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
                 throw new Error(`AsbDetail with id ${id} not found`);
             }
         } catch (error) {
+            console.log("Error deleting ASB Detail: ", error);
             throw error;
         }
     }

@@ -120,8 +120,10 @@ export class AsbDetailServiceImpl extends AsbDetailService {
 
     async deleteByAsbId(idAsb: number): Promise<void> {
         try {
+            console.log("Deleting ASB Detail by ASB ID: ", idAsb);
             await this.repository.deleteByAsbId(idAsb);
         } catch (error) {
+            console.log("Error deleting ASB Detail by ASB ID: ", error);
             throw error;
         }
     }

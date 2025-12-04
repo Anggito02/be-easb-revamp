@@ -13,7 +13,7 @@ import { AsbLantaiOrmEntity } from 'src/infrastructure/asb_lantai/orm/asb_lantai
 import { AsbFungsiRuangOrmEntity } from '../../asb_fungsi_ruang/orm/asb_fungsi_ruang.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
-@Entity('asb_detail')
+@Entity('asb_details')
 export class AsbDetailOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
