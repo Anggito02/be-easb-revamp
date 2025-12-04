@@ -13,7 +13,7 @@ import { CalculationMethod } from '../../../domain/asb_bipek_standard/calculatio
 import { AsbKomponenBangunanStdOrmEntity } from '../../asb_komponen_bangunan_std/orm/asb_komponen_bangunan_std.orm_entity';
 import { AsbOrmEntity } from '../../asb/orm/asb.orm_entity';
 
-@Entity('asb_bipek_standard')
+@Entity('asb_bipek_standards')
 export class AsbBipekStandardOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;

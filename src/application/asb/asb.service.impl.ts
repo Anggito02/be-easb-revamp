@@ -227,6 +227,7 @@ export class AsbServiceImpl implements AsbService {
 
             return { id: asb.id, status: asb.idAsbStatus };
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }
