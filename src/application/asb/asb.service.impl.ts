@@ -478,9 +478,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Update ASB status to 5
+            // 2. Update Rekening &  ASB status to 5
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 5
+                idAsbStatus: 5,
+                idRekening: dto.id_rekening
             });
 
             return {
