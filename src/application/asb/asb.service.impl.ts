@@ -951,7 +951,7 @@ export class AsbServiceImpl implements AsbService {
 
             const kertasKerjaDto = {
                 title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
-                tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
+                tipe_bangunan: asbData.asbTipeBangunan?.tipe_bangunan,
                 tanggal_cetak: dateFormatted,
                 dataAsb: asbData,
                 dataAsbDetailReview: dataAsbDetailReview,

@@ -33,7 +33,7 @@ export class AsbWithRelationsDto {
     // Related entities
     kabkota?: {
         id: number;
-        namaKabkota: string;
+        nama: string;
         idProvinsi: number;
     } | null;
 
@@ -53,9 +53,9 @@ export class AsbWithRelationsDto {
         alias: string;
     };
 
-    tipeBangunan?: {
+    asbTipeBangunan?: {
         id: number;
-        tipeBangunan: string;
+        tipe_bangunan: string;
     };
 
     asbKlasifikasi?: {
