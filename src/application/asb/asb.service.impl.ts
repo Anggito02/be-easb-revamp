@@ -134,6 +134,12 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions
             const isOpd = userRoles.includes(Role.OPD);
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+
+            if (isAdmin || isSuperAdmin) {
+                return await this.repository.getAllByMonthYear(dto);
+            }
 
             if (isOpd && userIdOpd) {
                 // Get only asb with idOpd

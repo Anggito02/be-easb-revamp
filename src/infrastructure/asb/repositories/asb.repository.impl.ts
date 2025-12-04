@@ -90,14 +90,16 @@ export class AsbRepositoryImpl implements AsbRepository {
             .createQueryBuilder('e')
             .select("DATE(e.created_at)", "date")
             .addSelect("COUNT(e.id)", "count")
-            .where("MONTH(e.created_at) = :month", { month: dto.month })
-            .andWhere("YEAR(e.created_at) = :year", { year: dto.year })
+            .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
+            .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
             .groupBy("DATE(e.created_at)")
             .orderBy("DATE(e.created_at)", "ASC");
 
         if (idOpd) {
             qb.andWhere("e.id_opd = :idOpd", { idOpd });
         }
+
+        console.log("qb", qb.getQuery());
 
         const rows = await qb.getRawMany<{ date: string; count: string }>();
 
