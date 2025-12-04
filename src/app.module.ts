@@ -37,6 +37,7 @@ import { AsbModule } from './presentation/asb/asb.module';
 import { OpdModule } from './presentation/opd/opd.module';
 import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/standard_klasifikasi.module';
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
+import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -112,7 +113,8 @@ import { DataSourceOptions } from 'typeorm';
         OpdModule,
         StandardKlasifikasiModule,
         AsbJakonModule,
-        KecamatanModule
+        KecamatanModule,
+        KelurahanModule
         // other modules...
     ],
     providers: [
