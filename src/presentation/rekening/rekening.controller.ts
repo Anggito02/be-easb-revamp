@@ -166,7 +166,7 @@ export class RekeningController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getRekenings(@Query() dto: GetRekeningsDto): Promise<ResponseDto> {
         try {
             const result = await this.rekeningService.findAll(dto);
@@ -213,7 +213,7 @@ export class RekeningController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getRekeningDetail(@Query() dto: GetRekeningDetailDto): Promise<ResponseDto> {
         try {
             const rekening = await this.rekeningService.findById(dto.id);

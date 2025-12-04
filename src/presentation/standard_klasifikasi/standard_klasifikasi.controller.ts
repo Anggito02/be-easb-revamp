@@ -167,7 +167,7 @@ export class StandardKlasifikasiController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getStandardKlasifikasis(@Query() dto: GetStandardKlasifikasisDto): Promise<ResponseDto> {
         try {
             const result = await this.standardKlasifikasiService.findAll(dto);
@@ -214,7 +214,7 @@ export class StandardKlasifikasiController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getStandardKlasifikasiDetail(@Query() dto: GetStandardKlasifikasiDetailDto): Promise<ResponseDto> {
         try {
             const standardKlasifikasi = await this.standardKlasifikasiService.findById(dto);

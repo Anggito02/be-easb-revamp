@@ -139,7 +139,7 @@ export class KecamatanController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getKecamatans(@Query() dto: GetKecamatansDto): Promise<ResponseDto> {
         try {
             const result = await this.kecamatanService.getAll(dto);
@@ -177,7 +177,7 @@ export class KecamatanController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getKecamatanDetail(@Query() dto: GetKecamatanDetailDto): Promise<ResponseDto> {
         try {
             const kecamatan = await this.kecamatanService.getById(dto);

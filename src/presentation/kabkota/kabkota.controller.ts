@@ -167,7 +167,7 @@ export class KabKotaController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getKabKotas(@Query() dto: GetKabKotasDto): Promise<ResponseDto> {
         try {
             const result = await this.kabKotaService.getKabKotas(dto);
@@ -214,7 +214,7 @@ export class KabKotaController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getKabKotaDetail(@Query() dto: GetKabKotaDetailDto): Promise<ResponseDto> {
         try {
             const kabkota = await this.kabKotaService.getKabKotaDetail(dto);

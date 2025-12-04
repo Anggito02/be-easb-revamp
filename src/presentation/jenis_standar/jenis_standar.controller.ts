@@ -167,7 +167,7 @@ export class JenisStandarController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getJenisStandars(@Query() dto: GetJenisStandarDto): Promise<ResponseDto> {
         try {
             const result = await this.jenisStandarService.findAll(dto);
@@ -214,7 +214,7 @@ export class JenisStandarController {
     }
 
     @Get("detail")
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getJenisStandarDetail(@Query() dto: GetJenisStandarDetailDto): Promise<ResponseDto> {
         try {
             const jenisStandar = await this.jenisStandarService.findById(dto.id);

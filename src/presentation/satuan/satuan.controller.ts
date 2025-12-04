@@ -167,7 +167,7 @@ export class SatuanController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getSatuans(@Query() dto: GetSatuansDto): Promise<ResponseDto> {
         try {
             const result = await this.satuanService.getSatuans(dto);
@@ -214,7 +214,7 @@ export class SatuanController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getSatuanDetail(@Query() dto: GetSatuanDetailDto): Promise<ResponseDto> {
         try {
             const satuan = await this.satuanService.getSatuanDetail(dto);

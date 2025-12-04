@@ -167,7 +167,7 @@ export class ProvinceController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getProvinces(@Query() dto: GetProvincesDto): Promise<ResponseDto> {
         try {
             const result = await this.provinceService.getProvinces(dto);
@@ -214,7 +214,7 @@ export class ProvinceController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async getProvinceDetail(@Query() dto: GetProvinceDetailDto): Promise<ResponseDto> {
         try {
             const province = await this.provinceService.getProvinceDetail(dto);
