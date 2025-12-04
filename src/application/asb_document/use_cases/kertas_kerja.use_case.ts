@@ -569,7 +569,7 @@ export class KertasKerjaUseCase {
                     <td></td>
                     <td></td>
                     <td class="text-left" colspan="4">
-                        Biaya Pekerjaan Standar = ${dataAsb.} x ${number_format(shst || 0)} m<sup>2</sup> x ${dataAsb.koefisienLantaiTotal} x ${dataAsb.koefisienFungsiRuangTotal} x ${number_format(dataAsb.luasTotalBangunan || 0)} m<sup>2</sup>
+                        Biaya Pekerjaan Standar = ${dataAsb.bobotTotalBps || 0} x ${number_format(shst || 0)} m<sup>2</sup> x ${dataAsb.koefisienLantaiTotal} x ${dataAsb.koefisienFungsiRuangTotal} x ${number_format(dataAsb.luasTotalBangunan || 0)} m<sup>2</sup>
                     </td>
                 </tr>
                 <tr>
@@ -623,7 +623,7 @@ export class KertasKerjaUseCase {
                     <td></td>
                     <td></td>
                     <td class="text-left" colspan="4">
-                        Biaya Pekerjaan Standar = ${jbobotNsKoef} x ${number_format(shst || 0)} m<sup>2</sup> x ${number_format(koefLantai, 2)} x ${number_format(koefFungsi, 2)} x ${number_format(totalLuas)} m<sup>2</sup>
+                        Biaya Pekerjaan Non Standar = ${dataAsb.bobotTotalBpns || 0} x ${number_format(shst || 0)} m<sup>2</sup> x ${dataAsb.koefisienLantaiTotal} x ${dataAsb.koefisienFungsiRuangTotal} x ${dataAsb.luasTotalBangunan || 0} m<sup>2</sup>
                     </td>
                 </tr>
                 <tr>
