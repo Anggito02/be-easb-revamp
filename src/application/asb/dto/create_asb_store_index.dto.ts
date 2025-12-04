@@ -18,7 +18,6 @@ export class CreateAsbStoreIndexDto {
     @IsInt()
     @IsNotEmpty()
     @Min(1)
-    @Max(12)
     @Type(() => Number)
     totalLantai: number;
 

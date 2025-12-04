@@ -29,4 +29,7 @@ export class UpdateAsbStoreLantaiDto {
 
     @IsOptional()
     id_asb_bipek_nonstd?: number[];
+
+    @IsOptional()
+    id_asb_klasifikasi?: number;
 }

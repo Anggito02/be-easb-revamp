@@ -358,7 +358,21 @@ export class AsbServiceImpl implements AsbService {
             await this.asbDetailService.create(createDetailDto);
         }
 
-        // Step 4: Update ASB status to 2
+        // Step 4: Set ASB Klasifikasi
+        // REQUEST_TULUNGAGUNG //
+        const totalLantaiExistingAsb = existingAsb.totalLantai || 0;
+        if (existingAsb.idAsbTipeBangunan === 1) {
+            existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
+        } else {
+            const totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
+
+            existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
+        }
+
+        await this.repository.update(dto.id_asb, { idAsbKlasifikasi: existingAsb.idAsbKlasifikasi });
+        // REQUEST_TULUNGAGUNG //
+
+        // Step 5: Update ASB
         const updatedAsb = await this.repository.update(dto.id_asb, { idAsbStatus: 2 });
 
         return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
