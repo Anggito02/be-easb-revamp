@@ -441,6 +441,7 @@ export class AsbServiceImpl implements AsbService {
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 3,
+                shst: shstNominal,
                 nominalBps: BPS,
                 bobotTotalBps: jumlahBobot
             });
@@ -592,6 +593,7 @@ export class AsbServiceImpl implements AsbService {
             // 3. Create AsbDetailReview records for each lantai
             for (let i = 0; i < asb.totalLantai; i++) {
                 const createDetailReviewDto = new CreateAsbDetailReviewDto();
+                createDetailReviewDto.idAsb = dto.id_asb;
                 createDetailReviewDto.idAsbDetail = asbDetails.data[i].id; // Will be set by the service if needed
                 createDetailReviewDto.files = Files.ORIGIN;
                 createDetailReviewDto.idAsbLantai = dto.verif_id_asb_lantai[i];

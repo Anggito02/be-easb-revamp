@@ -101,6 +101,7 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
                 totalPages: Math.ceil(total / dto.amount)
             };
         } catch (error) {
+            console.log(error);
             throw error;
         }
     }

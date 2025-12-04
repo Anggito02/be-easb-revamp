@@ -3,6 +3,9 @@ import { Files } from '../../../domain/asb_detail/files.enum';
 
 export class CreateAsbDetailReviewDto {
     @IsInt()
+    idAsb: number;
+
+    @IsInt()
     idAsbDetail: number;
 
     @IsEnum(Files)
