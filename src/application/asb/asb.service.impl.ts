@@ -60,43 +60,48 @@ export class AsbServiceImpl implements AsbService {
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
-        // Check if user is ADMIN or SUPERADMIN
-        const isAdmin = userRoles.includes(Role.ADMIN);
-        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
-        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+        try {
+            // Check if user is ADMIN or SUPERADMIN
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
-        if (isAdmin || isSuperAdmin || isVerifikator) {
-            // ADMIN/SUPERADMIN can access ANY ASB without OPD filter
-            const asb = await this.repository.findById(id);
+            if (isAdmin || isSuperAdmin || isVerifikator) {
+                // ADMIN/SUPERADMIN can access ANY ASB without OPD filter
+                const asb = await this.repository.findById(id);
 
-            if (!asb) {
-                throw new NotFoundException(`ASB with id ${id} not found`);
+                if (!asb) {
+                    throw new NotFoundException(`ASB with id ${id} not found`);
+                }
+
+                return asb;
             }
 
-            return asb;
+            // For OPD users
+            const isOpd = userRoles.includes(Role.OPD);
+
+            if (isOpd) {
+                // OPD users must have an idOpd
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+
+                // Fetch with OPD filter
+                const asb = await this.repository.findById(id, userIdOpd);
+
+                if (!asb) {
+                    // Either doesn't exist OR belongs to different OPD (we don't reveal which)
+                    throw new NotFoundException(`ASB with id ${id} not found`);
+                }
+
+                return asb;
+            }
+
+            else throw new ForbiddenException('User is not authorized to access this ASB');
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
-
-        // For OPD users
-        const isOpd = userRoles.includes(Role.OPD);
-
-        if (isOpd) {
-            // OPD users must have an idOpd
-            if (!userIdOpd) {
-                throw new ForbiddenException('OPD user has no associated OPD');
-            }
-
-            // Fetch with OPD filter
-            const asb = await this.repository.findById(id, userIdOpd);
-
-            if (!asb) {
-                // Either doesn't exist OR belongs to different OPD (we don't reveal which)
-                throw new NotFoundException(`ASB with id ${id} not found`);
-            }
-
-            return asb;
-        }
-
-        else throw new ForbiddenException('User is not authorized to access this ASB');
     }
 
     async findAll(dto: FindAllAsbDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbListResultDto> {
@@ -751,6 +756,7 @@ export class AsbServiceImpl implements AsbService {
             }
 
             // 2. Update ASB idRekeningReview and status to 12
+            console.log(dto.id_rekening_review);
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idRekeningReview: dto.id_rekening_review,
                 idAsbStatus: 12
@@ -879,6 +885,10 @@ export class AsbServiceImpl implements AsbService {
             // 4. Update ASB 
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8,
+                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
+                pengawasanKonstruksi: nominalPengawasanKonstruksi,
+                managementKonstruksi: nominalManagementKonstruksi,
+                pengelolaanKegiatan: nominalPengelolaanKegiatan,
                 rekapitulasiBiayaKonstruksi: asb.rekapitulasiBiayaKonstruksi,
                 rekapitulasiBiayaKonstruksiRounded: asb.rekapitulasiBiayaKonstruksiRounded
             });

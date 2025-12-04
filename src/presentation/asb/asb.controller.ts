@@ -83,7 +83,7 @@ export class AsbController {
     @Get('id')
     @Roles(Role.OPD, Role.ADMIN, Role.SUPERADMIN)
     async findById(
-        @Query() id: number,
+        id: number,
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: AsbWithRelationsDto }> {
         const user = req.user as UserContext;

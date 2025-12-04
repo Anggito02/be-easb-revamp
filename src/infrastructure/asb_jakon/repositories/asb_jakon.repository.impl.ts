@@ -118,7 +118,8 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
         try {
-            const entity = await this.repo
+            // Try to find a record where total_biaya falls within the price range
+            let entity = await this.repo
                 .createQueryBuilder('asb_jakon')
                 .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
                     id_asb_klasifikasi: dto.id_asb_klasifikasi
@@ -139,6 +140,27 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
                     total_biaya: dto.total_biaya_pembangunan
                 })
                 .getOne();
+
+            // If no record found in range, check if total_biaya is less than all price_from
+            // If so, get the record with the lowest price_from
+            if (!entity) {
+                entity = await this.repo
+                    .createQueryBuilder('asb_jakon')
+                    .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                        id_asb_klasifikasi: dto.id_asb_klasifikasi
+                    })
+                    .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                        id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                    })
+                    .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
+                        id_asb_jenis: dto.id_asb_jenis
+                    })
+                    .andWhere('asb_jakon.type = :type', {
+                        type: dto.type
+                    })
+                    .orderBy('asb_jakon.price_from', 'ASC')
+                    .getOne();
+            }
 
             return entity || null;
         } catch (error) {

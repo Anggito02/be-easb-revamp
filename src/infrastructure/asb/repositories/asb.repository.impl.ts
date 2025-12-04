@@ -19,7 +19,7 @@ export class AsbRepositoryImpl implements AsbRepository {
         const whereClause: any = { id };
 
         // Add OPD filter if provided
-        if (!idOpd) {
+        if (idOpd) {
             whereClause.idOpd = idOpd;
         }
 
