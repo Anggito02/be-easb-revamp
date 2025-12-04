@@ -78,8 +78,8 @@ export class AsbBipekStandardReviewOrmEntity {
     asbBipekStandard: AsbBipekStandardOrmEntity;
 
     @ManyToOne(() => AsbKomponenBangunanStdOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_asb_komponen_bangunan' })
-    asbKomponenBangunan: AsbKomponenBangunanStdOrmEntity;
+    @JoinColumn({ name: 'id_asb_komponen_bangunan_std' })
+    asbKomponenBangunanStd: AsbKomponenBangunanStdOrmEntity;
 
     @ManyToOne(() => AsbOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb' })

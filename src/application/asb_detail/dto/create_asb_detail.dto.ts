@@ -7,6 +7,9 @@ export class CreateAsbDetailDto {
     files?: Files;
 
     @IsInt()
+    idAsb: number;
+
+    @IsInt()
     idAsbLantai: number;
 
     @IsInt()

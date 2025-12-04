@@ -79,7 +79,6 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
                 throw new Error(`AsbDetail with id ${id} not found`);
             }
         } catch (error) {
-            console.log("Error deleting ASB Detail: ", error);
             throw error;
         }
     }

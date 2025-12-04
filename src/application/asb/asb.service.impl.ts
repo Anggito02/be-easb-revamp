@@ -36,6 +36,7 @@ import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dt
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
+import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -51,6 +52,7 @@ export class AsbServiceImpl implements AsbService {
         private readonly calculateBobotBPSUseCase: CalculateBobotBPSUseCase,
         private readonly calculateBobotBPNSUseCase: CalculateBobotBPNSUseCase,
         private readonly asbDetailReviewService: AsbDetailReviewService,
+        private readonly calculateBobotBPSReviewUseCase: CalculateBobotBPSReviewUseCase,
         private readonly calculateBobotBPNSReviewUseCase: CalculateBobotBPNSReviewUseCase,
     ) { }
 
@@ -58,8 +60,9 @@ export class AsbServiceImpl implements AsbService {
         // Check if user is ADMIN or SUPERADMIN
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
-        if (isAdmin || isSuperAdmin) {
+        if (isAdmin || isSuperAdmin || isVerifikator) {
             // ADMIN/SUPERADMIN can access ANY ASB without OPD filter
             const asb = await this.repository.findById(id);
 
@@ -345,6 +348,7 @@ export class AsbServiceImpl implements AsbService {
         // Step 3: Create AsbDetail records for each floor
         for (let i = 0; i < totalLantai; i++) {
             const createDetailDto = new CreateAsbDetailDto();
+            createDetailDto.idAsb = dto.id_asb;
             createDetailDto.idAsbLantai = dto.id_asb_lantai[i];
             createDetailDto.idAsbFungsiRuang = dto.id_asb_fungsi_ruang[i];
             createDetailDto.idAsbTipeBangunan = existingAsb.idAsbTipeBangunan;
@@ -527,10 +531,19 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            // 2. Create AsbDetailReview records for each lantai
+            // 2. Get all AsbDetail records
+            const asbDetails = await this.asbDetailService.getByAsb({
+                idAsb: dto.id_asb,
+                page: 1,
+                amount: 1000
+            });
+
+            console.log("Get asb detail", asbDetails);
+
+            // 3. Create AsbDetailReview records for each lantai
             for (let i = 0; i < asb.totalLantai; i++) {
                 const createDetailReviewDto = new CreateAsbDetailReviewDto();
-                createDetailReviewDto.idAsbDetail = 0; // Will be set by the service if needed
+                createDetailReviewDto.idAsbDetail = asbDetails.data[i].id; // Will be set by the service if needed
                 createDetailReviewDto.files = Files.ORIGIN;
                 createDetailReviewDto.idAsbLantai = dto.verif_id_asb_lantai[i];
                 createDetailReviewDto.idAsbFungsiRuang = dto.verif_id_asb_fungsi_ruang[i];
@@ -540,7 +553,7 @@ export class AsbServiceImpl implements AsbService {
                 await this.asbDetailReviewService.create(createDetailReviewDto);
             }
 
-            // 3. Update ASB status to 9
+            // 4. Update ASB status to 9
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 9
             });
@@ -550,6 +563,7 @@ export class AsbServiceImpl implements AsbService {
                 status: updatedAsb.asbStatus
             };
         } catch (error) {
+            console.log("Error:", error);
             throw error;
         }
     }
@@ -589,7 +603,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            await this.calculateBobotBPNSReviewUseCase.execute(
+            await this.calculateBobotBPSReviewUseCase.execute(
                 dto.id_asb,
                 asbBipekStandardIds,
                 dto.verif_komponen_std,
@@ -608,6 +622,7 @@ export class AsbServiceImpl implements AsbService {
                 status: updatedAsb.asbStatus
             };
         } catch (error) {
+            console.log("Error:", error);
             throw error;
         }
     }

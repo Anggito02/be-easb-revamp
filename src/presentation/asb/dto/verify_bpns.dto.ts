@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, IsArray } from 'class-validator';
+import { IsNumber, IsNotEmpty, IsArray, IsOptional } from 'class-validator';
 
 export class VerifyBpnsDto {
     @IsNumber()
@@ -14,5 +14,8 @@ export class VerifyBpnsDto {
     verif_bobot_acuan_nonstd: number[];
 
     // internal use
+    @IsArray()
+    @IsNumber({}, { each: true })
+    @IsOptional()
     id_asb_bipek_nonstd?: number[];
 }

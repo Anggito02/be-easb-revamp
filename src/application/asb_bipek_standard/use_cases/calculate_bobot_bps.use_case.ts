@@ -68,6 +68,8 @@ export class CalculateBobotBPSUseCase {
             amount: 100
         });
 
+        console.log("Get asb detail", asbDetails);
+
         let KTL = 0;
         let KFB = 0;
         let LTB = 0;

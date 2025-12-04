@@ -24,6 +24,7 @@ export class AsbBipekStandardReviewRepositoryImpl extends AsbBipekStandardReview
     ): Promise<AsbBipekStandardReview> {
         try {
             const ormEntity = this.repository.create(dto);
+            console.log("ORM Entity:", ormEntity);
 
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbBipekStandardReview, saved);
