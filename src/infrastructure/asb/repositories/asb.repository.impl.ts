@@ -141,13 +141,18 @@ export class AsbRepositoryImpl implements AsbRepository {
     }
 
     async update(id: number, data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
-        await this.repo.update(id, data);
-        console.log("Entity updated:", data);
-        const updatedEntity = await this.repo.findOne({
-            where: { id },
-            relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd'],
-        });
-        return plainToInstance(AsbWithRelationsDto, updatedEntity);
+        try {
+            await this.repo.update(id, data);
+            console.log("Entity updated:", data);
+            const updatedEntity = await this.repo.findOne({
+                where: { id },
+                relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd'],
+            });
+            return plainToInstance(AsbWithRelationsDto, updatedEntity);
+        } catch (error) {
+            console.log("Error updating ASB:", error);
+            throw error;
+        }
     }
 
     async delete(id: number): Promise<void> {

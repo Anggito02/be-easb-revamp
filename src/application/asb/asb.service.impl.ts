@@ -408,34 +408,41 @@ export class AsbServiceImpl implements AsbService {
             // 3. Get SHST Nominal
             const shstDto = new GetShstNominalDto();
             shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
-            console.log("asb:", asb);
+
             // Ensure optional fields are present or handle error
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
                 throw new Error("ASB is missing required classification or location data for SHST lookup");
             }
             shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
             shstDto.id_kabkota = asb.idKabkota;
+            shstDto.tahun = asb.tahunAnggaran || new Date().getFullYear();
 
             console.log("Shst dto:", shstDto);
 
             const shstNominal = await this.shstService.getNominal(shstDto);
+            console.log("Shst nominal:", shstNominal);
 
             // 4. Calculate BPS
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            await this.calculateBobotBPSUseCase.execute(
+            const [BPS, jumlahBobot] = await this.calculateBobotBPSUseCase.execute(
                 dto.id_asb,
                 dto.komponen_std,
                 dto.bobot_std,
                 shstNominal,
-                asb.totalLantai
+                asb.totalLantai,
+                asb.koefisienLantaiTotal || 0,
+                asb.koefisienFungsiRuangTotal || 0,
+                asb.luasTotalBangunan || 0
             );
 
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 3
+                idAsbStatus: 3,
+                nominalBps: BPS,
+                bobotTotalBps: jumlahBobot
             });
 
             return {
@@ -464,32 +471,47 @@ export class AsbServiceImpl implements AsbService {
             // 3. Get SHST Nominal using asb data
             const shstDto = new GetShstNominalDto();
             shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
-            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+
             // Ensure optional fields are present or handle error
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
                 throw new Error("ASB is missing required classification or location data for SHST lookup");
             }
             shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
             shstDto.id_kabkota = asb.idKabkota;
+            shstDto.tahun = asb.tahunAnggaran || new Date().getFullYear();
 
             const shstNominal = await this.shstService.getNominal(shstDto);
+            console.log("Shst nominal:", shstNominal);
 
             // 4. Calculate BPNS
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            await this.calculateBobotBPNSUseCase.execute(
+            const [BPNS, jumlahBobot] = await this.calculateBobotBPNSUseCase.execute(
                 dto.id_asb,
                 dto.komponen_nonstd,
                 dto.bobot_nonstd,
                 shstNominal,
-                asb.totalLantai
+                asb.totalLantai,
+                asb.koefisienLantaiTotal || 0,
+                asb.koefisienFungsiRuangTotal || 0,
+                asb.luasTotalBangunan || 0,
+                asb.bobotTotalBps || 0
             );
+
+            // Update total biaya pembangunan
+            const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
+            console.log("BPNS:", BPNS);
+            console.log("Nominal BPS:", asb.nominalBps);
+            console.log("Total biaya pembangunan:", totalBiayaPembangunan);
 
             // 5. Update ASB status to 4
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 4
+                idAsbStatus: 4,
+                nominalBpns: BPNS,
+                bobotTotalBpns: jumlahBobot,
+                totalBiayaPembangunan: totalBiayaPembangunan
             });
 
             return {

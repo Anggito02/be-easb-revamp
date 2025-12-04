@@ -128,6 +128,38 @@ export class AsbOrmEntity {
     })
     totalBiayaPembangunan: number | null;
 
+    @Column({
+        name: 'nominal_bps',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    nominalBps: number | null;
+
+    @Column({
+        name: 'nominal_bpns',
+        type: 'decimal',
+        precision: 20,
+        scale: 2,
+        nullable: true,
+    })
+    nominalBpns: number | null;
+
+    @Column({
+        name: 'bobot_total_bps',
+        type: 'float',
+        nullable: true,
+    })
+    bobotTotalBps: number | null;
+
+    @Column({
+        name: 'bobot_total_bpns',
+        type: 'float',
+        nullable: true,
+    })
+    bobotTotalBpns: number | null;
+
     // Timestamps
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt: Date;

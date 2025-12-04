@@ -23,6 +23,10 @@ export class AsbWithRelationsDto {
     koefisienLantaiTotal: number | null;
     koefisienFungsiRuangTotal: number | null;
     totalBiayaPembangunan: number | null;
+    nominalBps: number | null;
+    nominalBpns: number | null;
+    bobotTotalBps: number | null;
+    bobotTotalBpns: number | null;
 
     // Related entities
     kabkota?: {

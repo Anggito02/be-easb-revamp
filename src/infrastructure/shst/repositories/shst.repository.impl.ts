@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ShstRepository } from "../../../domain/shst/shst.repository";
@@ -110,12 +110,16 @@ export class ShstRepositoryImpl extends ShstRepository {
                 where: {
                     id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan,
                     id_asb_klasifikasi: dto.id_asb_klasifikasi,
-                    id_kabkota: dto.id_kabkota,
-                    tahun: 2025
+                    id_kabkota: dto.id_kabkota
                 },
                 order: { id: 'DESC' }
             });
-            return entity?.nominal || 0;
+
+            if (!entity) {
+                throw new NotFoundException(`SHST record not found`);
+            }
+
+            return entity.nominal;
         } catch (error) {
             throw error;
         }

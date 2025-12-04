@@ -19,8 +19,12 @@ export class CalculateBobotBPNSUseCase {
         komponenIds: number[],
         bobotInputs: number[],
         shst: number,
-        totalLantai: number
-    ): Promise<number> {
+        totalLantai: number,
+        koefisienLantaiTotal: number,
+        koefisienFungsiRuangTotal: number,
+        luasTotalBangunan: number,
+        bobotTotalBps: number
+    ): Promise<number[]> {
         let jumlahBobot = 0;
         let kompBangProsList: AsbKomponenBangunanProsNonstd[] = [];
         let calculationMethod: CalculationMethod;
@@ -62,25 +66,11 @@ export class CalculateBobotBPNSUseCase {
             }
         }
 
-        // Calculate KTL, KFB, LTB from AsbDetail
-        const asbDetails = await this.asbDetailService.getByAsb({
-            idAsb,
-            page: 1,
-            amount: 100
-        });
-
-        let KTL = 0;
-        let KFB = 0;
-        let LTB = 0;
-
-        for (const detail of asbDetails.data) {
-            KTL += detail.lantaiKoef || 0;
-            KFB += detail.asbFungsiRuangKoef || 0;
-            LTB += detail.luas || 0;
-        }
+        jumlahBobot = jumlahBobot > 1.5 * bobotTotalBps ? 1.5 * bobotTotalBps : jumlahBobot;
 
         // Calculate BPNS
-        const BPNS = jumlahBobot * shst * (KTL / LTB) * (KFB / LTB) * LTB;
+        const BPNS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
+        console.log("BPNS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan", BPNS, jumlahBobot, shst, koefisienLantaiTotal, koefisienFungsiRuangTotal, luasTotalBangunan);
 
         // Loop 2: Create and save AsbBipekNonStd records
         for (let i = 0; i < komponenIds.length; i++) {
@@ -114,6 +104,6 @@ export class CalculateBobotBPNSUseCase {
             }
         }
 
-        return BPNS;
+        return [BPNS, jumlahBobot];
     }
 }

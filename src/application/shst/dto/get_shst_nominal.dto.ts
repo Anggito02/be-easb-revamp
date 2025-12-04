@@ -12,4 +12,8 @@ export class GetShstNominalDto {
     @IsInt()
     @IsNotEmpty()
     id_kabkota: number;
+
+    @IsInt()
+    @IsNotEmpty()
+    tahun: number;
 }
