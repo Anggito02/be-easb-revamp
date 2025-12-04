@@ -8,6 +8,7 @@ import { UpdateAsbDetailDto } from './dto/update_asb_detail.dto';
 import { GetAsbDetailByAsbDto } from '../../presentation/asb_detail/dto/get_asb_detail_by_asb.dto';
 import { CalculateKoefLantaiUseCase } from './use_cases/calculate_koef_lantai.use_case';
 import { CalculateKoefFungsiBangunanUseCase } from './use_cases/calculate_koef_fungsi_bangunan.use_case';
+import { AsbDetailWithRelationDto } from './dto/asb_detail_with_relation.dto';
 
 @Injectable()
 export class AsbDetailServiceImpl extends AsbDetailService {
@@ -105,6 +106,14 @@ export class AsbDetailServiceImpl extends AsbDetailService {
                 amount: dto.amount,
                 totalPages: Math.ceil(total / dto.amount)
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]> {
+        try {
+            return await this.repository.getAsbDetailWithRelation(idAsb);
         } catch (error) {
             throw error;
         }

@@ -30,7 +30,7 @@ export class KertasKerjaUseCase {
     }
 
     async generateHtml(data: KertasKerjaDto): Promise<string> {
-        const { title, tipe_bangunan, tanggal_cetak, dataAsb, shst, dataBps, dataBpns } = data;
+        const { title, tipe_bangunan, tanggal_cetak, dataAsb, dataAsbDetail, shst, dataBps, dataBpns } = data;
 
         // Helper for number formatting
         const number_format = (num: number, decimals = 0) => {
@@ -762,6 +762,12 @@ export class KertasKerjaUseCase {
         <p class="note-text">
             *Nilai perencanaan, pengawasan, dan manajemen konstruksi merupakan harga satuan tertinggi yang digunakan sebagai plafon anggaran, apabila terdapat rekomendasi dari Dinas Pembina,
             yaitu Dinas Pekerjaan Umum Cipta Karya maka SKPD dapat menyesuaikan anggaran menggunakan koefisien dalam SIPD.
+        </p>
+        <p class="note-text">
+            *Dokumen ini juga sebagai penanda bahwa SKPD telah melakukan analisis kebutuhan biaya dan telah menentukan nilai perencanaan, pengawasan, dan manajemen konstruksi.
+        </p>
+        <p class="note-text">
+            *Dokumen ini juga sebagai penanda bahwa SKPD telah melakukan analisis kebutuhan biaya dan telah menentukan nilai perencanaan, pengawasan, dan manajemen konstruksi.
         </p>
     </div>
 </body>

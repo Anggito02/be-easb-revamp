@@ -8,6 +8,7 @@ import { AsbDetailOrmEntity } from '../orm/asb_detail.orm_entity';
 import { Files } from '../../../domain/asb_detail/files.enum';
 import { CreateAsbDetailDto } from '../../../application/asb_detail/dto/create_asb_detail.dto';
 import { UpdateAsbDetailDto } from '../../../application/asb_detail/dto/update_asb_detail.dto';
+import { AsbDetailWithRelationDto } from 'src/application/asb_detail/dto/asb_detail_with_relation.dto';
 
 @Injectable()
 export class AsbDetailRepositoryImpl extends AsbDetailRepository {
@@ -113,6 +114,18 @@ export class AsbDetailRepositoryImpl extends AsbDetailRepository {
             });
             const domainEntities = entities.map((e) => plainToInstance(AsbDetail, e));
             return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbDetailWithRelation(idAsb: number): Promise<AsbDetailWithRelationDto[]> {
+        try {
+            const entities = await this.repository.find({
+                where: { idAsb },
+                relations: ['asbFungsiRuang', 'asbLantai'],
+            });
+            return entities.map((e) => plainToInstance(AsbDetailWithRelationDto, e));
         } catch (error) {
             throw error;
         }

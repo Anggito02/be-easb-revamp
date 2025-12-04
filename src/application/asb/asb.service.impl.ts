@@ -793,11 +793,15 @@ export class AsbServiceImpl implements AsbService {
                 }
             });
 
+            // Ambil data asb detail
+            const dataAsbDetail = await this.asbDetailService.getAsbDetailWithRelation(id_asb);
+
             const kertasKerjaDto = {
                 title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
                 tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
                 tanggal_cetak: new Date().toISOString(),
                 dataAsb: asbData,
+                dataAsbDetail: dataAsbDetail,
                 shst: asbData.shst,
                 dataBps: dataBpsKomponen,
                 dataBpns: dataBpnsKomponen,
