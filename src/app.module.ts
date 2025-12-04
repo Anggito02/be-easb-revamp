@@ -36,6 +36,7 @@ import { AsbBipekNonStdReviewModule } from './presentation/asb_bipek_non_std_rev
 import { AsbModule } from './presentation/asb/asb.module';
 import { OpdModule } from './presentation/opd/opd.module';
 import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/standard_klasifikasi.module';
+import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -110,7 +111,8 @@ import { DataSourceOptions } from 'typeorm';
         AsbModule,
         OpdModule,
         StandardKlasifikasiModule,
-        AsbJakonModule
+        AsbJakonModule,
+        KecamatanModule
         // other modules...
     ],
     providers: [
