@@ -2,7 +2,7 @@ import { AsbDetail } from './asb_detail.entity';
 import { Files } from './files.enum';
 import { CreateAsbDetailDto } from '../../application/asb_detail/dto/create_asb_detail.dto';
 import { UpdateAsbDetailDto } from '../../application/asb_detail/dto/update_asb_detail.dto';
-import { AsbDetailWithRelationDto } from 'src/application/asb_detail/dto/asb_detail_with_relation.dto';
+import { AsbDetailWithRelationDto } from '../../application/asb_detail/dto/asb_detail_with_relation.dto';
 
 export abstract class AsbDetailRepository {
     abstract create(dto: CreateAsbDetailDto): Promise<AsbDetail>;

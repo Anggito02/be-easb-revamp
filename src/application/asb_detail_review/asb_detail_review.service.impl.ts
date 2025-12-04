@@ -7,6 +7,7 @@ import { UpdateAsbDetailReviewDto } from './dto/update_asb_detail_review.dto';
 import { GetAsbDetailReviewByAsbDto } from '../../presentation/asb_detail_review/dto/get_asb_detail_review_by_asb.dto';
 import { CalculateKoefLantaiUseCase } from './use_cases/calculate_koef_lantai.use_case';
 import { CalculateKoefFungsiBangunanUseCase } from './use_cases/calculate_koef_fungsi_bangunan.use_case';
+import { AsbDetailReviewWithRelationDto } from './dto/asb_detail_review_with_relation.dto';
 
 @Injectable()
 export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
@@ -102,6 +103,14 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
             };
         } catch (error) {
             console.log(error);
+            throw error;
+        }
+    }
+
+    async getAsbDetailReviewWithRelation(idAsb: number): Promise<AsbDetailReviewWithRelationDto[]> {
+        try {
+            return await this.repository.getAsbDetailReviewWithRelation(idAsb);
+        } catch (error) {
             throw error;
         }
     }

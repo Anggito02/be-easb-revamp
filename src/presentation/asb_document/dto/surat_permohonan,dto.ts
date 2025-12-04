@@ -3,5 +3,5 @@ export class SuratPermohonanDto {
     nama_asb: string;
     asb_jenis: string;
     alamat: string;
-    alias: string;
+    username: string;
 }

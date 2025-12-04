@@ -57,4 +57,9 @@ export class AsbWithRelationsDto {
         id: number;
         tipeBangunan: string;
     };
+
+    asbKlasifikasi?: {
+        id: number;
+        klasifikasi: string;
+    };
 }

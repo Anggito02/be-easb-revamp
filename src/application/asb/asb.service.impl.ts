@@ -206,12 +206,14 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[], username: string): Promise<{ id: number; status: any }> {
         try {
             // Set status to 1
             dto.idAsbStatus = 1;
             if (userIdOpd) {
                 dto.idOpd = userIdOpd;
+            } else {
+                throw new ForbiddenException('User is not sync to an opd');
             }
             console.log("dto", dto);
 
@@ -231,7 +233,7 @@ export class AsbServiceImpl implements AsbService {
                 nama_asb: asbData.namaAsb || "",
                 asb_jenis: asbData.asbJenis?.jenis || "",
                 alamat: asbData.alamat || "",
-                alias: asbData.opd?.alias || ""
+                username: username
             }
 
             const asbDocs = await this.asbDocumentService.generateSuratPermohonan(suratPermohonanDto);
@@ -899,22 +901,19 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            const dataBps = await this.asbBipekStandardReviewService.getBpsWithRelationByAsb({
+            const dataBpsReview = await this.asbBipekStandardReviewService.getBpsWithRelationByAsb({
                 idAsb: id_asb,
                 page: 1,
                 amount: 10000
             })
 
-            const dataBpns = await this.asbBipekNonStdReviewService.getBpnsWithRelationByAsb({
+            const dataBpnsReview = await this.asbBipekNonStdReviewService.getBpnsWithRelationByAsb({
                 idAsb: id_asb,
                 page: 1,
                 amount: 10000
             })
 
-            console.log("Data BPS: ", dataBps);
-            console.log("Data BPNS: ", dataBpns);
-
-            const dataBpsKomponen = dataBps.data.map((data) => {
+            const dataBpsKomponen = dataBpsReview.data.map((data) => {
                 return {
                     komponen: data.asbKomponenBangunanStd?.komponen,
                     asb: {
@@ -924,8 +923,7 @@ export class AsbServiceImpl implements AsbService {
                     }
                 }
             });
-
-            const dataBpnsKomponen = dataBpns.data.map((data) => {
+            const dataBpnsKomponen = dataBpnsReview.data.map((data) => {
                 return {
                     komponen: data.asbKomponenBangunanNonstd?.komponen,
                     asb: {
@@ -937,14 +935,20 @@ export class AsbServiceImpl implements AsbService {
             });
 
             // Ambil data asb detail
-            const dataAsbDetail = await this.asbDetailService.getAsbDetailWithRelation(id_asb);
+            const dataAsbDetailReview = await this.asbDetailReviewService.getAsbDetailReviewWithRelation(id_asb);
+            console.log("dataAsbDetailReview", dataAsbDetailReview);
+
+            const now = new Date();
+            const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
+            const time = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-mm-ss
+            const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
             const kertasKerjaDto = {
                 title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
                 tipe_bangunan: asbData.tipeBangunan?.tipeBangunan,
-                tanggal_cetak: new Date().toISOString(),
+                tanggal_cetak: dateFormatted,
                 dataAsb: asbData,
-                dataAsbDetail: dataAsbDetail,
+                dataAsbDetailReview: dataAsbDetailReview,
                 shst: asbData.shst,
                 dataBps: dataBpsKomponen,
                 dataBpns: dataBpnsKomponen,

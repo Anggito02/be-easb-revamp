@@ -5,7 +5,13 @@ import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_perm
 @Injectable()
 export class SuratPermohonanUseCase {
     async execute(data: SuratPermohonanDto): Promise<Buffer> {
-        const html = await this.generateHtml(data);
+        const now = new Date();
+
+        const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
+        const time = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-mm-ss
+        const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
+
+        const html = await this.generateHtml(data, dateFormatted);
         const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
 
@@ -29,7 +35,7 @@ export class SuratPermohonanUseCase {
         return Buffer.from(pdfBuffer);
     }
 
-    async generateHtml(data: SuratPermohonanDto): Promise<string> {
+    async generateHtml(data: SuratPermohonanDto, dateFormatted: string): Promise<string> {
         return `<!DOCTYPE html>
 <html lang="id">
 <head>
@@ -177,12 +183,12 @@ export class SuratPermohonanUseCase {
         <tr>
             <td style="width:20%;">Diusulkan oleh</td>
             <td style="width:2%;">:</td>
-            <td>${data.alias}</td>
+            <td>${data.username}</td>
         </tr>
         <tr>
             <td>Pada tanggal</td>
             <td>:</td>
-            <td>${Date.now().toLocaleString('id-ID')}</td>
+            <td>${dateFormatted}</td>
         </tr>
     </table>
 

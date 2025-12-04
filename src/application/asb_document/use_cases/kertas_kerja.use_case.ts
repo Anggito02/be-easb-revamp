@@ -18,10 +18,10 @@ export class KertasKerjaUseCase {
             format: 'A4',
             printBackground: true,
             margin: {
-                top: '10mm',
-                bottom: '10mm',
-                left: '10mm',
-                right: '10mm'
+                top: '15mm',
+                bottom: '15mm',
+                left: '15mm',
+                right: '15mm'
             }
         });
 
@@ -30,7 +30,7 @@ export class KertasKerjaUseCase {
     }
 
     async generateHtml(data: KertasKerjaDto): Promise<string> {
-        const { title, tipe_bangunan, tanggal_cetak, dataAsb, dataAsbDetail, shst, dataBps, dataBpns } = data;
+        const { title, tipe_bangunan, tanggal_cetak, dataAsb, dataAsbDetailReview, shst, dataBps, dataBpns } = data;
 
         // Helper for number formatting
         const number_format = (num: number, decimals = 0) => {
@@ -62,16 +62,6 @@ export class KertasKerjaUseCase {
             }
             return temp;
         };
-
-        // Calculations
-        // Note: Assuming dataAsb.detail is populated if needed, but based on DTO it's Asb entity.
-        // The PHP code uses $data->detail->sum('luas') etc.
-        // We might need to adjust the DTO or assume the caller passes calculated values if Asb entity doesn't have details loaded or if they are not simple arrays.
-        // For now, I will assume dataAsb has a 'detail' property that is an array of objects with 'luas', 'lantai_koef', 'fungsibangunan_koef', 'fungsibangunan'.
-        // If Asb entity definition doesn't have it, we might need to extend it or use `any` for now to match the PHP logic flexibility, or better, update the DTO to be more specific.
-        // Given the PHP code: $data->detail is iterated.
-
-        // Let's try to map the PHP logic as closely as possible using the provided data.
 
         // Calculate totals for BPS
         let sumBps = 0;
@@ -142,20 +132,18 @@ export class KertasKerjaUseCase {
         const getTipeBangunan = (d: any) => d.asbTipeBangunan?.tipeBangunan ?? tipe_bangunan; // Fallback to input
         const getKlasifikasi = (d: any) => d.asbKlasifikasi?.klasifikasi ?? ''; // Check entity relation name
         const getKabKota = (d: any) => d.kabkota?.kabkota ?? '';
+        console.log("dataAsbDetailsReview", dataAsbDetailReview)
 
-        // Mocking detail loop for now as it's complex to extract from just 'Asb' entity without eager loading details
-        // We will assume dataAsb has a 'details' property injected or we handle it gracefully if missing.
-        const details = (dataAsb as any).details || [];
-        const detailRows = details.map((detail: any, i: number) => `
+        const asbDetailsReview = dataAsbDetailReview.map((detail, i: number) => `
             <tr>
                 <td></td>
-                <td>- Luas Lantai ${i + 1}</td>
+                <td>- Luas ${detail.asb_lantai?.lantai}</td>
                 <td>:</td>
-                <td>${detail.luas ?? ''} m<sup>2</sup></td>
+                <td>${detail.luas} m<sup>2</sup></td>
             </tr>
         `).join('');
 
-        const detailFungsiRows = details.map((detail: any, i: number) => `
+        const detailFungsiRows = dataAsbDetailReview.map((detail: any, i: number) => `
             <tr>
                 <td></td>
                 <td>- Fungsi Lantai ${i + 1}</td>
@@ -164,10 +152,10 @@ export class KertasKerjaUseCase {
             </tr>
         `).join('');
 
-        const totalLuas = details.reduce((acc: number, curr: any) => acc + (curr.luas || 0), 0);
+        const totalLuas = dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.luas || 0), 0);
         // Avoid division by zero
-        const koefLantai = totalLuas ? (details.reduce((acc: number, curr: any) => acc + (curr.lantai_koef || 0), 0) / totalLuas) : 0;
-        const koefFungsi = totalLuas ? (details.reduce((acc: number, curr: any) => acc + (curr.fungsibangunan_koef || 0), 0) / totalLuas) : 0;
+        const koefLantai = totalLuas ? (dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.lantai_koef || 0), 0) / totalLuas) : 0;
+        const koefFungsi = totalLuas ? (dataAsbDetailReview.reduce((acc: number, curr: any) => acc + (curr.fungsibangunan_koef || 0), 0) / totalLuas) : 0;
 
 
         return `
@@ -370,7 +358,7 @@ export class KertasKerjaUseCase {
         <table>
             <tr>
                 <td>
-                    <i>Dicetak melalui Aplikasi eASB ${new Date().getFullYear()} - Biro Administrasi Pembangunan Sekretariat Daerah Provinsi Jawa Timur</i>
+                    <i>Dicetak melalui Aplikasi eASB ${new Date().getFullYear()} - ${getOpd(data.dataAsb)}</i>
                 </td>
                 <td class="text-right">
                     Halaman | <span class="pagenum"></span>
@@ -430,7 +418,7 @@ export class KertasKerjaUseCase {
                     <td>:</td>
                     <td>${getTotalLantai(dataAsb)}</td>
                 </tr>
-                ${detailRows}
+                ${asbDetailsReview}
                 <tr class="highlight-row">
                     <td></td>
                     <td>Luas Total Bangunan</td>
@@ -762,12 +750,6 @@ export class KertasKerjaUseCase {
         <p class="note-text">
             *Nilai perencanaan, pengawasan, dan manajemen konstruksi merupakan harga satuan tertinggi yang digunakan sebagai plafon anggaran, apabila terdapat rekomendasi dari Dinas Pembina,
             yaitu Dinas Pekerjaan Umum Cipta Karya maka SKPD dapat menyesuaikan anggaran menggunakan koefisien dalam SIPD.
-        </p>
-        <p class="note-text">
-            *Dokumen ini juga sebagai penanda bahwa SKPD telah melakukan analisis kebutuhan biaya dan telah menentukan nilai perencanaan, pengawasan, dan manajemen konstruksi.
-        </p>
-        <p class="note-text">
-            *Dokumen ini juga sebagai penanda bahwa SKPD telah melakukan analisis kebutuhan biaya dan telah menentukan nilai perencanaan, pengawasan, dan manajemen konstruksi.
         </p>
     </div>
 </body>

@@ -7,6 +7,7 @@ import { AsbDetailReviewRepository } from '../../../domain/asb_detail_review/asb
 import { AsbDetailReviewOrmEntity } from '../orm/asb_detail_review.orm_entity';
 import { CreateAsbDetailReviewDto } from '../../../application/asb_detail_review/dto/create_asb_detail_review.dto';
 import { UpdateAsbDetailReviewDto } from '../../../application/asb_detail_review/dto/update_asb_detail_review.dto';
+import { AsbDetailReviewWithRelationDto } from 'src/application/asb_detail_review/dto/asb_detail_review_with_relation.dto';
 
 @Injectable()
 export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
@@ -107,6 +108,40 @@ export class AsbDetailReviewRepositoryImpl extends AsbDetailReviewRepository {
             });
             const domainEntities = entities.map((e) => plainToInstance(AsbDetailReview, e));
             return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbDetailReviewWithRelation(idAsb: number): Promise<AsbDetailReviewWithRelationDto[]> {
+        try {
+            const entities = await this.repository.find({
+                where: { idAsb },
+                relations: ['asbDetail', 'asbLantai', 'asbFungsiRuang']
+            });
+
+            const domainEntities: AsbDetailReviewWithRelationDto[] = entities.map((e) => {
+                return {
+                    id: e.id,
+                    id_asb_detail: e.asbDetail.id,
+                    id_asb_lantai: e.idAsbLantai,
+                    id_asb_fungsi_ruang: e.idAsbFungsiRuang,
+                    asb_fungsi_ruang_koef: e.asbFungsiRuangKoef,
+                    lantai_koef: e.lantaiKoef,
+                    luas: e.luas,
+                    asb_lantai: {
+                        id: e.asbLantai.id,
+                        lantai: e.asbLantai.lantai,
+                        koef: e.asbLantai.koef
+                    },
+                    asb_fungsi_ruang: {
+                        id: e.asbFungsiRuang.id,
+                        fungsi_ruang: e.asbFungsiRuang.nama_fungsi_ruang,
+                        koef: e.asbFungsiRuang.koef
+                    }
+                }
+            });
+            return domainEntities;
         } catch (error) {
             throw error;
         }
