@@ -6,6 +6,7 @@ import { DeleteAsbJakonDto } from 'src/presentation/asb_jakon/dto/delete_asb_jak
 import { GetAsbJakonListDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list.dto';
 import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_detail.dto';
 import { GetAsbJakonListFilterDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_list_filter.dto';
+import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
 
 export abstract class AsbJakonService {
     abstract create(dto: CreateAsbJakonDto): Promise<AsbJakon>;
@@ -18,4 +19,5 @@ export abstract class AsbJakonService {
     abstract findByAsbKlasifikasiId(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByTahun(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
     abstract findByType(dto: GetAsbJakonListFilterDto): Promise<AsbJakon[]>;
+    abstract getJakonByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null>;
 }

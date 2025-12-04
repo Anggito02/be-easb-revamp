@@ -109,7 +109,8 @@ import { DataSourceOptions } from 'typeorm';
         AsbBipekNonStdReviewModule,
         AsbModule,
         OpdModule,
-        StandardKlasifikasiModule
+        StandardKlasifikasiModule,
+        AsbJakonModule
         // other modules...
     ],
     providers: [

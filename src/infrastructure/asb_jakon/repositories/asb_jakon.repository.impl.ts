@@ -11,6 +11,7 @@ import { GetAsbJakonListDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon
 import { GetAsbJakonDetailDto } from 'src/presentation/asb_jakon/dto/get_asb_jakon_detail.dto';
 import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 import { Injectable } from '@nestjs/common';
+import { GetJakonByPriceRangeDto } from 'src/application/asb_jakon/dto/get_jakon_by_price_range.dto';
 
 @Injectable()
 export class AsbJakonRepositoryImpl implements AsbJakonRepository {
@@ -110,6 +111,36 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
         try {
             const data = await this.repo.find({ where: { type } });
             return data || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
+        try {
+            const entity = await this.repo
+                .createQueryBuilder('asb_jakon')
+                .where('asb_jakon.id_asb_klasifikasi = :id_asb_klasifikasi', {
+                    id_asb_klasifikasi: dto.id_asb_klasifikasi
+                })
+                .andWhere('asb_jakon.id_asb_tipe_bangunan = :id_asb_tipe_bangunan', {
+                    id_asb_tipe_bangunan: dto.id_asb_tipe_bangunan
+                })
+                .andWhere('asb_jakon.id_asb_jenis = :id_asb_jenis', {
+                    id_asb_jenis: dto.id_asb_jenis
+                })
+                .andWhere('asb_jakon.type = :type', {
+                    type: dto.type
+                })
+                .andWhere('asb_jakon.price_from <= :total_biaya', {
+                    total_biaya: dto.total_biaya_pembangunan
+                })
+                .andWhere('asb_jakon.price_to > :total_biaya', {
+                    total_biaya: dto.total_biaya_pembangunan
+                })
+                .getOne();
+
+            return entity || null;
         } catch (error) {
             throw error;
         }

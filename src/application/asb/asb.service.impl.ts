@@ -37,6 +37,8 @@ import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
+import { AsbJakonService } from 'src/domain/asb_jakon/asb_jakon.service';
+import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -54,6 +56,7 @@ export class AsbServiceImpl implements AsbService {
         private readonly asbDetailReviewService: AsbDetailReviewService,
         private readonly calculateBobotBPSReviewUseCase: CalculateBobotBPSReviewUseCase,
         private readonly calculateBobotBPNSReviewUseCase: CalculateBobotBPNSReviewUseCase,
+        private readonly asbJakonService: AsbJakonService,
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
@@ -796,7 +799,48 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            // 2. Update ASB idAsbStatus to 8
+            // 3 Get Jakon data
+            if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !asb.totalBiayaPembangunan) {
+                throw new Error("ASB is missing required classification or location data for Jakon lookup");
+            }
+            const perencanaanKonstruksi = this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PERENCANAAN,
+                total_biaya_pembangunan: asb.totalBiayaPembangunan
+            });
+
+            const pengawasanKonstruksi = this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGAWASAN,
+                total_biaya_pembangunan: asb.totalBiayaPembangunan
+            });
+
+            if (!asb.totalLantai || !asb.jumlahKontraktor) {
+                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
+            }
+
+            const managementKonstruksi = (asb.totalLantai >= 4 && asb.jumlahKontraktor >= 2) ? 0 : this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.MANAGEMENT,
+                total_biaya_pembangunan: asb.totalBiayaPembangunan
+            });
+
+            const pengelolaanKegiatan = this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGELOLAAN,
+                total_biaya_pembangunan: asb.totalBiayaPembangunan
+            });
+
+
+            // 4. Update ASB idAsbStatus to 8
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8
             });

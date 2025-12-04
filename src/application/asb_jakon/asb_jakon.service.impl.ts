@@ -9,7 +9,7 @@ import { GetAsbJakonListDto } from '../../presentation/asb_jakon/dto/get_asb_jak
 import { GetAsbJakonDetailDto } from '../../presentation/asb_jakon/dto/get_asb_jakon_detail.dto';
 import { ValidatePriceRangeUseCase } from './use_cases/validate_price_range.use_case';
 import { GetAsbJakonListFilterDto } from '../../presentation/asb_jakon/dto/get_asb_jakon_list_filter.dto';
-
+import { GetJakonByPriceRangeDto } from './dto/get_jakon_by_price_range.dto';
 @Injectable()
 export class AsbJakonServiceImpl implements AsbJakonService {
     constructor(
@@ -149,6 +149,15 @@ export class AsbJakonServiceImpl implements AsbJakonService {
                 throw new BadRequestException('type is required');
             }
             return await this.repository.findByType(dto.type);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getJakonByPriceRange(dto: GetJakonByPriceRangeDto): Promise<AsbJakon | null> {
+        try {
+            const jakon = await this.repository.findByPriceRange(dto);
+            return jakon;
         } catch (error) {
             throw error;
         }
