@@ -99,8 +99,6 @@ export class AsbRepositoryImpl implements AsbRepository {
             qb.andWhere("e.id_opd = :idOpd", { idOpd });
         }
 
-        console.log("qb", qb.getQuery());
-
         const rows = await qb.getRawMany<{ date: string; count: string }>();
 
         return rows.map(r => ({
@@ -114,8 +112,8 @@ export class AsbRepositoryImpl implements AsbRepository {
             .createQueryBuilder('e')
             .select("e.id_asb_status", "idAsbStatus")
             .addSelect("COUNT(e.id)", "count")
-            .where("MONTH(e.created_at) = :month", { month: dto.month })
-            .andWhere("YEAR(e.created_at) = :year", { year: dto.year })
+            .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
+            .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
             .groupBy("e.id_asb_status");
 
         if (idOpd) {
