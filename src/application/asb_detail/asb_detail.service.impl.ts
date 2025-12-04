@@ -153,6 +153,7 @@ export class AsbDetailServiceImpl extends AsbDetailService {
         try {
             const details = await this.repository.findByAsb(idAsb, 1, 100);
             const totalLuasFungsiRuang = details[0].reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
+
             return Number((luasTotal / totalLuasFungsiRuang).toPrecision(3));
         } catch (error) {
             throw error;

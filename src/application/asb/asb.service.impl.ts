@@ -361,12 +361,10 @@ export class AsbServiceImpl implements AsbService {
         // Step 4: Set ASB Klasifikasi
         // REQUEST_TULUNGAGUNG //
         const totalLantaiExistingAsb = existingAsb.totalLantai || 0;
-        let totalLuasLantai = 0;
+        const totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
         if (existingAsb.idAsbTipeBangunan === 1) {
             existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
         } else {
-            totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
-
             existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
         }
 
