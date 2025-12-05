@@ -35,6 +35,7 @@ import { AsbBipekStandardReviewModule } from './presentation/asb_bipek_standard_
 import { AsbBipekNonStdReviewModule } from './presentation/asb_bipek_non_std_review/asb_bipek_non_std_review.module';
 import { AsbModule } from './presentation/asb/asb.module';
 import { OpdModule } from './presentation/opd/opd.module';
+import { VerifikatorModule } from './presentation/verifikator/verifikator.module';
 import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/standard_klasifikasi.module';
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
@@ -111,6 +112,7 @@ import { DataSourceOptions } from 'typeorm';
         AsbBipekNonStdReviewModule,
         AsbModule,
         OpdModule,
+        VerifikatorModule,
         StandardKlasifikasiModule,
         AsbJakonModule,
         KecamatanModule,
