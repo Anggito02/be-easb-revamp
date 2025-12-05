@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateStandardKlasifikasi1764827294778 implements MigrationInterface {
-    name = 'CreateStandardKlasifikasi1764827294778';
+export class CreateStandardKlasifikasi1764760755981 implements MigrationInterface {
+    name = 'CreateStandardKlasifikasi1764760755981';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`

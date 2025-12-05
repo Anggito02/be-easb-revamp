@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class AddRekapitulasiBiayaToAsb1733303045461 implements MigrationInterface {
-    name = 'AddRekapitulasiBiayaToAsb1733303045461';
+export class AddRekapitulasiBiayaToAsb1764760755980 implements MigrationInterface {
+    name = 'AddRekapitulasiBiayaToAsb1764760755980';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Add new columns to asb table
