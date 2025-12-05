@@ -3,6 +3,8 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import * as fs from 'fs';
+import * as path from 'path';
+import archiver from 'archiver';
 import { AsbDocument } from '../../domain/asb_document/asb_document.entity';
 import { AsbDocumentService } from '../../domain/asb_document/asb_document.service';
 import { AsbDocumentRepository } from '../../domain/asb_document/asb_document.repository';
@@ -182,7 +184,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             const asbDoc = await this.kertasKerjaUseCase.execute(dto)
             const file: Express.Multer.File = {
                 buffer: asbDoc,
-                originalname: 'asb_kertas_kerja.pdf',
+                originalname: `${dto.dataAsb.opd?.opd}.pdf`,
                 size: asbDoc.length,
                 encoding: '7bit',
                 mimetype: 'application/pdf',
@@ -210,7 +212,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             const asbDoc = await this.suratPermohonanUseCase.execute(dto)
             const file: Express.Multer.File = {
                 buffer: asbDoc,
-                originalname: 'asb_surat_permohonan.pdf',
+                originalname: `${dto.opd}_${dto.nama_asb}.pdf`,
                 size: asbDoc.length,
                 encoding: '7bit',
                 mimetype: 'application/pdf',
@@ -227,6 +229,94 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
                 spec: DocumentSpec.SURAT_PERMOHONAN,
             }, filepath);
             return true;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async downloadAllByAsbAsZip(idAsb: number): Promise<{ buffer: Buffer, filename: string }> {
+        try {
+            // Get all documents for this ASB
+            const documents = await this.repository.findByAsbIdAll(idAsb);
+
+            if (!documents || documents.length === 0) {
+                throw new NotFoundException(`No documents found for ASB with id ${idAsb}`);
+            }
+
+            // Create a buffer to store the zip file
+            const chunks: Buffer[] = [];
+            const archive = archiver('zip', {
+                zlib: { level: 9 } // Maximum compression
+            });
+
+            // Listen for archive data
+            archive.on('data', (chunk) => {
+                chunks.push(chunk);
+            });
+
+            // Finalize promise
+            const archivePromise = new Promise<Buffer>((resolve, reject) => {
+                archive.on('end', () => {
+                    resolve(Buffer.concat(chunks));
+                });
+                archive.on('error', (err) => {
+                    reject(err);
+                });
+            });
+
+            // Add each document to the archive
+            for (const doc of documents) {
+                if (fs.existsSync(doc.filename)) {
+                    const fileBuffer = fs.readFileSync(doc.filename);
+                    const fileName = path.basename(doc.filename);
+                    archive.append(fileBuffer, { name: fileName });
+                }
+            }
+
+            // Finalize the archive
+            await archive.finalize();
+
+            // Wait for the archive to complete
+            const buffer = await archivePromise;
+
+            return {
+                buffer,
+                filename: `asb_documents_${idAsb}.zip`
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async downloadByAsbAndSpec(idAsb: number, spec: DocumentSpec): Promise<{ buffer: Buffer, filename: string }> {
+        try {
+            // Get all documents for this ASB
+            const documents = await this.repository.findByAsbIdAll(idAsb);
+
+            // Filter by spec
+            const document = documents.find(doc => doc.spec === spec);
+
+            if (!document) {
+                throw new NotFoundException(
+                    `Document with spec ${spec} not found for ASB with id ${idAsb}`
+                );
+            }
+
+            // Check if file exists
+            if (!fs.existsSync(document.filename)) {
+                throw new NotFoundException(
+                    `File not found on disk: ${document.filename}`
+                );
+            }
+
+            // Read the file
+            const buffer = fs.readFileSync(document.filename);
+            const filename = path.basename(document.filename);
+
+            return {
+                buffer,
+                filename
+            };
         } catch (error) {
             throw error;
         }

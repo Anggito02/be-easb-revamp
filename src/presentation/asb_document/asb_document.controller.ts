@@ -1,4 +1,5 @@
 import type { Express } from 'express';
+import type { Response } from 'express';
 import {
     Controller,
     Post,
@@ -12,6 +13,8 @@ import {
     HttpException,
     UseInterceptors,
     UploadedFile,
+    Res,
+    StreamableFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
@@ -27,6 +30,7 @@ import { GetAsbDocumentListDto } from './dto/get_asb_document_list.dto';
 import { GetAsbDocumentListFilterDto } from './dto/get_asb_document_list_filter.dto';
 import { GetAsbDocumentDetailDto } from './dto/get_asb_document_detail.dto';
 import { AsbDocumentPaginationResultDto } from './dto/asb_document_pagination_result.dto';
+import { DownloadDocumentsByAsbDto } from './dto/download_documents_by_asb.dto';
 
 @Controller('asb-document')
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -140,6 +144,69 @@ export class AsbDocumentController {
                 statusCode: HttpStatus.OK,
                 message: 'AsbDocument deleted successfully',
             };
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    @Get('download-all-by-asb')
+    async downloadAllByAsb(
+        @Query() dto: DownloadDocumentsByAsbDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        try {
+            const { buffer, filename } = await this.service.downloadAllByAsbAsZip(dto.idAsb);
+
+            res.set({
+                'Content-Type': 'application/zip',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+            });
+
+            return new StreamableFile(buffer);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    @Get('download-surat-permohonan')
+    async downloadSuratPermohonan(
+        @Query() dto: DownloadDocumentsByAsbDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        try {
+            const { buffer, filename } = await this.service.downloadByAsbAndSpec(
+                dto.idAsb,
+                DocumentSpec.SURAT_PERMOHONAN
+            );
+
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+            });
+
+            return new StreamableFile(buffer);
+        } catch (error) {
+            this.handleError(error);
+        }
+    }
+
+    @Get('download-kertas-kerja')
+    async downloadKertasKerja(
+        @Query() dto: DownloadDocumentsByAsbDto,
+        @Res({ passthrough: true }) res: Response,
+    ) {
+        try {
+            const { buffer, filename } = await this.service.downloadByAsbAndSpec(
+                dto.idAsb,
+                DocumentSpec.KERTAS_KERJA
+            );
+
+            res.set({
+                'Content-Type': 'application/pdf',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+            });
+
+            return new StreamableFile(buffer);
         } catch (error) {
             this.handleError(error);
         }

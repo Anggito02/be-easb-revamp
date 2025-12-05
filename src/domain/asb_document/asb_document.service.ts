@@ -30,4 +30,6 @@ export abstract class AsbDocumentService {
     abstract deleteByAsbId(idAsb: number): Promise<void>;
     abstract generateAsbKertasKerja(dto: KertasKerjaDto): Promise<boolean>;
     abstract generateSuratPermohonan(dto: SuratPermohonanDto): Promise<boolean>;
+    abstract downloadAllByAsbAsZip(idAsb: number): Promise<{ buffer: Buffer, filename: string }>;
+    abstract downloadByAsbAndSpec(idAsb: number, spec: DocumentSpec): Promise<{ buffer: Buffer, filename: string }>;
 }
