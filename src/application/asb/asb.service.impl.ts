@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
 import { Express } from 'express';
 import { AsbService } from '../../domain/asb/asb.service';
 import { AsbRepository } from '../../domain/asb/asb.repository';
@@ -226,6 +226,17 @@ export class AsbServiceImpl implements AsbService {
                 throw new ForbiddenException('User is not sync to an opd');
             }
             console.log("dto", dto);
+
+            // Validate luasTanah based on building type
+            if (dto.idAsbTipeBangunan === 2) {
+                // Type 2 (Non-Gedung) requires luas_tanah
+                if (!dto.luasTanah) {
+                    throw new BadRequestException('luas_tanah is required for Non-Gedung buildings (type 2)');
+                }
+            } else if (dto.idAsbTipeBangunan === 1 && dto.luasTanah !== undefined) {
+                // Type 1 (Gedung) should not have luas_tanah
+                throw new BadRequestException('luas_tanah cannot be set for Gedung buildings (type 1)');
+            }
 
             // Create ASB
             const asb = await this.repository.create(dto);

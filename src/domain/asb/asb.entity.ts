@@ -26,6 +26,7 @@ export class Asb {
     alamat: string | null;
     jumlahKontraktor: number | null;
     totalLantai: number | null;
+    luasTanah: number | null;
     rejectReason: string | null;
 
     // Double/numeric fields

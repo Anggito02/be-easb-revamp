@@ -21,6 +21,12 @@ export class CreateAsbStoreIndexDto {
     @Type(() => Number)
     totalLantai: number;
 
+    @IsOptional()
+    @IsInt()
+    @Min(1)
+    @Type(() => Number)
+    luasTanah?: number;
+
     @IsInt()
     @IsNotEmpty()
     @Type(() => Number)

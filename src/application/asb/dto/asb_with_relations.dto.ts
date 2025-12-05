@@ -13,6 +13,7 @@ export class AsbWithRelationsDto {
     alamat: string | null;
     jumlahKontraktor: number | null;
     totalLantai: number | null;
+    luasTanah: number | null;
     rejectReason: string | null;
     shst: number | null;
     perencanaanKonstruksi: number | null;

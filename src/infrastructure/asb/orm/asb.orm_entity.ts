@@ -67,6 +67,9 @@ export class AsbOrmEntity {
     @Column({ name: 'total_lantai', type: 'int', nullable: true })
     totalLantai: number | null;
 
+    @Column({ name: 'luas_tanah', type: 'int', nullable: true })
+    luasTanah: number | null;
+
     @Column({ name: 'reject_reason', type: 'text', nullable: true })
     rejectReason: string | null;
 
