@@ -399,10 +399,20 @@ export class AsbServiceImpl implements AsbService {
         // Step 8: Calculate Koefisien Fungsi RuangTotal
         existingAsb.koefisienFungsiRuangTotal = await this.asbDetailService.calculateKoefFungsiRuangTotal(dto.id_asb, totalLuasLantai);
 
-        // Step 9: Update ASB
+        // Step 9: Get Nominal shst
+        const shstDto = new GetShstNominalDto();
+        shstDto.id_asb_tipe_bangunan = existingAsb.idAsbTipeBangunan;
+        shstDto.id_asb_klasifikasi = existingAsb.idAsbKlasifikasi;
+        shstDto.id_kabkota = existingAsb.idKabkota || 0;
+        shstDto.tahun = existingAsb.tahunAnggaran || 0;
+        const shstNominal = await this.shstService.getNominal(shstDto);
+        console.log("Shst nominal:", shstNominal);
+
+        // Step 10: Update ASB
         const updatedAsb = await this.repository.update(dto.id_asb, {
             idAsbStatus: 2,
             idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
+            shst: shstNominal,
             luasTotalBangunan: existingAsb.luasTotalBangunan,
             koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
             koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
@@ -425,23 +435,6 @@ export class AsbServiceImpl implements AsbService {
                 await this.asbBipekStandardService.delete(dto.id_asb_bipek_standard);
             }
 
-            // 3. Get SHST Nominal
-            const shstDto = new GetShstNominalDto();
-            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
-
-            // Ensure optional fields are present or handle error
-            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
-                throw new Error("ASB is missing required classification or location data for SHST lookup");
-            }
-            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
-            shstDto.id_kabkota = asb.idKabkota;
-            shstDto.tahun = asb.tahunAnggaran || new Date().getFullYear();
-
-            console.log("Shst dto:", shstDto);
-
-            const shstNominal = await this.shstService.getNominal(shstDto);
-            console.log("Shst nominal:", shstNominal);
-
             // 4. Calculate BPS
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
@@ -451,7 +444,7 @@ export class AsbServiceImpl implements AsbService {
                 dto.id_asb,
                 dto.komponen_std,
                 dto.bobot_std,
-                shstNominal,
+                asb.shst || 0,
                 asb.totalLantai,
                 asb.koefisienLantaiTotal || 0,
                 asb.koefisienFungsiRuangTotal || 0,
@@ -461,7 +454,7 @@ export class AsbServiceImpl implements AsbService {
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 3,
-                shst: shstNominal,
+                shst: asb.shst || 0,
                 nominalBps: BPS,
                 bobotTotalBps: jumlahBobot
             });

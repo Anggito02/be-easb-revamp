@@ -167,7 +167,7 @@ export class AsbTipeBangunanController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getAsbTipeBangunan(@Query() dto: GetAsbTipeBangunanDto): Promise<ResponseDto> {
         try {
             const result = await this.asbTipeBangunanService.findAll(dto);
@@ -214,7 +214,7 @@ export class AsbTipeBangunanController {
     }
 
     @Get("detail")
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getAsbTipeBangunanDetail(@Query() dto: GetAsbTipeBangunanDetailDto): Promise<ResponseDto> {
         try {
             const asbTipeBangunan = await this.asbTipeBangunanService.findById(dto);

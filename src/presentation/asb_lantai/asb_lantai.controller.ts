@@ -166,7 +166,7 @@ export class AsbLantaiController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getAsbLantais(@Query() dto: GetAsbLantaisDto): Promise<ResponseDto> {
         try {
             const result = await this.asbLantaiService.findAll(dto);
@@ -213,7 +213,7 @@ export class AsbLantaiController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getAsbLantaiDetail(@Query() dto: GetAsbLantaiDetailDto): Promise<ResponseDto> {
         try {
             const asbLantai = await this.asbLantaiService.findById(dto.id);
