@@ -341,35 +341,50 @@ export class KertasKerjaUseCase {
 
     <!-- II. DATA ANALISIS -->
     <table class="table table-hover table-condensed table-striped section-table">
+        <colgroup>
+        <col style="width: 3%;">   <!-- kolom kosong / III. -->
+        <col style="width: 4%;">   <!-- kolom 1., 2., 3. -->
+        <col>                      <!-- kolom judul -->
+        <col>
+        <col>
+        <col>
+      </colgroup>
       <thead>
         <tr>
           <th class="text-center section-label">II.</th>
-          <th class="text-left section-subtitle" colspan="2">Data Analisis</th>
-          <th style="width:60%;"></th>
+          <th class="text-left section-subtitle" colspan="5">Data Analisis</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td width="2%"></td><td width="2%">1.</td><td colspan="2">Undang Undang Nomor 28 Tahun 2002 tentang Bangunan Gedung</td></tr>
-        <tr><td></td><td>2.</td><td colspan="2">Peraturan Pemerintah Nomor 16 Tahun 2021 tentang Peraturan Pelaksanaan Undang Nomor 28 Tahun 2002 tentang Bangunan Gedung</td></tr>
-        <tr><td></td><td>3.</td><td colspan="2">Peraturan Menteri PUPR Nomor 22 Tahun 2018 tentang Pembangunan Bangunan Gedung Negara</td></tr>
-        <tr><td></td><td>4.</td><td colspan="2">Keputusan Menteri PUPR Nomor 1044/KPTS/M/2018 tentang Koefisien / Faktor Pengali Jumlah Lantai Bangunan Gedung Negara</td></tr>
-        <tr><td></td><td>5.</td><td colspan="2">Peraturan Kepala Daerah Harga Satuan Pemerintah Provinsi Jawa Timur Tahun Anggaran 2024</td></tr>
+        <tr><td></td><td class="text-center section-no">1.</td><td colspan="4">Undang Undang Nomor 28 Tahun 2002 tentang Bangunan Gedung</td></tr>
+        <tr><td></td><td class="text-center">2.</td><td colspan="4">Peraturan Pemerintah Nomor 16 Tahun 2021 tentang Peraturan Pelaksanaan Undang Nomor 28 Tahun 2002 tentang Bangunan Gedung</td></tr>
+        <tr><td></td><td class="text-center">3.</td><td colspan="4">Peraturan Menteri PUPR Nomor 22 Tahun 2018 tentang Pembangunan Bangunan Gedung Negara</td></tr>
+        <tr><td></td><td class="text-center">4.</td><td colspan="4">Keputusan Menteri PUPR Nomor 1044/KPTS/M/2018 tentang Koefisien / Faktor Pengali Jumlah Lantai Bangunan Gedung Negara</td></tr>
+        <tr><td></td><td class="text-center">5.</td><td colspan="4">Peraturan Kepala Daerah Harga Satuan Pemerintah Provinsi Jawa Timur Tahun Anggaran 2024</td></tr>
       </tbody>
     </table>
 
     <!-- III. ANALISIS BIAYA KONSTRUKSI FISIK -->
     <table class="table table-hover table-condensed table-striped section-table" id="analisis-biaya">
+        <colgroup>
+        <col style="width: 3%;">   <!-- kolom kosong / III. -->
+        <col style="width: 4%;">   <!-- kolom 1., 2., 3. -->
+        <col>                      <!-- kolom judul -->
+        <col>
+        <col>
+        <col>
+      </colgroup>
       <thead>
         <tr>
-          <th class="text-center section-label" width="2%">III.</th>
+          <th class="text-center section-label">III.</th>
           <th class="text-left section-subtitle" colspan="5">Analisis Biaya Pembangunan Konstruksi Fisik ${tipe_bangunan}</th>
         </tr>
       </thead>
       <tbody>
         <!-- SHST -->
         <tr>
-          <td width="2%"></td>
-          <td width="2%" class="font-weight-bold">1.</td>
+          <td></td>
+          <td class="font-weight-bold">1.</td>
           <td class="text-left font-weight-bold" colspan="4">Standar Harga Satuan Tertinggi (SHST)</td>
         </tr>
         <tr>
@@ -458,8 +473,6 @@ export class KertasKerjaUseCase {
         </tr>
         <tr><td></td><td></td><td class="text-left font-weight-bold" colspan="3">Biaya Pekerjaan Non Standar</td><td class="text-right font-weight-bold">${number_format(sumBpns)}</td></tr>
 
-        <tr class="section-divider-row"><td colspan="6">-</td></tr>
-
         <!-- Rekap -->
         <tr><td></td><td class="font-weight-bold">4.</td>
           <td class="text-left font-weight-bold" colspan="4">Rekapitulasi Biaya Konstruksi Fisik ${tipe_bangunan} ${getKlasifikasi(dataAsb)}</td>
@@ -476,22 +489,30 @@ export class KertasKerjaUseCase {
 
     <!-- IV. FINAL -->
     <table class="table table-hover table-condensed table-striped section-table">
+        <colgroup>
+        <col style="width: 3%;">   <!-- kolom kosong / III. -->
+        <col style="width: 4%;">   <!-- kolom 1., 2., 3. -->
+        <col>                      <!-- kolom judul -->
+        <col>
+        <col>
+        <col>
+      </colgroup>
       <thead>
         <tr>
           <th class="text-center section-label" width="2%">IV.</th>
-          <th class="text-left section-subtitle" colspan="3">Analisis Biaya Pembangunan Konstruksi Fisik</th>
+          <th class="text-left section-subtitle" colspan="5">Analisis Biaya Pembangunan Konstruksi Fisik</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td width="2%"></td><td width="2%">a.</td><td class="text-left" width="76%">Biaya Konstruksi ${tipe_bangunan} ${getKlasifikasi(dataAsb)}</td><td class="text-right font-weight-bold">${number_format(totalBiayaKonstruksi)}</td></tr>
-        <tr><td></td><td>b.</td><td class="text-left">Biaya Perencanaan Konstruksi</td><td class="text-right font-weight-bold">${number_format(jakonPerencanaan)}</td></tr>
-        <tr><td></td><td>c.</td><td class="text-left">Biaya Pengawasan Konstruksi</td><td class="text-right font-weight-bold">${number_format(jakonPengawasan)}</td></tr>
-        <tr><td></td><td>d.</td><td class="text-left">Biaya Manajemen Konstruksi</td><td class="text-right font-weight-bold">${number_format(jakonManagement)}</td></tr>
-        <tr><td></td><td>e.</td><td class="text-left">Biaya Pengelolaan Kegiatan</td><td class="text-right font-weight-bold">${number_format(jakonPengelolaan)}</td></tr>
-        <tr class="highlight-row"><td class="text-right" colspan="3">Total</td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksi || 0)}</td></tr>
-        <tr><td class="text-right" colspan="3"><i><b>Dibulatkan</b></i></td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)}</td></tr>
-        <tr><td colspan="4" class="terbilang-label"><b>Terbilang:</b></td></tr>
-        <tr><td colspan="4" class="terbilang-text">${terbilang(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)} Rupiah</td></tr>
+        <tr><td width="2%"></td><td width="2%">a.</td><td class="text-left" width="76%" colspan="3">Biaya Konstruksi ${tipe_bangunan} ${getKlasifikasi(dataAsb)}</td><td class="text-right font-weight-bold" colspan="1">${number_format(totalBiayaKonstruksi)}</td></tr>
+        <tr><td></td><td>b.</td><td class="text-left" colspan="3">Biaya Perencanaan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPerencanaan)}</td></tr>
+        <tr><td></td><td>c.</td><td class="text-left" colspan="3">Biaya Pengawasan Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPengawasan)}</td></tr>
+        <tr><td></td><td>d.</td><td class="text-left" colspan="3">Biaya Manajemen Konstruksi</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonManagement)}</td></tr>
+        <tr><td></td><td>e.</td><td class="text-left" colspan="3">Biaya Pengelolaan Kegiatan</td><td class="text-right font-weight-bold" colspan="1">${number_format(jakonPengelolaan)}</td></tr>
+        <tr class="highlight-row"><td class="text-right" colspan="5">Total</td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksi || 0)}</td></tr>
+        <tr><td class="text-right" colspan="5"><i><b>Dibulatkan</b></i></td><td class="text-right font-weight-bold num">Rp${number_format(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)}</td></tr>
+        <tr><td colspan="6" class="terbilang-label"><b>Terbilang:</b></td></tr>
+        <tr><td colspan="6" class="terbilang-text">${terbilang(dataAsb.rekapitulasiBiayaKonstruksiRounded || 0)} Rupiah</td></tr>
       </tbody>
     </table>
 
