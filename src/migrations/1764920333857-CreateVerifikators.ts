@@ -29,7 +29,7 @@ export class CreateVerifikators1764920333857 implements MigrationInterface {
         // Add foreign key constraint to users table
         await queryRunner.query(`
             ALTER TABLE "verifikators"
-            ADD CONSTRAINT IF NOT EXISTS "FK_verifikators_user"
+            ADD CONSTRAINT "FK_verifikators_user"
             FOREIGN KEY ("id_user")
             REFERENCES "users"("id")
             ON DELETE CASCADE
@@ -52,7 +52,7 @@ export class CreateVerifikators1764920333857 implements MigrationInterface {
         // Drop foreign key constraint
         await queryRunner.query(`
             ALTER TABLE "verifikators"
-            DROP CONSTRAINT IF EXISTS "FK_verifikators_user"
+            DROP CONSTRAINT "FK_verifikators_user"
         `);
 
         // Drop table

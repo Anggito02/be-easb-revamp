@@ -73,7 +73,7 @@ export class AsbKomponenBangunanNonstdController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getAll(@Query() dto: GetAsbKomponenBangunanNonstdsDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getAll(dto);
@@ -89,7 +89,7 @@ export class AsbKomponenBangunanNonstdController {
     }
 
     @Get('detail')
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
     async getDetail(@Query() dto: GetAsbKomponenBangunanNonstdDetailDto): Promise<ResponseDto> {
         try {
             const result = await this.service.getDetail(dto);
