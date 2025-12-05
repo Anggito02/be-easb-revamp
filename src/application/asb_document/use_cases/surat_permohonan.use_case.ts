@@ -8,7 +8,7 @@ export class SuratPermohonanUseCase {
         const now = new Date();
 
         const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
-        const time = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-mm-ss
+        const time = now.toTimeString().split(' ')[0].replace(/:/g, ':'); // HH:mm:ss
         const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
         const html = await this.generateHtml(data, dateFormatted);

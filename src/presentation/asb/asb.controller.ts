@@ -141,8 +141,8 @@ export class AsbController {
         @Req() req: Request,
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
+            console.log("Dto: ", dto);
             const user = req.user as UserContext;
-            console.log("# UserContext: ", user);
             const result = await this.asbService.createIndex(dto, user.idOpd, user.roles, user.username);
 
             return {

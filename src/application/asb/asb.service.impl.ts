@@ -9,8 +9,6 @@ import { Role } from '../../domain/user/user_role.enum';
 import { CreateAsbStoreIndexDto } from './dto/create_asb_store_index.dto';
 import { UpdateAsbStoreIndexDto } from './dto/update_asb_store_index.dto';
 import { UpdateAsbStoreLantaiDto } from './dto/update_asb_store_lantai.dto';
-import { CreateAsbDocumentDto } from 'src/presentation/asb_document/dto/create_asb_document.dto';
-import { DocumentSpec } from 'src/domain/asb_document/document_spec.enum';
 import { AsbDocumentService } from 'src/domain/asb_document/asb_document.service';
 import { AsbDetailService } from 'src/domain/asb_detail/asb_detail.service';
 import { CreateAsbDetailDto } from 'src/application/asb_detail/dto/create_asb_detail.dto';
@@ -1048,7 +1046,7 @@ export class AsbServiceImpl implements AsbService {
 
             const now = new Date();
             const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
-            const time = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-mm-ss
+            const time = now.toTimeString().split(' ')[0].replace(/:/g, ':'); // HH:mm:ss
             const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
             console.log(asbData);

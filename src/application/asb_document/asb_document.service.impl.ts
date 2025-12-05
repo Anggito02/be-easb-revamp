@@ -5,30 +5,26 @@ import {
 import * as fs from 'fs';
 import * as path from 'path';
 import archiver from 'archiver';
+import { Express } from 'express';
 import { AsbDocument } from '../../domain/asb_document/asb_document.entity';
 import { AsbDocumentService } from '../../domain/asb_document/asb_document.service';
 import { AsbDocumentRepository } from '../../domain/asb_document/asb_document.repository';
 import { DocumentSpec } from '../../domain/asb_document/document_spec.enum';
-import { ValidateDocumentUploadUseCase } from './use_cases/validate_document_upload.use_case';
 import { EnsureDocumentDirectoryUseCase } from './use_cases/ensure_document_directory.use_case';
 import { SaveDocumentUseCase } from './use_cases/save_document.use_case';
 import { DeleteDocumentUseCase } from './use_cases/delete_document.use_case';
-import { CreateAsbDocumentDto } from '../../presentation/asb_document/dto/create_asb_document.dto';
-import { UpdateAsbDocumentDto } from '../../presentation/asb_document/dto/update_asb_document.dto';
-import { GetAsbDocumentListFilterDto } from '../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
 import { GetAsbDocumentByAsbDto } from '../../presentation/asb_document/dto/get_asb_document_by_asb.dto';
-import { Express } from 'express';
 import { KertasKerjaUseCase } from './use_cases/kertas_kerja.use_case';
 import { KertasKerjaDto } from 'src/presentation/asb_document/dto/kertas_kerja.dto';
 import { Readable } from 'typeorm/platform/PlatformTools.js';
 import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_permohonan,dto';
 import { SuratPermohonanUseCase } from './use_cases/surat_permohonan.use_case';
+import { Role } from '../../domain/user/user_role.enum';
 
 @Injectable()
 export class AsbDocumentServiceImpl extends AsbDocumentService {
     constructor(
         private readonly repository: AsbDocumentRepository,
-        private readonly validateDocumentUpload: ValidateDocumentUploadUseCase,
         private readonly ensureDocumentDir: EnsureDocumentDirectoryUseCase,
         private readonly saveDocument: SaveDocumentUseCase,
         private readonly deleteDocument: DeleteDocumentUseCase,
@@ -40,119 +36,31 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         this.ensureDocumentDir.execute();
     }
 
-    async create(
-        dto: CreateAsbDocumentDto,
-        file: Express.Multer.File,
-    ): Promise<AsbDocument> {
+    /**
+     * Helper method to determine if idOpd filter should be applied
+     * OPD role: filter by idOpd (users can only see documents for their OPD)
+     * SUPERADMIN/ADMIN/VERIFIKATOR: no filter (can see all documents)
+     */
+    private getOpdFilter(idOpd: number | null, role: Role): number | null | undefined {
+        if (role === Role.OPD && idOpd !== null) {
+            return idOpd;
+        }
+        return undefined; // No filter for SUPERADMIN, ADMIN, VERIFIKATOR
+    }
+
+    async findBySpec(spec: DocumentSpec, idOpd?: number | null, role?: Role): Promise<AsbDocument[]> {
         try {
-            // Validate file
-            this.validateDocumentUpload.execute(file);
-
-            // Save file with spec in filename
-            const filepath = this.saveDocument.execute(file, dto.spec);
-
-            // Pass DTO and filename to repository
-            return await this.repository.create(dto, filepath);
+            const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
+            return await this.repository.findBySpec(spec, opdFilter);
         } catch (error) {
             throw error;
         }
     }
 
-    async update(
-        id: number,
-        dto: UpdateAsbDocumentDto,
-        file?: Express.Multer.File,
-    ): Promise<AsbDocument> {
+    async getByAsb(dto: GetAsbDocumentByAsbDto, idOpd?: number | null, role?: Role): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }> {
         try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbDocument with id ${id} not found`,
-                );
-            }
-
-            let filepath: string | undefined = undefined;
-
-            // If new file is provided, replace the old one
-            if (file) {
-                this.validateDocumentUpload.execute(file);
-
-                // Delete old file
-                this.deleteDocument.execute(existing.filename);
-
-                // Save new file with spec (use updated spec if provided, otherwise existing)
-                const spec = dto.spec !== undefined ? dto.spec : existing.spec;
-                filepath = this.saveDocument.execute(file, spec);
-            }
-
-            // Pass DTO and optional filename to repository
-            return await this.repository.update(id, dto, filepath);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async delete(id: number): Promise<void> {
-        try {
-            const existing = await this.repository.findById(id);
-            if (!existing) {
-                throw new NotFoundException(
-                    `AsbDocument with id ${id} not found`,
-                );
-            }
-
-            // Delete file from disk
-            this.deleteDocument.execute(existing.filename);
-
-            // Soft delete from database
-            await this.repository.delete(id);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findById(id: number): Promise<AsbDocument> {
-        try {
-            const entity = await this.repository.findById(id);
-            if (!entity) {
-                throw new NotFoundException(
-                    `AsbDocument with id ${id} not found`,
-                );
-            }
-            return entity;
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findAll(
-        page: number,
-        amount: number,
-        filters?: GetAsbDocumentListFilterDto,
-    ): Promise<{ data: AsbDocument[]; total: number }> {
-        try {
-            const [data, total] = await this.repository.findAll(
-                page,
-                amount,
-                filters,
-            );
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findBySpec(spec: DocumentSpec): Promise<AsbDocument[]> {
-        try {
-            return await this.repository.findBySpec(spec);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async getByAsb(dto: GetAsbDocumentByAsbDto): Promise<{ data: AsbDocument[], total: number, page: number, amount: number, totalPages: number }> {
-        try {
-            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount);
+            const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
+            const [data, total] = await this.repository.findByAsb(dto.idAsb, dto.page, dto.amount, opdFilter);
             return {
                 data,
                 total,
@@ -170,9 +78,13 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             // Get all documents for this ASB
             const documents = await this.repository.findByAsbIdAll(idAsb);
 
-            // Delete each document (this handles both file and DB deletion)
+            // Delete each document (file and DB)
             for (const doc of documents) {
-                await this.delete(doc.id);
+                // Delete file from disk
+                this.deleteDocument.execute(doc.filename);
+
+                // Soft delete from database  
+                await this.repository.delete(doc.id);
             }
         } catch (error) {
             throw error;
@@ -197,10 +109,7 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
 
             const filepath = this.saveDocument.execute(file, DocumentSpec.KERTAS_KERJA);
 
-            await this.repository.create({
-                idAsb: dto.dataAsb.id,
-                spec: DocumentSpec.KERTAS_KERJA,
-            }, filepath);
+            await this.repository.create(dto.dataAsb.id, DocumentSpec.KERTAS_KERJA, filepath);
             return true;
         } catch (error) {
             throw error;
@@ -224,20 +133,18 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             };
 
             const filepath = this.saveDocument.execute(file, DocumentSpec.SURAT_PERMOHONAN);
-            await this.repository.create({
-                idAsb: dto.idAsb,
-                spec: DocumentSpec.SURAT_PERMOHONAN,
-            }, filepath);
+            await this.repository.create(dto.idAsb, DocumentSpec.SURAT_PERMOHONAN, filepath);
             return true;
         } catch (error) {
             throw error;
         }
     }
 
-    async downloadAllByAsbAsZip(idAsb: number): Promise<{ buffer: Buffer, filename: string }> {
+    async downloadAllByAsbAsZip(idAsb: number, idOpd?: number | null, role?: Role): Promise<{ buffer: Buffer, filename: string }> {
         try {
-            // Get all documents for this ASB
-            const documents = await this.repository.findByAsbIdAll(idAsb);
+            // Get all documents for this ASB with OPD filter
+            const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
+            const documents = await this.repository.findByAsbIdAll(idAsb, opdFilter);
 
             if (!documents || documents.length === 0) {
                 throw new NotFoundException(`No documents found for ASB with id ${idAsb}`);
@@ -288,10 +195,11 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
         }
     }
 
-    async downloadByAsbAndSpec(idAsb: number, spec: DocumentSpec): Promise<{ buffer: Buffer, filename: string }> {
+    async downloadByAsbAndSpec(idAsb: number, spec: DocumentSpec, idOpd?: number | null, role?: Role): Promise<{ buffer: Buffer, filename: string }> {
         try {
-            // Get all documents for this ASB
-            const documents = await this.repository.findByAsbIdAll(idAsb);
+            // Get all documents for this ASB with OPD filter
+            const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
+            const documents = await this.repository.findByAsbIdAll(idAsb, opdFilter);
 
             // Filter by spec
             const document = documents.find(doc => doc.spec === spec);

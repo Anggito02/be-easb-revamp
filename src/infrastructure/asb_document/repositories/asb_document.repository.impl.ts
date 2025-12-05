@@ -6,9 +6,6 @@ import { AsbDocument } from '../../../domain/asb_document/asb_document.entity';
 import { AsbDocumentRepository } from '../../../domain/asb_document/asb_document.repository';
 import { AsbDocumentOrmEntity } from '../orm/asb_document.orm_entity';
 import { DocumentSpec } from '../../../domain/asb_document/document_spec.enum';
-import { CreateAsbDocumentDto } from '../../../presentation/asb_document/dto/create_asb_document.dto';
-import { UpdateAsbDocumentDto } from '../../../presentation/asb_document/dto/update_asb_document.dto';
-import { GetAsbDocumentListFilterDto } from '../../../presentation/asb_document/dto/get_asb_document_list_filter.dto';
 
 @Injectable()
 export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
@@ -19,50 +16,16 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
         super();
     }
 
-    async create(
-        dto: CreateAsbDocumentDto,
-        filename: string,
-    ): Promise<AsbDocument> {
+    async create(idAsb: number, spec: DocumentSpec, filename: string): Promise<AsbDocument> {
         try {
             const ormEntity = this.repository.create({
-                filename: filename,
-                spec: dto.spec,
+                idAsb,
+                spec,
+                filename,
             });
 
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbDocument, saved);
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async update(
-        id: number,
-        dto: UpdateAsbDocumentDto,
-        filename?: string,
-    ): Promise<AsbDocument> {
-        try {
-            const existing = await this.repository.findOne({ where: { id } });
-            if (!existing) {
-                throw new Error(`AsbDocument with id ${id} not found`);
-            }
-
-            const updateData: Partial<AsbDocumentOrmEntity> = {};
-
-            if (dto.spec !== undefined) {
-                updateData.spec = dto.spec;
-            }
-            if (dto.idAsb !== undefined) {
-                updateData.idAsb = dto.idAsb;
-            }
-            if (filename !== undefined) {
-                updateData.filename = filename;
-            }
-
-            await this.repository.update(id, updateData);
-
-            const updated = await this.repository.findOne({ where: { id } });
-            return plainToInstance(AsbDocument, updated);
         } catch (error) {
             throw error;
         }
@@ -79,68 +42,43 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
         }
     }
 
-    async findById(id: number): Promise<AsbDocument | null> {
+    async findBySpec(spec: DocumentSpec, idOpd?: number | null): Promise<AsbDocument[]> {
         try {
-            const entity = await this.repository.findOne({ where: { id } });
-            return entity ? plainToInstance(AsbDocument, entity) : null;
-        } catch (error) {
-            throw error;
-        }
-    }
+            const queryBuilder = this.repository
+                .createQueryBuilder('document')
+                .leftJoinAndSelect('document.asb', 'asb')
+                .where('document.spec = :spec', { spec });
 
-    async findAll(
-        page: number,
-        amount: number,
-        filters?: GetAsbDocumentListFilterDto,
-    ): Promise<[AsbDocument[], number]> {
-        try {
-            const queryBuilder = this.repository.createQueryBuilder('document');
-
-            if (filters?.spec) {
-                queryBuilder.andWhere('document.spec = :spec', {
-                    spec: filters.spec,
-                });
+            // If idOpd is provided, filter by OPD
+            if (idOpd !== null && idOpd !== undefined) {
+                queryBuilder.andWhere('asb.id_opd = :idOpd', { idOpd });
             }
 
-            if (filters?.filename) {
-                queryBuilder.andWhere('document.filename LIKE :filename', {
-                    filename: `%${filters.filename}%`,
-                });
-            }
-
-            const [entities, total] = await queryBuilder
-                .skip((page - 1) * amount)
-                .take(amount)
-                .getManyAndCount();
-
-            const domainEntities = entities.map((e) =>
-                plainToInstance(AsbDocument, e),
-            );
-            return [domainEntities, total];
-        } catch (error) {
-            throw error;
-        }
-    }
-
-    async findBySpec(spec: DocumentSpec): Promise<AsbDocument[]> {
-        try {
-            const entities = await this.repository.find({
-                where: { spec },
-            });
+            const entities = await queryBuilder.getMany();
             return entities.map((e) => plainToInstance(AsbDocument, e));
         } catch (error) {
             throw error;
         }
     }
 
-    async findByAsb(idAsb: number, page: number, amount: number): Promise<[AsbDocument[], number]> {
+    async findByAsb(idAsb: number, page: number, amount: number, idOpd?: number | null): Promise<[AsbDocument[], number]> {
         try {
-            const [entities, total] = await this.repository.findAndCount({
-                where: { idAsb },
-                skip: (page - 1) * amount,
-                take: amount,
-                order: { id: 'DESC' }
-            });
+            const queryBuilder = this.repository
+                .createQueryBuilder('document')
+                .leftJoinAndSelect('document.asb', 'asb')
+                .where('document.id_asb = :idAsb', { idAsb });
+
+            // If idOpd is provided, filter by OPD
+            if (idOpd !== null && idOpd !== undefined) {
+                queryBuilder.andWhere('asb.id_opd = :idOpd', { idOpd });
+            }
+
+            const [entities, total] = await queryBuilder
+                .skip((page - 1) * amount)
+                .take(amount)
+                .orderBy('document.id', 'DESC')
+                .getManyAndCount();
+
             const domainEntities = entities.map((e) => plainToInstance(AsbDocument, e));
             return [domainEntities, total];
         } catch (error) {
@@ -148,11 +86,19 @@ export class AsbDocumentRepositoryImpl extends AsbDocumentRepository {
         }
     }
 
-    async findByAsbIdAll(idAsb: number): Promise<AsbDocument[]> {
+    async findByAsbIdAll(idAsb: number, idOpd?: number | null): Promise<AsbDocument[]> {
         try {
-            const entities = await this.repository.find({
-                where: { idAsb }
-            });
+            const queryBuilder = this.repository
+                .createQueryBuilder('document')
+                .leftJoinAndSelect('document.asb', 'asb')
+                .where('document.id_asb = :idAsb', { idAsb });
+
+            // If idOpd is provided, filter by OPD
+            if (idOpd !== null && idOpd !== undefined) {
+                queryBuilder.andWhere('asb.id_opd = :idOpd', { idOpd });
+            }
+
+            const entities = await queryBuilder.getMany();
             return entities.map((e) => plainToInstance(AsbDocument, e));
         } catch (error) {
             throw error;

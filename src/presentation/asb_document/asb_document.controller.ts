@@ -1,102 +1,42 @@
-import type { Express } from 'express';
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 import {
     Controller,
-    Post,
     Get,
-    Put,
-    Delete,
-    Body,
     Query,
     UseGuards,
     HttpStatus,
     HttpException,
-    UseInterceptors,
-    UploadedFile,
     Res,
     StreamableFile,
+    Req,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { AsbDocumentService } from '../../domain/asb_document/asb_document.service';
 import { DocumentSpec } from '../../domain/asb_document/document_spec.enum';
-import { CreateAsbDocumentDto } from './dto/create_asb_document.dto';
-import { UpdateAsbDocumentDto } from './dto/update_asb_document.dto';
-import { DeleteAsbDocumentDto } from './dto/delete_asb_document.dto';
-import { GetAsbDocumentListDto } from './dto/get_asb_document_list.dto';
-import { GetAsbDocumentListFilterDto } from './dto/get_asb_document_list_filter.dto';
-import { GetAsbDocumentDetailDto } from './dto/get_asb_document_detail.dto';
-import { AsbDocumentPaginationResultDto } from './dto/asb_document_pagination_result.dto';
 import { DownloadDocumentsByAsbDto } from './dto/download_documents_by_asb.dto';
+import { GetAsbDocumentByAsbDto } from './dto/get_asb_document_by_asb.dto';
+import { UserContext } from 'src/common/types/user-context.type';
 
 @Controller('asb-document')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.SUPERADMIN)
+@Roles(Role.SUPERADMIN, Role.ADMIN, Role.OPD, Role.VERIFIKATOR)
 export class AsbDocumentController {
     constructor(private readonly service: AsbDocumentService) { }
 
-    @Post()
-    @UseInterceptors(FileInterceptor('file'))
-    async create(
-        @Body() dto: CreateAsbDocumentDto,
-        @UploadedFile() file: Express.Multer.File,
+    @Get('by-asb')
+    async getByAsb(
+        @Query() dto: GetAsbDocumentByAsbDto,
+        @Req() req: Request,
     ) {
         try {
-            if (!file) {
-                throw new HttpException('File is required', HttpStatus.BAD_REQUEST);
-            }
-
-            const result = await this.service.create(dto, file);
-            return {
-                statusCode: HttpStatus.CREATED,
-                message: 'AsbDocument created successfully',
-                data: result,
-            };
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    @Get()
-    async findAll(
-        @Query() paginationDto: GetAsbDocumentListDto,
-        @Query() filterDto: GetAsbDocumentListFilterDto,
-    ) {
-        try {
-            const result = await this.service.findAll(
-                paginationDto.page,
-                paginationDto.amount,
-                filterDto,
-            );
-
-            const response: AsbDocumentPaginationResultDto = {
-                data: result.data,
-                total: result.total,
-                page: paginationDto.page,
-                amount: paginationDto.amount,
-                totalPages: Math.ceil(result.total / paginationDto.amount),
-            };
-
+            const user = req.user as UserContext;
+            const result = await this.service.getByAsb(dto, user.idOpd, user.roles[0]);
             return {
                 statusCode: HttpStatus.OK,
-                message: 'AsbDocument list retrieved successfully',
-                data: response,
-            };
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    @Get('detail')
-    async findOne(@Query() dto: GetAsbDocumentDetailDto) {
-        try {
-            const result = await this.service.findById(dto.id);
-            return {
-                statusCode: HttpStatus.OK,
-                message: 'AsbDocument detail retrieved successfully',
+                message: 'Documents by ASB retrieved successfully',
                 data: result,
             };
         } catch (error) {
@@ -105,9 +45,13 @@ export class AsbDocumentController {
     }
 
     @Get('by-spec')
-    async findBySpec(@Query('spec') spec: DocumentSpec) {
+    async findBySpec(
+        @Query('spec') spec: DocumentSpec,
+        @Req() req: Request,
+    ) {
         try {
-            const result = await this.service.findBySpec(spec);
+            const user = req.user as UserContext;
+            const result = await this.service.findBySpec(spec, user.idOpd, user.roles[0]);
             return {
                 statusCode: HttpStatus.OK,
                 message: 'AsbDocument list by spec retrieved successfully',
@@ -118,44 +62,19 @@ export class AsbDocumentController {
         }
     }
 
-    @Put()
-    @UseInterceptors(FileInterceptor('file'))
-    async update(
-        @Body() dto: UpdateAsbDocumentDto,
-        @UploadedFile() file?: Express.Multer.File,
-    ) {
-        try {
-            const result = await this.service.update(dto.id, dto, file);
-            return {
-                statusCode: HttpStatus.OK,
-                message: 'AsbDocument updated successfully',
-                data: result,
-            };
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    @Delete()
-    async remove(@Body() dto: DeleteAsbDocumentDto) {
-        try {
-            await this.service.delete(dto.id);
-            return {
-                statusCode: HttpStatus.OK,
-                message: 'AsbDocument deleted successfully',
-            };
-        } catch (error) {
-            this.handleError(error);
-        }
-    }
-
     @Get('download-all-by-asb')
     async downloadAllByAsb(
         @Query() dto: DownloadDocumentsByAsbDto,
         @Res({ passthrough: true }) res: Response,
+        @Req() req: Request,
     ) {
         try {
-            const { buffer, filename } = await this.service.downloadAllByAsbAsZip(dto.idAsb);
+            const user = req.user as UserContext;
+            const { buffer, filename } = await this.service.downloadAllByAsbAsZip(
+                dto.idAsb,
+                user.idOpd,
+                user.roles[0],
+            );
 
             res.set({
                 'Content-Type': 'application/zip',
@@ -171,17 +90,23 @@ export class AsbDocumentController {
     @Get('download-surat-permohonan')
     async downloadSuratPermohonan(
         @Query() dto: DownloadDocumentsByAsbDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
         try {
+            const user = req.user as UserContext;
             const { buffer, filename } = await this.service.downloadByAsbAndSpec(
                 dto.idAsb,
-                DocumentSpec.SURAT_PERMOHONAN
+                DocumentSpec.SURAT_PERMOHONAN,
+                user.idOpd,
+                user.roles[0],
             );
 
             res.set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="${filename}"`,
+                'Content-Disposition': dto.view === 'true'
+                    ? `inline; filename="${filename}"`
+                    : `attachment; filename="${filename}"`,
             });
 
             return new StreamableFile(buffer);
@@ -193,17 +118,23 @@ export class AsbDocumentController {
     @Get('download-kertas-kerja')
     async downloadKertasKerja(
         @Query() dto: DownloadDocumentsByAsbDto,
+        @Req() req: Request,
         @Res({ passthrough: true }) res: Response,
     ) {
         try {
+            const user = req.user as UserContext;
             const { buffer, filename } = await this.service.downloadByAsbAndSpec(
                 dto.idAsb,
-                DocumentSpec.KERTAS_KERJA
+                DocumentSpec.KERTAS_KERJA,
+                user.idOpd,
+                user.roles[0],
             );
 
             res.set({
                 'Content-Type': 'application/pdf',
-                'Content-Disposition': `attachment; filename="${filename}"`,
+                'Content-Disposition': dto.view === 'true'
+                    ? `inline; filename="${filename}"`
+                    : `attachment; filename="${filename}"`,
             });
 
             return new StreamableFile(buffer);
