@@ -30,13 +30,13 @@ export class UserServiceImpl implements UserService {
             if (exists) {
                 throw new ConflictException('Username already exists');
             }
-            
+
             // hash password
             userDto.password = bcrypt.hashSync(userDto.password);
 
             // create user
-            const newUser = await this.userRepo.create(userDto); 
-            
+            const newUser = await this.userRepo.create(userDto);
+
             const { passwordHash: _, ...safe } = newUser as any;
             return safe as User;
         } catch (error) {
@@ -60,14 +60,15 @@ export class UserServiceImpl implements UserService {
             if (exists) {
                 throw new ConflictException('Username already exists');
             }
-            
+
             // hash password
             userDto.password = bcrypt.hashSync(userDto.password);
 
             // create user
-            const newUser = await this.userRepo.create(userDto); 
-            
+            const newUser = await this.userRepo.create(userDto);
+
             const { passwordHash: _, ...safe } = newUser as any;
+            safe.passwordHash = undefined;
             return safe as User;
         } catch (error) {
             if (error instanceof HttpException) {
@@ -130,7 +131,7 @@ export class UserServiceImpl implements UserService {
 
             // prepare data untuk update
             const updateData = { ...userDto };
-            
+
             // hash password jika ada
             if (userDto.password) {
                 updateData.password = bcrypt.hashSync(userDto.password);
@@ -138,7 +139,7 @@ export class UserServiceImpl implements UserService {
 
             // update user via repository
             const updatedUser = await this.userRepo.updateUser(updateData);
-            
+
             // return user tanpa passwordHash
             const { passwordHash: _, ...safe } = updatedUser as any;
             return safe as User;
@@ -177,7 +178,7 @@ export class UserServiceImpl implements UserService {
 
             // prepare data untuk update
             const updateData = { ...userDto };
-            
+
             // hash password jika ada
             if (userDto.password) {
                 updateData.password = bcrypt.hashSync(userDto.password);
@@ -185,7 +186,7 @@ export class UserServiceImpl implements UserService {
 
             // update user via repository
             const updatedUser = await this.userRepo.updateUserByAdmin(updateData);
-            
+
             // return user tanpa passwordHash
             const { passwordHash: _, ...safe } = updatedUser as any;
             return safe as User;
@@ -245,7 +246,7 @@ export class UserServiceImpl implements UserService {
     async getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult> {
         try {
             const result = await this.userRepo.getUsers(pagination);
-            
+
             // sanitize users - remove passwordHash from response and superadmin users
             const sanitizedUsers = result.data.map(user => {
                 const { passwordHash: _, ...safe } = user as any;

@@ -62,4 +62,9 @@ export class AsbWithRelationsDto {
         id: number;
         klasifikasi: string;
     };
+
+    verifikator?: {
+        id: number;
+        username: string;
+    } | null;
 }

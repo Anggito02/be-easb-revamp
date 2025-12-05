@@ -2,6 +2,7 @@ import { KabKota } from '../kabkota/kabkota.entity';
 import { Opd } from '../opd/opd.entity';
 import { AsbStatus } from '../asb_status/asb_status.entity';
 import { AsbJenis } from '../asb_jenis/asb_jenis.entity';
+import { User } from '../user/user.entity';
 
 export class Asb {
     id: number;
@@ -17,6 +18,7 @@ export class Asb {
     idRekeningReview: number | null;
     idKabkota: number | null;
     idAsbKlasifikasi: number | null;
+    idVerifikator: number | null;
 
     // Core fields
     tahunAnggaran: number | null;
@@ -48,4 +50,5 @@ export class Asb {
     opd?: Opd;
     asbStatus?: AsbStatus;
     asbJenis?: AsbJenis;
+    verifikator?: User | null;
 }

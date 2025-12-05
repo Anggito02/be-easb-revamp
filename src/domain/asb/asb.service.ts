@@ -35,6 +35,6 @@ export abstract class AsbService {
     abstract verifyBpns(dto: VerifyBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyRekening(dto: VerifyRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract verifyPekerjaan(dto: VerifyPekerjaanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verify(id_asb: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verify(id_asb: number, userIdOpd: number | null, userId: string, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract reject(id_asb: number, rejectReason: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 }

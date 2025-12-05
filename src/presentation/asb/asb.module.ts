@@ -27,6 +27,7 @@ import { AsbDetailReviewModule } from '../asb_detail_review/asb_detail_review.mo
 import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.module';
 import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbJakonModule } from '../asb_jakon/asb_jakon.module';
+import { UserModule } from '../users/user.module';
 
 @Module({
     imports: [
@@ -47,7 +48,8 @@ import { AsbJakonModule } from '../asb_jakon/asb_jakon.module';
         AsbBipekNonStdReviewModule,
         AsbKomponenBangunanProsStdModule,
         AsbKomponenBangunanProsNonstdModule,
-        AsbJakonModule
+        AsbJakonModule,
+        UserModule
     ],
     providers: [
         {

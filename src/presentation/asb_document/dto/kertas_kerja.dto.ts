@@ -3,6 +3,7 @@ import { AsbDetailReviewWithRelationDto } from 'src/application/asb_detail_revie
 
 export class KertasKerjaDto {
     title: string;
+    usernameOpd: string | undefined;
     tipe_bangunan: string | undefined;
     tanggal_cetak: string;
     dataAsb: AsbWithRelationsDto;

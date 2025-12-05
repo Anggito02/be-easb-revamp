@@ -31,7 +31,7 @@ export class KertasKerjaUseCase {
             footerTemplate: `
                 <div style="font-size:8px; width:100%; padding:5px 20px; 
                             color:#555; display:flex; justify-content:space-between;">
-                    <span>Dicetak melalui Aplikasi eASB ${new Date().getFullYear()} - Diajukan oleh ${data.dataAsb.opd?.opd} - Disetujui oleh </span>
+                    <span>Dicetak melalui Aplikasi eASB ${new Date().getFullYear()} - Diajukan oleh ${data.dataAsb.opd?.opd} | ${data.usernameOpd} - Disetujui oleh ${data.dataAsb.verifikator?.username}</span>
                     <div style="width:20px;">
                         <span class="pageNumber"></span> / <span class="totalPages"></span>
                     </div>

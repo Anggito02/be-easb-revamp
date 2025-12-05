@@ -39,6 +39,8 @@ import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
 import { AsbJakonService } from 'src/domain/asb_jakon/asb_jakon.service';
 import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
+import { UserService } from 'src/domain/user/user.service';
+import { OpdService } from 'src/domain/opd/opd.service';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -57,6 +59,8 @@ export class AsbServiceImpl implements AsbService {
         private readonly calculateBobotBPSReviewUseCase: CalculateBobotBPSReviewUseCase,
         private readonly calculateBobotBPNSReviewUseCase: CalculateBobotBPNSReviewUseCase,
         private readonly asbJakonService: AsbJakonService,
+        private readonly opdService: OpdService,
+        private readonly userService: UserService
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
@@ -805,13 +809,17 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verify(id_asb: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verify(id_asb: number, userIdOpd: number | null, userId: string, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
             const asb = await this.findById(id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
+
+            const opdAsb = await this.opdService.getOpdById({ id: asb.idOpd })
+            const userOpdAsb = await this.userService.findById(opdAsb?.id_user || 0)
+            const usernameOpd = userOpdAsb?.username;
 
             // 3 Get Jakon data
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !asb.totalBiayaPembangunan) {
@@ -890,9 +898,10 @@ export class AsbServiceImpl implements AsbService {
 
             asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
 
-            // 4. Update ASB 
+            // 4. Update ASB - track which verifikator approved this
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8,
+                idVerifikator: Number(userId),
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
@@ -949,8 +958,11 @@ export class AsbServiceImpl implements AsbService {
             const time = now.toTimeString().split(' ')[0].replace(/:/g, '-'); // HH-mm-ss
             const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
+            console.log(asbData);
+
             const kertasKerjaDto = {
                 title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
+                usernameOpd,
                 tipe_bangunan: asbData.asbTipeBangunan?.tipe_bangunan,
                 tanggal_cetak: dateFormatted,
                 dataAsb: asbData,
@@ -961,7 +973,7 @@ export class AsbServiceImpl implements AsbService {
             }
 
             // 4. Generate kertas kerja
-            const kertasKerja = await this.asbDocumentService.generateAsbKertasKerja(kertasKerjaDto);
+            await this.asbDocumentService.generateAsbKertasKerja(kertasKerjaDto);
 
             return {
                 id: updatedAsb.id,

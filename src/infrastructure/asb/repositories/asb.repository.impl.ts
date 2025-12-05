@@ -25,7 +25,7 @@ export class AsbRepositoryImpl implements AsbRepository {
 
         const entity = await this.repo.findOne({
             where: whereClause,
-            relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd', 'asbTipeBangunan', 'asbKlasifikasi', 'rekening', 'rekeningReview'],
+            relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd', 'asbTipeBangunan', 'asbKlasifikasi', 'rekening', 'rekeningReview', 'verifikator'],
         });
 
         if (!entity) {

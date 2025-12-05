@@ -743,7 +743,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verify(dto.id_asb, user.idOpd, user.roles);
+            const result = await this.asbService.verify(dto.id_asb, user.idOpd, user.userId, user.roles,);
 
             return {
                 status: 'success',

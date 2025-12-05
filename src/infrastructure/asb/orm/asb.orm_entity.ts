@@ -15,6 +15,7 @@ import { AsbTipeBangunanOrmEntity } from '../../asb_tipe_bangunan/orm/asb_tipe_b
 import { RekeningOrmEntity } from '../../rekening/orm/rekening.orm_entity';
 import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 import { AsbKlasifikasiOrmEntity } from '../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
+import { UserOrmEntity } from '../../user/orm/user.orm_entity';
 
 @Entity('asb')
 export class AsbOrmEntity {
@@ -46,6 +47,9 @@ export class AsbOrmEntity {
 
     @Column({ name: 'id_asb_klasifikasi', type: 'int', nullable: true })
     idAsbKlasifikasi: number | null;
+
+    @Column({ name: 'id_verifikator', type: 'int', nullable: true })
+    idVerifikator: number | null;
 
     // Core fields
     @Column({ name: 'tahun_anggaran', type: 'int', nullable: true })
@@ -225,4 +229,8 @@ export class AsbOrmEntity {
     @ManyToOne(() => AsbKlasifikasiOrmEntity, { onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_asb_klasifikasi' })
     asbKlasifikasi: AsbKlasifikasiOrmEntity;
+
+    @ManyToOne(() => UserOrmEntity, { onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_verifikator' })
+    verifikator: UserOrmEntity;
 }
