@@ -48,8 +48,14 @@ export class AsbOrmEntity {
     @Column({ name: 'id_asb_klasifikasi', type: 'int', nullable: true })
     idAsbKlasifikasi: number | null;
 
-    @Column({ name: 'id_verifikator', type: 'int', nullable: true })
-    idVerifikator: number | null;
+    @Column({ name: 'id_verifikator_adpem', type: 'int', nullable: true })
+    idVerifikatorAdpem: number | null;
+
+    @Column({ name: 'id_verifikator_bpkad', type: 'int', nullable: true })
+    idVerifikatorBPKAD: number | null;
+
+    @Column({ name: 'id_verifikator_bappeda', type: 'int', nullable: true })
+    idVerifikatorBappeda: number | null;
 
     // Core fields
     @Column({ name: 'tahun_anggaran', type: 'int', nullable: true })
@@ -69,6 +75,15 @@ export class AsbOrmEntity {
 
     @Column({ name: 'luas_tanah', type: 'int', nullable: true })
     luasTanah: number | null;
+
+    @Column({ name: 'verified_adpem_at', type: 'timestamptz', nullable: true })
+    verifiedAdpemAt: Date | null;
+
+    @Column({ name: 'verified_bpkad_at', type: 'timestamptz', nullable: true })
+    verifiedBpkadAt: Date | null;
+
+    @Column({ name: 'verified_bappeda_at', type: 'timestamptz', nullable: true })
+    verifiedBappedaAt: Date | null;
 
     @Column({ name: 'reject_reason', type: 'text', nullable: true })
     rejectReason: string | null;
@@ -233,7 +248,15 @@ export class AsbOrmEntity {
     @JoinColumn({ name: 'id_asb_klasifikasi' })
     asbKlasifikasi: AsbKlasifikasiOrmEntity;
 
-    @ManyToOne(() => UserOrmEntity, { onDelete: 'SET NULL' })
-    @JoinColumn({ name: 'id_verifikator' })
-    verifikator: UserOrmEntity;
+    @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_verifikator_adpem' })
+    verifikatorAdpem: UserOrmEntity | null;
+
+    @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_verifikator_bpkad' })
+    verifikatorBPKAD: UserOrmEntity | null;
+
+    @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_verifikator_bappeda' })
+    verifikatorBappeda: UserOrmEntity | null;
 }

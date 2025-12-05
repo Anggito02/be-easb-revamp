@@ -28,6 +28,7 @@ import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_
 import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbJakonModule } from '../asb_jakon/asb_jakon.module';
 import { UserModule } from '../users/user.module';
+import { VerifikatorModule } from '../verifikator/verifikator.module';
 
 @Module({
     imports: [
@@ -49,7 +50,8 @@ import { UserModule } from '../users/user.module';
         AsbKomponenBangunanProsStdModule,
         AsbKomponenBangunanProsNonstdModule,
         AsbJakonModule,
-        UserModule
+        UserModule,
+        VerifikatorModule
     ],
     providers: [
         {

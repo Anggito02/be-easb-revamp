@@ -18,7 +18,9 @@ export class Asb {
     idRekeningReview: number | null;
     idKabkota: number | null;
     idAsbKlasifikasi: number | null;
-    idVerifikator: number | null;
+    idVerifikatorAdpem: number | null;
+    idVerifikatorBPKAD: number | null;
+    idVerifikatorBappeda: number | null;
 
     // Core fields
     tahunAnggaran: number | null;
@@ -27,6 +29,9 @@ export class Asb {
     jumlahKontraktor: number | null;
     totalLantai: number | null;
     luasTanah: number | null;
+    verifiedAdpemAt: Date | null;
+    verifiedBpkadAt: Date | null;
+    verifiedBappedaAt: Date | null;
     rejectReason: string | null;
 
     // Double/numeric fields
@@ -51,5 +56,7 @@ export class Asb {
     opd?: Opd;
     asbStatus?: AsbStatus;
     asbJenis?: AsbJenis;
-    verifikator?: User | null;
+    verifikatorAdpem?: User | null;
+    verifikatorBPKAD?: User | null;
+    verifikatorBappeda?: User | null;
 }

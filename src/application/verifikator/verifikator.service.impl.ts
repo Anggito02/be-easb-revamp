@@ -83,6 +83,14 @@ export class VerifikatorServiceImpl implements VerifikatorService {
         }
     }
 
+    async findByUserId(userId: number): Promise<Verifikator | null> {
+        try {
+            return await this.verifikatorRepository.findByUserId(userId);
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async findAll(page: number, amount: number): Promise<{ data: Verifikator[]; total: number; page: number; amount: number; totalPages: number }> {
         try {
             const result = await this.verifikatorRepository.findAll(page, amount);

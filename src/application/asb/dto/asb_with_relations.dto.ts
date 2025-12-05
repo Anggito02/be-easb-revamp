@@ -8,12 +8,18 @@ export class AsbWithRelationsDto {
     idRekeningReview: number | null;
     idKabkota: number | null;
     idAsbKlasifikasi: number | null;
+    idVerifikatorAdpem: number | null;
+    idVerifikatorBPKAD: number | null;
+    idVerifikatorBappeda: number | null;
     tahunAnggaran: number | null;
     namaAsb: string;
     alamat: string | null;
     jumlahKontraktor: number | null;
     totalLantai: number | null;
     luasTanah: number | null;
+    verifiedAdpemAt: Date | null;
+    verifiedBpkadAt: Date | null;
+    verifiedBappedaAt: Date | null;
     rejectReason: string | null;
     shst: number | null;
     perencanaanKonstruksi: number | null;
@@ -64,7 +70,17 @@ export class AsbWithRelationsDto {
         klasifikasi: string;
     };
 
-    verifikator?: {
+    verifikatorAdpem?: {
+        id: number;
+        username: string;
+    } | null;
+
+    verifikatorBPKAD?: {
+        id: number;
+        username: string;
+    } | null;
+
+    verifikatorBappeda?: {
         id: number;
         username: string;
     } | null;

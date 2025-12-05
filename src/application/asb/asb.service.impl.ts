@@ -41,6 +41,8 @@ import { AsbJakonService } from 'src/domain/asb_jakon/asb_jakon.service';
 import { AsbJakonType } from 'src/domain/asb_jakon/asb_jakon_type.enum';
 import { UserService } from 'src/domain/user/user.service';
 import { OpdService } from 'src/domain/opd/opd.service';
+import { VerifikatorService } from 'src/domain/verifikator/verifikator.service';
+import { JenisVerifikator } from 'src/domain/verifikator/jenis_verifikator.enum';
 
 @Injectable()
 export class AsbServiceImpl implements AsbService {
@@ -60,7 +62,8 @@ export class AsbServiceImpl implements AsbService {
         private readonly calculateBobotBPNSReviewUseCase: CalculateBobotBPNSReviewUseCase,
         private readonly asbJakonService: AsbJakonService,
         private readonly opdService: OpdService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly verifikatorService: VerifikatorService
     ) { }
 
     async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null> {
@@ -594,9 +597,21 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verifyLantai(dto: VerifyLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.findByUserId(Number(userId));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify Lantai ASB`);
+                }
+            }
+
+
             const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
@@ -644,9 +659,19 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verifyBps(dto: VerifyBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyBps(dto: VerifyBpsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify BPS ASB`);
+                }
+            }
             const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
@@ -704,9 +729,20 @@ export class AsbServiceImpl implements AsbService {
     }
 
 
-    async verifyBpns(dto: VerifyBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyBpns(dto: VerifyBpnsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify BPNS ASB`);
+                }
+            }
+
             const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
@@ -764,9 +800,20 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verifyRekening(dto: VerifyRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyRekening(dto: VerifyRekeningDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify Rekening ASB`);
+                }
+            }
+
             const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
@@ -788,9 +835,20 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verifyPekerjaan(dto: VerifyPekerjaanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verifyPekerjaan(dto: VerifyPekerjaanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
             // 1. Check permissions and existence
+            if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
+                }
+            }
+
             const asb = await this.findById(dto.id_asb, userIdOpd, userRoles);
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
@@ -814,12 +872,41 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async verify(id_asb: number, userIdOpd: number | null, userId: string, userRoles: Role[]): Promise<{ id: number; status: any }> {
+    async verify(id_asb: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         try {
-            // 1. Check permissions and existence
-            const asb = await this.findById(id_asb, userIdOpd, userRoles);
+            // 1. Update Asb Verification
+            const asbBeforeVerify = await this.findById(id_asb, userIdOpd, userRoles);
+            if (!asbBeforeVerify) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            const verificatorUser = await this.verifikatorService.findByUserId(Number(userIdOpd));
+            if (!verificatorUser) {
+                throw new NotFoundException(`User not sync with verifikator`);
+            }
+            const verificatorType = verificatorUser.jenisVerifikator;
+
+            await this.repository.update(id_asb, {
+                idVerifikatorAdpem: verificatorType === JenisVerifikator.ADPEM ? verificatorUser.id : null,
+                verifiedAdpemAt: verificatorType === JenisVerifikator.ADPEM ? new Date() : null,
+                idVerifikatorBPKAD: verificatorType === JenisVerifikator.BPKAD ? verificatorUser.id : null,
+                verifiedBpkadAt: verificatorType === JenisVerifikator.BPKAD ? new Date() : null,
+                idVerifikatorBappeda: verificatorType === JenisVerifikator.BAPPEDA ? verificatorUser.id : null,
+                verifiedBappedaAt: verificatorType === JenisVerifikator.BAPPEDA ? new Date() : null,
+            });
+
+            const asb = await this.findById(id_asb, userIdOpd, userRoles)
+
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
+            }
+
+            // if not all verifikator verified
+            if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD || !asb?.idVerifikatorBappeda) {
+                return {
+                    id: asb.id,
+                    status: asb.asbStatus
+                };
             }
 
             const opdAsb = await this.opdService.getOpdById({ id: asb.idOpd })
@@ -906,7 +993,8 @@ export class AsbServiceImpl implements AsbService {
             // 4. Update ASB - track which verifikator approved this
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8,
-                idVerifikator: Number(userId),
+                idVerifikatorAdpem: Number(userId),
+                verifiedAdpemAt: new Date(),
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,

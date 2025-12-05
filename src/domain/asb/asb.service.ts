@@ -30,11 +30,11 @@ export abstract class AsbService {
     abstract storeBpns(dto: StoreBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeRekening(dto: StoreRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract storeVerif(dto: StoreVerifDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyLantai(dto: VerifyLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBps(dto: VerifyBpsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyBpns(dto: VerifyBpnsDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyRekening(dto: VerifyRekeningDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verifyPekerjaan(dto: VerifyPekerjaanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract verify(id_asb: number, userIdOpd: number | null, userId: string, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyLantai(dto: VerifyLantaiDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyBps(dto: VerifyBpsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyBpns(dto: VerifyBpnsDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyRekening(dto: VerifyRekeningDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verifyPekerjaan(dto: VerifyPekerjaanDto, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
+    abstract verify(id_asb: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract reject(id_asb: number, rejectReason: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 }

@@ -543,7 +543,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyLantai(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyLantai(dto, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -593,7 +593,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBps(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBps(dto, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -643,7 +643,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyBpns(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyBpns(dto, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -693,7 +693,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verifyRekening(dto, user.idOpd, user.roles);
+            const result = await this.asbService.verifyRekening(dto, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
@@ -743,7 +743,7 @@ export class AsbController {
     ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
         try {
             const user = req.user as UserContext;
-            const result = await this.asbService.verify(dto.id_asb, user.idOpd, user.userId, user.roles,);
+            const result = await this.asbService.verify(dto.id_asb, user.userId, user.idOpd, user.roles);
 
             return {
                 status: 'success',
