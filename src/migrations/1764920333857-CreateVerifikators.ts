@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class CreateVerifikator1764920333857 implements MigrationInterface {
-    name = 'CreateVerifikator1764920333857';
+export class CreateVerifikators1764920333857 implements MigrationInterface {
+    name = 'CreateVerifikators1764920333857';
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Create enum type for jenis_verifikator

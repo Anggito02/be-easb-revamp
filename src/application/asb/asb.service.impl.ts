@@ -250,6 +250,7 @@ export class AsbServiceImpl implements AsbService {
 
             // Save documents
             const suratPermohonanDto = {
+                idAsb: asbData.id,
                 opd: asbData.opd?.opd || "",
                 nama_asb: asbData.namaAsb || "",
                 asb_jenis: asbData.asbJenis?.jenis || "",

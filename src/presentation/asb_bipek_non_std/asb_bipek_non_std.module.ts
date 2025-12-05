@@ -10,6 +10,7 @@ import { CalculateBobotBPNSUseCase } from 'src/application/asb_bipek_non_std/use
 import { AsbKomponenBangunanProsNonstdModule } from '../asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.module';
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
 import { AsbDocumentModule } from '../asb_document/asb_document.module';
+import { AsbBipekNonStdController } from './asb_bipek_non_std.controller';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { AsbDocumentModule } from '../asb_document/asb_document.module';
         AsbDetailModule,
         AsbDocumentModule,
     ],
+    controllers: [AsbBipekNonStdController],
     providers: [
         {
             provide: AsbBipekNonStdRepository,

@@ -6,12 +6,14 @@ import { AsbBipekNonStdReviewRepositoryImpl } from '../../infrastructure/asb_bip
 import { AsbBipekNonStdReviewService } from '../../domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { AsbBipekNonStdReviewServiceImpl } from '../../application/asb_bipek_non_std_review/asb_bipek_non_std_review.service.impl';
 import { AsbKomponenBangunanNonstdModule } from '../asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.module';
+import { AsbBipekNonStdReviewController } from './asb_bipek_non_std_review.controller';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([AsbBipekNonStdReviewOrmEntity]),
         AsbKomponenBangunanNonstdModule,
     ],
+    controllers: [AsbBipekNonStdReviewController],
     providers: [
         {
             provide: AsbBipekNonStdReviewRepository,

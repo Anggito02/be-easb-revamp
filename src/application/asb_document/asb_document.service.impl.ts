@@ -193,7 +193,12 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
                 stream: Readable.from(asbDoc),
             };
 
-            this.saveDocument.execute(file, DocumentSpec.KERTAS_KERJA);
+            const filepath = this.saveDocument.execute(file, DocumentSpec.KERTAS_KERJA);
+
+            await this.repository.create({
+                idAsb: dto.dataAsb.id,
+                spec: DocumentSpec.KERTAS_KERJA,
+            }, filepath);
             return true;
         } catch (error) {
             throw error;
@@ -216,7 +221,11 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
                 stream: Readable.from(asbDoc),
             };
 
-            this.saveDocument.execute(file, DocumentSpec.SURAT_PERMOHONAN);
+            const filepath = this.saveDocument.execute(file, DocumentSpec.SURAT_PERMOHONAN);
+            await this.repository.create({
+                idAsb: dto.idAsb,
+                spec: DocumentSpec.SURAT_PERMOHONAN,
+            }, filepath);
             return true;
         } catch (error) {
             throw error;

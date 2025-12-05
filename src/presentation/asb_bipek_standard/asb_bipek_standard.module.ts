@@ -10,6 +10,7 @@ import { AsbKomponenBangunanProsStdModule } from '../asb_komponen_bangunan_pros_
 import { AsbDetailModule } from '../asb_detail/asb_detail.module';
 import { CalculateBobotBPSUseCase } from 'src/application/asb_bipek_standard/use_cases/calculate_bobot_bps.use_case';
 import { AsbDocumentModule } from '../asb_document/asb_document.module';
+import { AsbBipekStandardController } from './asb_bipek_standard.controller';
 
 @Module({
     imports: [
@@ -19,6 +20,7 @@ import { AsbDocumentModule } from '../asb_document/asb_document.module';
         AsbDetailModule,
         AsbDocumentModule,
     ],
+    controllers: [AsbBipekStandardController],
     providers: [
         {
             provide: AsbBipekStandardRepository,

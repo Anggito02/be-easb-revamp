@@ -10,6 +10,7 @@ import { AsbLantaiModule } from '../asb_lantai/asb_lantai.module';
 import { AsbFungsiRuangModule } from '../asb_fungsi_ruang/asb_fungsi_ruang.module';
 import { CalculateKoefFungsiBangunanUseCase } from 'src/application/asb_detail_review/use_cases/calculate_koef_fungsi_bangunan.use_case';
 import { CalculateKoefLantaiUseCase } from 'src/application/asb_detail_review/use_cases/calculate_koef_lantai.use_case';
+import { AsbDetailReviewController } from './asb_detail_review.controller';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { CalculateKoefLantaiUseCase } from 'src/application/asb_detail_review/us
         AsbLantaiModule,
         AsbFungsiRuangModule,
     ],
+    controllers: [AsbDetailReviewController],
     providers: [
         {
             provide: AsbDetailReviewRepository,
