@@ -106,4 +106,16 @@ export class VerifikatorServiceImpl implements VerifikatorService {
             throw error;
         }
     }
+
+    async checkVerifikatorType(userId: number): Promise<string> {
+        try {
+            const type = await this.verifikatorRepository.checkVerifikatorType(userId);
+            if (!type) {
+                throw new NotFoundException(`Verifikator with User ID ${userId} not found`);
+            }
+            return type;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

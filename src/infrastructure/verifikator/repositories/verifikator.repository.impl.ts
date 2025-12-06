@@ -81,4 +81,16 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
             throw error;
         }
     }
+
+    async checkVerifikatorType(userId: number): Promise<string | null> {
+        try {
+            const result = await this.repo.findOne({
+                where: { idUser: userId },
+                select: ['jenisVerifikator']
+            });
+            return result ? result.jenisVerifikator : null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
