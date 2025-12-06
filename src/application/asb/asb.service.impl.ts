@@ -583,7 +583,7 @@ export class AsbServiceImpl implements AsbService {
 
             // 2. Update ASB status to 5
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 5
+                idAsbStatus: 6
             });
 
             return {
