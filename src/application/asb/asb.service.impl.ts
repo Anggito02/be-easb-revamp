@@ -514,12 +514,6 @@ export class AsbServiceImpl implements AsbService {
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
                 throw new Error("ASB is missing required classification or location data for SHST lookup");
             }
-            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
-            shstDto.id_kabkota = asb.idKabkota;
-            shstDto.tahun = asb.tahunAnggaran || new Date().getFullYear();
-
-            const shstNominal = await this.shstService.getNominal(shstDto);
-            console.log("Shst nominal:", shstNominal);
 
             // 4. Calculate BPNS
             if (!asb.totalLantai) {
@@ -530,7 +524,6 @@ export class AsbServiceImpl implements AsbService {
                 dto.id_asb,
                 dto.komponen_nonstd,
                 dto.bobot_nonstd,
-                shstNominal,
                 asb.totalLantai,
                 asb.koefisienLantaiTotal || 0,
                 asb.koefisienFungsiRuangTotal || 0,
@@ -540,9 +533,6 @@ export class AsbServiceImpl implements AsbService {
 
             // Update total biaya pembangunan
             const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
-            console.log("BPNS:", BPNS);
-            console.log("Nominal BPS:", asb.nominalBps);
-            console.log("Total biaya pembangunan:", totalBiayaPembangunan);
 
             // 5. Update ASB status to 4
             const updatedAsb = await this.repository.update(dto.id_asb, {

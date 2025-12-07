@@ -18,7 +18,6 @@ export class CalculateBobotBPNSUseCase {
         idAsb: number,
         komponenIds: number[],
         bobotInputs: number[],
-        shst: number,
         totalLantai: number,
         koefisienLantaiTotal: number,
         koefisienFungsiRuangTotal: number,
@@ -69,8 +68,7 @@ export class CalculateBobotBPNSUseCase {
         jumlahBobot = jumlahBobot > 1.5 * bobotTotalBps ? 1.5 * bobotTotalBps : jumlahBobot;
 
         // Calculate BPNS
-        const BPNS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
-        console.log("BPNS = jumlahBobot * shst * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan", BPNS, jumlahBobot, shst, koefisienLantaiTotal, koefisienFungsiRuangTotal, luasTotalBangunan);
+        const BPNS = jumlahBobot * koefisienLantaiTotal * koefisienFungsiRuangTotal * luasTotalBangunan;
 
         // Loop 2: Create and save AsbBipekNonStd records
         for (let i = 0; i < komponenIds.length; i++) {
