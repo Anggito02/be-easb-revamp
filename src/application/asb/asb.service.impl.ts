@@ -402,7 +402,9 @@ export class AsbServiceImpl implements AsbService {
                 existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
             }
 
-            await this.repository.update(dto.id_asb, existingAsb);
+            await this.repository.update(dto.id_asb, {
+                idAsbKlasifikasi: existingAsb.idAsbKlasifikasi
+            });
 
             // REQUEST_TULUNGAGUNG //
 
