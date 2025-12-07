@@ -84,4 +84,11 @@ export class AsbWithRelationsDto {
         id: number;
         username: string;
     } | null;
+
+    asbDetails?: any[];
+    asbDetailReviews?: any[];
+    asbBipekStandards?: any[];
+    asbBipekStandardReviews?: any[];
+    asbBipekNonStds?: any[];
+    asbBipekNonStdReviews?: any[];
 }

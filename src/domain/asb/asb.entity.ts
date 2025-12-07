@@ -3,6 +3,12 @@ import { Opd } from '../opd/opd.entity';
 import { AsbStatus } from '../asb_status/asb_status.entity';
 import { AsbJenis } from '../asb_jenis/asb_jenis.entity';
 import { User } from '../user/user.entity';
+import { AsbDetail } from '../asb_detail/asb_detail.entity';
+import { AsbDetailReview } from '../asb_detail_review/asb_detail_review.entity';
+import { AsbBipekStandard } from '../asb_bipek_standard/asb_bipek_standard.entity';
+import { AsbBipekStandardReview } from '../asb_bipek_standard_review/asb_bipek_standard_review.entity';
+import { AsbBipekNonStd } from '../asb_bipek_non_std/asb_bipek_non_std.entity';
+import { AsbBipekNonStdReview } from '../asb_bipek_non_std_review/asb_bipek_non_std_review.entity';
 
 export class Asb {
     id: number;
@@ -59,4 +65,12 @@ export class Asb {
     verifikatorAdpem?: User | null;
     verifikatorBPKAD?: User | null;
     verifikatorBappeda?: User | null;
+
+    // OneToMany Relations
+    asbDetails?: AsbDetail[];
+    asbDetailReviews?: AsbDetailReview[];
+    asbBipekStandards?: AsbBipekStandard[];
+    asbBipekStandardReviews?: AsbBipekStandardReview[];
+    asbBipekNonStds?: AsbBipekNonStd[];
+    asbBipekNonStdReviews?: AsbBipekNonStdReview[];
 }

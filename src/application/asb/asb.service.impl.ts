@@ -336,102 +336,110 @@ export class AsbServiceImpl implements AsbService {
     }
 
     async storeLantai(dto: UpdateAsbStoreLantaiDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
-        // Check permissions
-        const isAdmin = userRoles.includes(Role.ADMIN);
-        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
-        const isOpd = userRoles.includes(Role.OPD);
+        try {
+            // Check permissions
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isOpd = userRoles.includes(Role.OPD);
 
-        // Verify existence and ownership
-        let existingAsb: AsbWithRelationsDto | null = null;
+            // Verify existence and ownership
+            let existingAsb: AsbWithRelationsDto | null = null;
 
-        if (isAdmin || isSuperAdmin) {
-            existingAsb = await this.repository.findById(dto.id_asb);
-        } else if (isOpd) {
-            if (!userIdOpd) {
-                throw new ForbiddenException('OPD user has no associated OPD');
+            if (isAdmin || isSuperAdmin) {
+                existingAsb = await this.repository.findById(dto.id_asb);
+            } else if (isOpd) {
+                if (!userIdOpd) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+                existingAsb = await this.repository.findById(dto.id_asb, userIdOpd);
+            } else {
+                throw new ForbiddenException('User is not authorized to update this ASB');
             }
-            existingAsb = await this.repository.findById(dto.id_asb, userIdOpd);
-        } else {
-            throw new ForbiddenException('User is not authorized to update this ASB');
+
+            if (!existingAsb) {
+                throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
+            }
+
+            // Step 1: Delete existing records if provided
+            if (dto.id_asb_detail && dto.id_asb_detail.length > 0) {
+                await this.asbDetailService.deleteByIds(dto.id_asb_detail);
+            }
+
+            // For bipek_standard and bipek_nonstd, we'd need services injected
+            // For now, we'll delete all AsbDetail records for this ASB to ensure clean state
+            await this.asbDetailService.deleteByAsbId(dto.id_asb);
+
+            // Step 2: Validate arrays length
+            const totalLantai = existingAsb.totalLantai || 0;
+            if (dto.luas_lantai.length !== totalLantai ||
+                dto.id_asb_lantai.length !== totalLantai ||
+                dto.id_asb_fungsi_ruang.length !== totalLantai) {
+                throw new ForbiddenException(
+                    `Array lengths must match total_lantai (${totalLantai})`
+                );
+            }
+
+            // Step 3: Create AsbDetail records for each floor
+            for (let i = 0; i < totalLantai; i++) {
+                const createDetailDto = new CreateAsbDetailDto();
+                createDetailDto.idAsb = dto.id_asb;
+                createDetailDto.idAsbLantai = dto.id_asb_lantai[i];
+                createDetailDto.idAsbFungsiRuang = dto.id_asb_fungsi_ruang[i];
+                createDetailDto.idAsbTipeBangunan = existingAsb.idAsbTipeBangunan;
+                createDetailDto.luas = dto.luas_lantai[i];
+
+                // The service will calculate koef values automatically
+                await this.asbDetailService.create(createDetailDto);
+            }
+
+            // Step 4: Set ASB Klasifikasi
+            // REQUEST_TULUNGAGUNG //
+            const totalLantaiExistingAsb = existingAsb.totalLantai || 0;
+            const totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
+            if (existingAsb.idAsbTipeBangunan === 1) {
+                existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
+            } else {
+                existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
+            }
+
+            // REQUEST_TULUNGAGUNG //
+
+            // Step 6: Calculate Luas Total Bangunan
+            existingAsb.luasTotalBangunan = totalLuasLantai;
+
+            // Step 7: Calculate Koefisien Lantai Total
+            existingAsb.koefisienLantaiTotal = await this.asbDetailService.calculateKoefLantaiTotal(dto.id_asb, totalLuasLantai);
+
+            // Step 8: Calculate Koefisien Fungsi RuangTotal
+            existingAsb.koefisienFungsiRuangTotal = await this.asbDetailService.calculateKoefFungsiRuangTotal(dto.id_asb, totalLuasLantai);
+
+            // Step 9: Get Nominal shst
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = existingAsb.idAsbTipeBangunan;
+            shstDto.id_asb_klasifikasi = existingAsb.idAsbKlasifikasi;
+            shstDto.id_kabkota = existingAsb.idKabkota || 0;
+            shstDto.tahun = existingAsb.tahunAnggaran || 0;
+
+            console.log("shst: ", shstDto);
+            const shstNominal = await this.shstService.getNominal(shstDto);
+            console.log("Shst nominal:", shstNominal);
+
+            // Step 10: Update ASB
+            const updatedAsb = await this.repository.update(dto.id_asb, {
+                idAsbStatus: 2,
+                idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
+                shst: shstNominal,
+                luasTotalBangunan: existingAsb.luasTotalBangunan,
+                koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
+                koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
+            });
+            console.log("Updated ASB:", updatedAsb);
+
+            return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
+        } catch (error) {
+            console.error("Error updating ASB:", error);
+            throw error;
         }
-
-        if (!existingAsb) {
-            throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
-        }
-
-        // Step 1: Delete existing records if provided
-        if (dto.id_asb_detail && dto.id_asb_detail.length > 0) {
-            await this.asbDetailService.deleteByIds(dto.id_asb_detail);
-        }
-
-        // For bipek_standard and bipek_nonstd, we'd need services injected
-        // For now, we'll delete all AsbDetail records for this ASB to ensure clean state
-        await this.asbDetailService.deleteByAsbId(dto.id_asb);
-
-        // Step 2: Validate arrays length
-        const totalLantai = existingAsb.totalLantai || 0;
-        if (dto.luas_lantai.length !== totalLantai ||
-            dto.id_asb_lantai.length !== totalLantai ||
-            dto.id_asb_fungsi_ruang.length !== totalLantai) {
-            throw new ForbiddenException(
-                `Array lengths must match total_lantai (${totalLantai})`
-            );
-        }
-
-        // Step 3: Create AsbDetail records for each floor
-        for (let i = 0; i < totalLantai; i++) {
-            const createDetailDto = new CreateAsbDetailDto();
-            createDetailDto.idAsb = dto.id_asb;
-            createDetailDto.idAsbLantai = dto.id_asb_lantai[i];
-            createDetailDto.idAsbFungsiRuang = dto.id_asb_fungsi_ruang[i];
-            createDetailDto.idAsbTipeBangunan = existingAsb.idAsbTipeBangunan;
-            createDetailDto.luas = dto.luas_lantai[i];
-
-            // The service will calculate koef values automatically
-            await this.asbDetailService.create(createDetailDto);
-        }
-
-        // Step 4: Set ASB Klasifikasi
-        // REQUEST_TULUNGAGUNG //
-        const totalLantaiExistingAsb = existingAsb.totalLantai || 0;
-        const totalLuasLantai = dto.luas_lantai.reduce((total, luas) => total + luas, 0);
-        if (existingAsb.idAsbTipeBangunan === 1) {
-            existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
-        } else {
-            existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
-        }
-
-        // REQUEST_TULUNGAGUNG //
-
-        // Step 6: Calculate Luas Total Bangunan
-        existingAsb.luasTotalBangunan = totalLuasLantai;
-
-        // Step 7: Calculate Koefisien Lantai Total
-        existingAsb.koefisienLantaiTotal = await this.asbDetailService.calculateKoefLantaiTotal(dto.id_asb, totalLuasLantai);
-
-        // Step 8: Calculate Koefisien Fungsi RuangTotal
-        existingAsb.koefisienFungsiRuangTotal = await this.asbDetailService.calculateKoefFungsiRuangTotal(dto.id_asb, totalLuasLantai);
-
-        // Step 9: Get Nominal shst
-        const shstDto = new GetShstNominalDto();
-        shstDto.id_asb_tipe_bangunan = existingAsb.idAsbTipeBangunan;
-        shstDto.id_asb_klasifikasi = existingAsb.idAsbKlasifikasi;
-        shstDto.id_kabkota = existingAsb.idKabkota || 0;
-        shstDto.tahun = existingAsb.tahunAnggaran || 0;
-        const shstNominal = await this.shstService.getNominal(shstDto);
-        console.log("Shst nominal:", shstNominal);
-
-        // Step 10: Update ASB
-        const updatedAsb = await this.repository.update(dto.id_asb, {
-            idAsbStatus: 2,
-            idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
-            shst: shstNominal,
-            luasTotalBangunan: existingAsb.luasTotalBangunan,
-            koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
-            koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
-        });
-
-        return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
     }
 
 

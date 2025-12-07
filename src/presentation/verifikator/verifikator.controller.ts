@@ -9,7 +9,9 @@ import {
     HttpStatus,
     HttpException,
     Query,
+    Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CreateVerifikatorDto } from '../../application/verifikator/dto/create_verifikator.dto';
@@ -19,8 +21,7 @@ import { GetVerifikatorsDto } from '../../application/verifikator/dto/get_verifi
 import { GetVerifikatorDetailDto } from '../../application/verifikator/dto/get_verifikator_detail.dto';
 import { ResponseDto } from '../../common/dto/response.dto';
 import { Role } from '../../domain/user/user_role.enum';
-import { CurrentUser } from '../../common/decorators/current_user.decorator';
-import { User } from '../../domain/user/user.entity';
+import { UserContext } from 'src/common/types/user-context.type';
 
 @Controller('verifikators')
 export class VerifikatorController {
@@ -28,9 +29,12 @@ export class VerifikatorController {
 
     @Get('check-verifikator-type')
     @Roles(Role.VERIFIKATOR)
-    async checkVerifikatorType(@CurrentUser() user: User): Promise<ResponseDto> {
+    async checkVerifikatorType(
+        @Req() req: Request
+    ): Promise<ResponseDto> {
         try {
-            const result = await this.verifikatorService.checkVerifikatorType(user.id);
+            const user = req.user as UserContext;
+            const result = await this.verifikatorService.checkVerifikatorType(Number(user.userId));
 
             return {
                 status: 'success',
