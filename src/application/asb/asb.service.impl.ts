@@ -431,7 +431,6 @@ export class AsbServiceImpl implements AsbService {
             // Step 10: Update ASB
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 2,
-                idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
                 shst: shstNominal,
                 luasTotalBangunan: existingAsb.luasTotalBangunan,
                 koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
