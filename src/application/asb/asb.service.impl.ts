@@ -402,6 +402,8 @@ export class AsbServiceImpl implements AsbService {
                 existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
             }
 
+            await this.repository.update(dto.id_asb, existingAsb);
+
             // REQUEST_TULUNGAGUNG //
 
             // Step 6: Calculate Luas Total Bangunan
