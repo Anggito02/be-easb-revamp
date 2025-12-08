@@ -63,4 +63,18 @@ export class UsulanJalanServiceImpl extends UsulanJalanService {
         const updated = await this.repo.update(id, payload);
         return updated;
     }
+
+    async delete(id: number): Promise<boolean> {
+        const existing = await this.repo.findById(id);
+        if (!existing) {
+            throw new NotFoundException(`Usulan jalan dengan id ${id} tidak ditemukan`);
+        }
+
+        if (existing.status !== UsulanJalanStatus.PENDING) {
+            throw new BadRequestException(`Tidak dapat menghapus usulan yang berstatus '${existing.status}'. Hanya usulan dengan status 'pending' dapat dihapus.`);
+        }
+
+        const deleted = await this.repo.delete(id);
+        return deleted;
+    }
 }

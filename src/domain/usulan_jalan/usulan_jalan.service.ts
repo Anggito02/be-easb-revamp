@@ -5,4 +5,5 @@ export abstract class UsulanJalanService {
     abstract findById(id: number): Promise<UsulanJalan>;
     abstract findAll(page: number, amount: number): Promise<{ data: UsulanJalan[]; total: number; page: number; amount: number; totalPages: number }>;
     abstract update(id: number, usulan: Partial<UsulanJalan>): Promise<UsulanJalan>;
+    abstract delete(id: number): Promise<boolean>;
 }
