@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UsulanJalanServiceImpl } from '../../application/usulan_jalan/usulan_jalan.service.impl';
 import { CreateUsulanJalanDto } from '../../application/usulan_jalan/dto/create_usulan_jalan.dto';
+import { GetUsulanJalanDetailDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_detail.dto';
 
 @Controller('usulan-jalan')
 export class UsulanJalanController {
@@ -8,6 +9,23 @@ export class UsulanJalanController {
 
     @Post()
     async create(@Body() dto: CreateUsulanJalanDto) {
-        return this.service.create(dto);
+        const created = await this.service.create(dto);
+        return {
+            status: 'success',
+            responseCode: 201,
+            message: 'Usulan jalan created',
+            data: created,
+        };
+    }
+
+    @Get('detail')
+    async detail(@Query() dto: GetUsulanJalanDetailDto) {
+        const found = await this.service.findById(dto.id);
+        return {
+            status: 'success',
+            responseCode: 200,
+            message: 'Usulan jalan detail retrieved',
+            data: found,
+        };
     }
 }

@@ -14,5 +14,6 @@ import { UsulanJalanController } from './usulan_jalan.controller';
         UsulanJalanServiceImpl,
         { provide: UsulanJalanRepository, useClass: UsulanJalanRepositoryImpl },
     ],
+    exports: [UsulanJalanServiceImpl]
 })
 export class UsulanJalanModule {}
