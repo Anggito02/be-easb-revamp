@@ -22,6 +22,7 @@ import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 import { VerifyBpsDto } from './dto/verify_bps.dto';
+import { VerifyPekerjaanDto } from './dto/verify_pekerjaan.dto';
 import { VerifyDto } from './dto/verify.dto';
 import { RejectDto } from './dto/reject.dto';
 
@@ -699,6 +700,56 @@ export class AsbController {
                 status: 'success',
                 responseCode: HttpStatus.OK,
                 message: 'ASB rekening verified successfully',
+                data: result,
+            };
+        } catch (error) {
+            if (error instanceof HttpException) {
+                const status = error.getStatus();
+                const response = error.getResponse();
+                let message: string;
+
+                if (typeof response === 'string') {
+                    message = response;
+                } else {
+                    const resObj = response as any;
+                    if (Array.isArray(resObj.message)) {
+                        message = resObj.message.join(', ');
+                    } else {
+                        message = resObj.message ?? 'Error';
+                    }
+                }
+
+                return {
+                    status: 'error',
+                    responseCode: status,
+                    message,
+                    data: null,
+                };
+            }
+
+            return {
+                status: 'error',
+                responseCode: HttpStatus.INTERNAL_SERVER_ERROR,
+                message: 'Internal server error',
+                data: null,
+            };
+        }
+    }
+
+    @Put('verify-pekerjaan')
+    @Roles(Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async verifyPekerjaan(
+        @Body() dto: VerifyPekerjaanDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        try {
+            const user = req.user as UserContext;
+            const result = await this.asbService.verifyPekerjaan(dto, user.userId, user.idOpd, user.roles);
+
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'ASB pekerjaan verified successfully',
                 data: result,
             };
         } catch (error) {
