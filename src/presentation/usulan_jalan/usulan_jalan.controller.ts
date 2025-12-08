@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
 import { UsulanJalanServiceImpl } from '../../application/usulan_jalan/usulan_jalan.service.impl';
 import { CreateUsulanJalanDto } from '../../application/usulan_jalan/dto/create_usulan_jalan.dto';
 import { GetUsulanJalanDetailDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_detail.dto';
 import { GetUsulanJalanListDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_list.dto';
+import { UpdateUsulanJalanDto } from 'src/application/usulan_jalan/dto/update_usulan_jalan.dto';
 
 @Controller('usulan-jalan')
 export class UsulanJalanController {
@@ -48,6 +49,18 @@ export class UsulanJalanController {
                 amount: result.amount,
                 totalPages: result.totalPages,
             },
+        };
+    }
+
+    @Put()
+    async update(@Body() dto: UpdateUsulanJalanDto) {
+        const { id, ...payload } = dto;
+        const updated = await this.service.update(id, payload);
+        return {
+            status: 'success',
+            responseCode: 200,
+            message: 'Usulan jalan updated',
+            data: updated,
         };
     }
 }
