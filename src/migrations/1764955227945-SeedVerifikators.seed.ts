@@ -8,8 +8,8 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
         const passwordHash = await bcrypt.hash('12345678', 10);
 
         const verifikatorsData = [
-            { username: 'VerifikatorAdpem1', type: 'ADPEM' },
-            { username: 'VerifikatorAdpem2', type: 'ADPEM' },
+            { username: 'VerifikatorAdbang1', type: 'ADBANG' },
+            { username: 'VerifikatorAdbang2', type: 'ADBANG' },
             { username: 'VerifikatorBpkad1', type: 'BPKAD' },
             { username: 'VerifikatorBpkad2', type: 'BPKAD' },
             { username: 'VerifikatorBappeda1', type: 'BAPPEDA' },
@@ -65,7 +65,7 @@ export class SeedVerifikators1764955227945 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         const usernames = [
-            'VerifikatorAdpem1', 'VerifikatorAdpem2',
+            'VerifikatorAdbang1', 'VerifikatorAdbang2',
             'VerifikatorBpkad1', 'VerifikatorBpkad2',
             'VerifikatorBappeda1', 'VerifikatorBappeda2'
         ];

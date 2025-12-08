@@ -525,11 +525,13 @@ export class AsbServiceImpl implements AsbService {
                 dto.komponen_nonstd,
                 dto.bobot_nonstd,
                 asb.totalLantai,
+                asb.shst || 0,
                 asb.koefisienLantaiTotal || 0,
                 asb.koefisienFungsiRuangTotal || 0,
                 asb.luasTotalBangunan || 0,
                 asb.bobotTotalBps || 0
             );
+            console.log("bpns", BPNS);
 
             // Update total biaya pembangunan
             const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
@@ -886,8 +888,8 @@ export class AsbServiceImpl implements AsbService {
             const verificatorType = verificatorUser.jenisVerifikator;
 
             await this.repository.update(id_asb, {
-                idVerifikatorAdpem: verificatorType === JenisVerifikator.ADPEM ? verificatorUser.id : null,
-                verifiedAdpemAt: verificatorType === JenisVerifikator.ADPEM ? new Date() : null,
+                idVerifikatorAdpem: verificatorType === JenisVerifikator.ADBANG ? verificatorUser.id : null,
+                verifiedAdpemAt: verificatorType === JenisVerifikator.ADBANG ? new Date() : null,
                 idVerifikatorBPKAD: verificatorType === JenisVerifikator.BPKAD ? verificatorUser.id : null,
                 verifiedBpkadAt: verificatorType === JenisVerifikator.BPKAD ? new Date() : null,
                 idVerifikatorBappeda: verificatorType === JenisVerifikator.BAPPEDA ? verificatorUser.id : null,

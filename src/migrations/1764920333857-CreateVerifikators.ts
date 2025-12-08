@@ -7,7 +7,7 @@ export class CreateVerifikators1764920333857 implements MigrationInterface {
         // Create enum type for jenis_verifikator
         await queryRunner.query(`
             DO $$ BEGIN
-                CREATE TYPE "jenis_verifikator_enum" AS ENUM('ADPEM', 'BPKAD', 'BAPPEDA');
+                CREATE TYPE "jenis_verifikator_enum" AS ENUM('ADBANG', 'BPKAD', 'BAPPEDA');
             EXCEPTION
                 WHEN duplicate_object THEN null;
             END $$;

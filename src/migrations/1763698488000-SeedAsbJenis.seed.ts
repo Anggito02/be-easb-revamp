@@ -6,7 +6,7 @@ export class SeedAsbJenis1763698488000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         const asbJenises = [
             { jenis: 'Pembangunan', asb: 'Fisik' },
-            { jenis: 'Perawatan', asb: 'Fisik' },
+            { jenis: 'Pemeliharaan', asb: 'Fisik' },
         ];
 
         for (const jenis of asbJenises) {
@@ -22,7 +22,7 @@ export class SeedAsbJenis1763698488000 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         const jenisList = [
             'Pembangunan',
-            'Perawatan',
+            'Pemeliharaan',
         ];
 
         const placeholders = jenisList.map((_, index) => `$${index + 1}`).join(', ');
