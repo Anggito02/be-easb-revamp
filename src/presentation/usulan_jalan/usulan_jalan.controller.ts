@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Put, Query } from '@nestjs/common';
 import { UsulanJalanServiceImpl } from '../../application/usulan_jalan/usulan_jalan.service.impl';
 import { CreateUsulanJalanDto } from '../../application/usulan_jalan/dto/create_usulan_jalan.dto';
 import { GetUsulanJalanDetailDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_detail.dto';
 import { GetUsulanJalanListDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_list.dto';
 import { UpdateUsulanJalanDto } from 'src/application/usulan_jalan/dto/update_usulan_jalan.dto';
+import { DeleteUsulanJalanDto } from 'src/application/usulan_jalan/dto/delete_usulan_jalan.dto';
 
 @Controller('usulan-jalan')
 export class UsulanJalanController {
@@ -61,6 +62,17 @@ export class UsulanJalanController {
             responseCode: 200,
             message: 'Usulan jalan updated',
             data: updated,
+        };
+    }
+    
+    @Delete()
+    async delete(@Body() dto: DeleteUsulanJalanDto) {
+        const deleted = await this.service.delete(dto.id);
+        return {
+            status: deleted ? 'success' : 'error',
+            responseCode: deleted ? 200 : 400,
+            message: deleted ? 'Usulan jalan deleted' : 'Delete failed',
+            data: null,
         };
     }
 }
