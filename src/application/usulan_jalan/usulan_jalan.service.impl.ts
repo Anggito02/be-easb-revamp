@@ -25,4 +25,20 @@ export class UsulanJalanServiceImpl extends UsulanJalanService {
         }
         return found;
     }
+
+    async findAll(page: number, amount: number): Promise<{ data: UsulanJalan[]; total: number; page: number; amount: number; totalPages: number }> {
+        const p = page && page > 0 ? page : 1;
+        const a = amount && amount > 0 ? amount : 10;
+
+        const result = await this.repo.findAll(p, a);
+        const totalPages = Math.ceil(result.total / a);
+
+        return {
+            data: result.data,
+            total: result.total,
+            page: p,
+            amount: a,
+            totalPages,
+        };
+    }
 }

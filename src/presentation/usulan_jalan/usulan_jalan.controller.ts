@@ -2,6 +2,7 @@ import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { UsulanJalanServiceImpl } from '../../application/usulan_jalan/usulan_jalan.service.impl';
 import { CreateUsulanJalanDto } from '../../application/usulan_jalan/dto/create_usulan_jalan.dto';
 import { GetUsulanJalanDetailDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_detail.dto';
+import { GetUsulanJalanListDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_list.dto';
 
 @Controller('usulan-jalan')
 export class UsulanJalanController {
@@ -26,6 +27,27 @@ export class UsulanJalanController {
             responseCode: 200,
             message: 'Usulan jalan detail retrieved',
             data: found,
+        };
+    }
+
+    @Get()
+    async list(@Query() dto: GetUsulanJalanListDto) {
+        const page = dto.page ?? 1;
+        const amount = dto.amount ?? 10;
+
+        const result = await this.service.findAll(page, amount);
+
+        return {
+            status: 'success',
+            responseCode: 200,
+            message: 'Usulan jalan list retrieved',
+            data: result.data,
+            meta: {
+                total: result.total,
+                page: result.page,
+                amount: result.amount,
+                totalPages: result.totalPages,
+            },
         };
     }
 }
