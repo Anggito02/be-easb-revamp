@@ -16,7 +16,7 @@ export class AsbRepositoryImpl implements AsbRepository {
     ) { }
 
     async findById(id: number, idOpd?: number): Promise<AsbWithRelationsDto | null> {
-        const whereClause: any = { id };
+        const whereClause: any = id;
 
         // Add OPD filter if provided
         if (idOpd) {
@@ -25,7 +25,25 @@ export class AsbRepositoryImpl implements AsbRepository {
 
         const entity = await this.repo.findOne({
             where: whereClause,
-            relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd', 'asbTipeBangunan', 'asbKlasifikasi', 'rekening', 'rekeningReview', 'verifikatorAdpem', 'verifikatorBPKAD', 'verifikatorBappeda'],
+            relations: [
+                'kabkota',
+                'asbStatus',
+                'asbJenis',
+                'opd',
+                'asbTipeBangunan',
+                'asbKlasifikasi',
+                'rekening',
+                'rekeningReview',
+                'verifikatorAdpem',
+                'verifikatorBPKAD',
+                'verifikatorBappeda',
+                'asbDetails',
+                'asbDetailReviews',
+                'asbBipekStandards',
+                'asbBipekStandardReviews',
+                'asbBipekNonStds',
+                'asbBipekNonStdReviews'
+            ],
         });
 
         if (!entity) {
@@ -65,7 +83,25 @@ export class AsbRepositoryImpl implements AsbRepository {
 
         const [entities, total] = await this.repo.findAndCount({
             where: whereClause,
-            relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd'],
+            relations: [
+                'kabkota',
+                'asbStatus',
+                'asbJenis',
+                'opd',
+                'asbTipeBangunan',
+                'asbKlasifikasi',
+                'rekening',
+                'rekeningReview',
+                'verifikatorAdpem',
+                'verifikatorBPKAD',
+                'verifikatorBappeda',
+                'asbDetails',
+                'asbDetailReviews',
+                'asbBipekStandards',
+                'asbBipekStandardReviews',
+                'asbBipekNonStds',
+                'asbBipekNonStdReviews'
+            ],
             skip: (dto.page - 1) * dto.amount,
             take: dto.amount,
             order: { createdAt: 'DESC' },
@@ -145,7 +181,25 @@ export class AsbRepositoryImpl implements AsbRepository {
             console.log("Entity updated:", data);
             const updatedEntity = await this.repo.findOne({
                 where: { id },
-                relations: ['kabkota', 'asbStatus', 'asbJenis', 'opd'],
+                relations: [
+                    'kabkota',
+                    'asbStatus',
+                    'asbJenis',
+                    'opd',
+                    'asbTipeBangunan',
+                    'asbKlasifikasi',
+                    'rekening',
+                    'rekeningReview',
+                    'verifikatorAdpem',
+                    'verifikatorBPKAD',
+                    'verifikatorBappeda',
+                    'asbDetails',
+                    'asbDetailReviews',
+                    'asbBipekStandards',
+                    'asbBipekStandardReviews',
+                    'asbBipekNonStds',
+                    'asbBipekNonStdReviews'
+                ],
             });
             return plainToInstance(AsbWithRelationsDto, updatedEntity);
         } catch (error) {

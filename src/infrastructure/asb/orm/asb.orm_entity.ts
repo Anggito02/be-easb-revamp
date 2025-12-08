@@ -7,6 +7,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     DeleteDateColumn,
+    OneToMany,
 } from 'typeorm';
 import { AsbJenisOrmEntity } from '../../asb_jenis/orm/asb_jenis.orm_entity';
 import { AsbStatusOrmEntity } from '../../asb_status/orm/asb_status.orm_entity';
@@ -16,6 +17,12 @@ import { RekeningOrmEntity } from '../../rekening/orm/rekening.orm_entity';
 import { KabKotaOrmEntity } from '../../kabkota/orm/kabkota.orm_entity';
 import { AsbKlasifikasiOrmEntity } from '../../asb_klasifikasi/orm/asb_klasifikasi.orm_entity';
 import { UserOrmEntity } from '../../user/orm/user.orm_entity';
+import { AsbDetailOrmEntity } from '../../asb_detail/orm/asb_detail.orm_entity';
+import { AsbDetailReviewOrmEntity } from '../../asb_detail_review/orm/asb_detail_review.orm_entity';
+import { AsbBipekStandardOrmEntity } from '../../asb_bipek_standard/orm/asb_bipek_standard.orm_entity';
+import { AsbBipekStandardReviewOrmEntity } from '../../asb_bipek_standard_review/orm/asb_bipek_standard_review.orm_entity';
+import { AsbBipekNonStdOrmEntity } from '../../asb_bipek_non_std/orm/asb_bipek_non_std.orm_entity';
+import { AsbBipekNonStdReviewOrmEntity } from '../../asb_bipek_non_std_review/orm/asb_bipek_non_std_review.orm_entity';
 
 @Entity('asb')
 export class AsbOrmEntity {
@@ -259,4 +266,23 @@ export class AsbOrmEntity {
     @ManyToOne(() => UserOrmEntity, { nullable: true, onDelete: 'SET NULL' })
     @JoinColumn({ name: 'id_verifikator_bappeda' })
     verifikatorBappeda: UserOrmEntity | null;
+
+    // OneToMany Relations
+    @OneToMany(() => AsbDetailOrmEntity, (entity) => entity.asb)
+    asbDetails: AsbDetailOrmEntity[];
+
+    @OneToMany(() => AsbDetailReviewOrmEntity, (entity) => entity.asb)
+    asbDetailReviews: AsbDetailReviewOrmEntity[];
+
+    @OneToMany(() => AsbBipekStandardOrmEntity, (entity) => entity.asb)
+    asbBipekStandards: AsbBipekStandardOrmEntity[];
+
+    @OneToMany(() => AsbBipekStandardReviewOrmEntity, (entity) => entity.asb)
+    asbBipekStandardReviews: AsbBipekStandardReviewOrmEntity[];
+
+    @OneToMany(() => AsbBipekNonStdOrmEntity, (entity) => entity.asb)
+    asbBipekNonStds: AsbBipekNonStdOrmEntity[];
+
+    @OneToMany(() => AsbBipekNonStdReviewOrmEntity, (entity) => entity.asb)
+    asbBipekNonStdReviews: AsbBipekNonStdReviewOrmEntity[];
 }
