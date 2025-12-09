@@ -16,151 +16,171 @@ export class AsbRepositoryImpl implements AsbRepository {
     ) { }
 
     async findById(id: number, idOpd?: number): Promise<AsbWithRelationsDto | null> {
-        const whereClause: any = id;
+        try {
+            const whereClause: any = { id };
 
-        // Add OPD filter if provided
-        if (idOpd) {
-            whereClause.idOpd = idOpd;
+            // Add OPD filter if provided
+            if (idOpd) {
+                whereClause.idOpd = idOpd;
+            }
+
+            const entity = await this.repo.findOne({
+                where: whereClause,
+                relations: [
+                    'kabkota',
+                    'asbStatus',
+                    'asbJenis',
+                    'opd',
+                    'asbTipeBangunan',
+                    'asbKlasifikasi',
+                    'rekening',
+                    'rekeningReview',
+                    'verifikatorAdpem',
+                    'verifikatorBPKAD',
+                    'verifikatorBappeda',
+                    'asbDetails',
+                    'asbDetailReviews',
+                    'asbBipekStandards',
+                    'asbBipekStandardReviews',
+                    'asbBipekNonStds',
+                    'asbBipekNonStdReviews'
+                ],
+            });
+
+            if (!entity) {
+                return null;
+            }
+            return plainToInstance(AsbWithRelationsDto, entity);
+        } catch (error) {
+            console.log("Error finding ASB by ID:", error);
+            throw error;
         }
-
-        const entity = await this.repo.findOne({
-            where: whereClause,
-            relations: [
-                'kabkota',
-                'asbStatus',
-                'asbJenis',
-                'opd',
-                'asbTipeBangunan',
-                'asbKlasifikasi',
-                'rekening',
-                'rekeningReview',
-                'verifikatorAdpem',
-                'verifikatorBPKAD',
-                'verifikatorBappeda',
-                'asbDetails',
-                'asbDetailReviews',
-                'asbBipekStandards',
-                'asbBipekStandardReviews',
-                'asbBipekNonStds',
-                'asbBipekNonStdReviews'
-            ],
-        });
-
-        if (!entity) {
-            return null;
-        }
-        return plainToInstance(AsbWithRelationsDto, entity);
     }
 
     async findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }> {
-        const whereClause: any = {};
+        try {
+            const whereClause: any = {};
 
-        // Add OPD filter if provided (for OPD users)
-        if (idOpd) {
-            whereClause.idOpd = idOpd;
+            // Add OPD filter if provided (for OPD users)
+            if (idOpd) {
+                whereClause.idOpd = idOpd;
+            }
+
+            // Add optional filters
+            if (dto.idAsbJenis) {
+                whereClause.idAsbJenis = dto.idAsbJenis;
+            }
+
+            if (dto.idAsbStatus) {
+                whereClause.idAsbStatus = dto.idAsbStatus;
+            }
+
+            if (dto.tahunAnggaran) {
+                whereClause.tahunAnggaran = dto.tahunAnggaran;
+            }
+
+            if (dto.namaAsb) {
+                whereClause.namaAsb = ILike(`%${dto.namaAsb}%`);
+            }
+
+            if (dto.idTipeBangunan) {
+                whereClause.idTipeBangunan = dto.idTipeBangunan;
+            }
+
+            const [entities, total] = await this.repo.findAndCount({
+                where: whereClause,
+                relations: [
+                    'kabkota',
+                    'asbStatus',
+                    'asbJenis',
+                    'opd',
+                    'asbTipeBangunan',
+                    'asbKlasifikasi',
+                    'rekening',
+                    'rekeningReview',
+                    'verifikatorAdpem',
+                    'verifikatorBPKAD',
+                    'verifikatorBappeda',
+                    'asbDetails',
+                    'asbDetailReviews',
+                    'asbBipekStandards',
+                    'asbBipekStandardReviews',
+                    'asbBipekNonStds',
+                    'asbBipekNonStdReviews'
+                ],
+                skip: (dto.page - 1) * dto.amount,
+                take: dto.amount,
+                order: { createdAt: 'DESC' },
+            });
+
+            const data = entities.map(entity => plainToInstance(AsbWithRelationsDto, entity));
+
+            return { data, total };
+        } catch (error) {
+            console.log("Error finding all ASBs:", error);
+            throw error;
         }
-
-        // Add optional filters
-        if (dto.idAsbJenis) {
-            whereClause.idAsbJenis = dto.idAsbJenis;
-        }
-
-        if (dto.idAsbStatus) {
-            whereClause.idAsbStatus = dto.idAsbStatus;
-        }
-
-        if (dto.tahunAnggaran) {
-            whereClause.tahunAnggaran = dto.tahunAnggaran;
-        }
-
-        if (dto.namaAsb) {
-            whereClause.namaAsb = ILike(`%${dto.namaAsb}%`);
-        }
-
-        if (dto.idTipeBangunan) {
-            whereClause.idTipeBangunan = dto.idTipeBangunan;
-        }
-
-        const [entities, total] = await this.repo.findAndCount({
-            where: whereClause,
-            relations: [
-                'kabkota',
-                'asbStatus',
-                'asbJenis',
-                'opd',
-                'asbTipeBangunan',
-                'asbKlasifikasi',
-                'rekening',
-                'rekeningReview',
-                'verifikatorAdpem',
-                'verifikatorBPKAD',
-                'verifikatorBappeda',
-                'asbDetails',
-                'asbDetailReviews',
-                'asbBipekStandards',
-                'asbBipekStandardReviews',
-                'asbBipekNonStds',
-                'asbBipekNonStdReviews'
-            ],
-            skip: (dto.page - 1) * dto.amount,
-            take: dto.amount,
-            order: { createdAt: 'DESC' },
-        });
-
-        const data = entities.map(entity => plainToInstance(AsbWithRelationsDto, entity));
-
-        return { data, total };
     }
 
     async getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]> {
-        const whereClause: any = {};
+        try {
+            const whereClause: any = {};
 
-        // Add OPD filter if provided (for OPD users)
-        if (idOpd) {
-            whereClause.idOpd = idOpd;
+            // Add OPD filter if provided (for OPD users)
+            if (idOpd) {
+                whereClause.idOpd = idOpd;
+            }
+
+            // Count id and group by date(created_at), between month/year
+            const qb = this.repo
+                .createQueryBuilder('e')
+                .select("DATE(e.created_at)", "date")
+                .addSelect("COUNT(e.id)", "count")
+                .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
+                .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
+                .groupBy("DATE(e.created_at)")
+                .orderBy("DATE(e.created_at)", "ASC");
+
+            if (idOpd) {
+                qb.andWhere("e.id_opd = :idOpd", { idOpd });
+            }
+
+            const rows = await qb.getRawMany<{ date: string; count: string }>();
+
+            return rows.map(r => ({
+                date: r.date,
+                count: Number(r.count),
+            }));
+        } catch (error) {
+            console.log("Error getting ASB by month/year:", error);
+            throw error;
         }
-
-        // Count id and group by date(created_at), between month/year
-        const qb = this.repo
-            .createQueryBuilder('e')
-            .select("DATE(e.created_at)", "date")
-            .addSelect("COUNT(e.id)", "count")
-            .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
-            .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
-            .groupBy("DATE(e.created_at)")
-            .orderBy("DATE(e.created_at)", "ASC");
-
-        if (idOpd) {
-            qb.andWhere("e.id_opd = :idOpd", { idOpd });
-        }
-
-        const rows = await qb.getRawMany<{ date: string; count: string }>();
-
-        return rows.map(r => ({
-            date: r.date,
-            count: Number(r.count),
-        }));
     }
 
     async getAsbStatusCountsByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ idAsbStatus: number; count: number }[]> {
-        const qb = this.repo
-            .createQueryBuilder('e')
-            .select("e.id_asb_status", "idAsbStatus")
-            .addSelect("COUNT(e.id)", "count")
-            .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
-            .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
-            .groupBy("e.id_asb_status");
+        try {
+            const qb = this.repo
+                .createQueryBuilder('e')
+                .select("e.id_asb_status", "idAsbStatus")
+                .addSelect("COUNT(e.id)", "count")
+                .where("EXTRACT(MONTH FROM e.created_at) = :month", { month: dto.month })
+                .andWhere("EXTRACT(YEAR FROM e.created_at) = :year", { year: dto.year })
+                .groupBy("e.id_asb_status");
 
-        if (idOpd) {
-            qb.andWhere("e.id_opd = :idOpd", { idOpd });
+            if (idOpd) {
+                qb.andWhere("e.id_opd = :idOpd", { idOpd });
+            }
+
+            const rows = await qb.getRawMany<{ idAsbStatus: number; count: string }>();
+
+            return rows.map(r => ({
+                idAsbStatus: Number(r.idAsbStatus),
+                count: Number(r.count),
+            }));
+        } catch (error) {
+            console.log("Error getting ASB status counts:", error);
+            throw error;
         }
-
-        const rows = await qb.getRawMany<{ idAsbStatus: number; count: string }>();
-
-        return rows.map(r => ({
-            idAsbStatus: Number(r.idAsbStatus),
-            count: Number(r.count),
-        }));
     }
 
     async create(data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
@@ -209,6 +229,11 @@ export class AsbRepositoryImpl implements AsbRepository {
     }
 
     async delete(id: number): Promise<void> {
-        await this.repo.softDelete(id);
+        try {
+            await this.repo.softDelete(id);
+        } catch (error) {
+            console.log("Error deleting ASB:", error);
+            throw error;
+        }
     }
 }

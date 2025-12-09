@@ -1,5 +1,5 @@
 export enum JenisVerifikator {
-    ADPEM = 'ADPEM',
+    ADBANG = 'ADBANG',
     BPKAD = 'BPKAD',
     BAPPEDA = 'BAPPEDA'
 }
