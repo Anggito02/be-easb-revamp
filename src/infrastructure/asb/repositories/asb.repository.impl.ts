@@ -39,11 +39,17 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'verifikatorBPKAD',
                     'verifikatorBappeda',
                     'asbDetails',
+                    'asbDetails.asbLantai',
                     'asbDetailReviews',
+                    'asbDetailReviews.asbLantai',
                     'asbBipekStandards',
+                    'asbBipekStandards.asbKomponenBangunanStd',
                     'asbBipekStandardReviews',
+                    'asbBipekStandardReviews.asbKomponenBangunanStd',
                     'asbBipekNonStds',
-                    'asbBipekNonStdReviews'
+                    'asbBipekNonStds.asbKomponenBangunanNonstd',
+                    'asbBipekNonStdReviews',
+                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
                 ],
             });
 
@@ -102,11 +108,17 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'verifikatorBPKAD',
                     'verifikatorBappeda',
                     'asbDetails',
+                    'asbDetails.asbLantai',
                     'asbDetailReviews',
+                    'asbDetailReviews.asbLantai',
                     'asbBipekStandards',
+                    'asbBipekStandards.asbKomponenBangunanStd',
                     'asbBipekStandardReviews',
+                    'asbBipekStandardReviews.asbKomponenBangunanStd',
                     'asbBipekNonStds',
-                    'asbBipekNonStdReviews'
+                    'asbBipekNonStds.asbKomponenBangunanNonstd',
+                    'asbBipekNonStdReviews',
+                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
                 ],
                 skip: (dto.page - 1) * dto.amount,
                 take: dto.amount,
@@ -214,11 +226,17 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'verifikatorBPKAD',
                     'verifikatorBappeda',
                     'asbDetails',
+                    'asbDetails.asbLantai',
                     'asbDetailReviews',
+                    'asbDetailReviews.asbLantai',
                     'asbBipekStandards',
+                    'asbBipekStandards.asbKomponenBangunanStd',
                     'asbBipekStandardReviews',
+                    'asbBipekStandardReviews.asbKomponenBangunanStd',
                     'asbBipekNonStds',
-                    'asbBipekNonStdReviews'
+                    'asbBipekNonStds.asbKomponenBangunanNonstd',
+                    'asbBipekNonStdReviews',
+                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
                 ],
             });
             return plainToInstance(AsbWithRelationsDto, updatedEntity);

@@ -535,13 +535,105 @@ export class AsbServiceImpl implements AsbService {
 
             // Update total biaya pembangunan
             const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
+            console.log("totalBiayaPembangunan: ", totalBiayaPembangunan);
+
+            // Save jakon price variables
+            if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
+                throw new Error("ASB is missing required classification or location data for Jakon lookup");
+            }
+
+            // Simpan field jakon
+            console.log("variables: ", {
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PERENCANAAN,
+                total_biaya_pembangunan: asb.totalBiayaPembangunan
+            })
+
+            const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PERENCANAAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!perencanaanKonstruksi) {
+                throw new Error("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
+            }
+
+            const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
+
+            const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGAWASAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!pengawasanKonstruksi) {
+                throw new Error("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
+            }
+
+            const nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
+
+            if (!asb.totalLantai || !asb.jumlahKontraktor) {
+                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
+            }
+
+            const managementKonstruksi = (asb.totalLantai >= 4 && asb.jumlahKontraktor >= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.MANAGEMENT,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!managementKonstruksi) {
+                throw new Error("ASB is missing required managementKonstruksi data for Jakon lookup");
+            }
+
+            const nominalManagementKonstruksi = managementKonstruksi.standard;
+
+            const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGELOLAAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!pengelolaanKegiatan) {
+                throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
+            }
+
+            const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
+
+            asb.rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
+
+            asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
+
+            console.log("nominalPerencanaanKonstruksi: ", nominalPerencanaanKonstruksi);
+            console.log("nominalPengawasanKonstruksi: ", nominalPengawasanKonstruksi);
+            console.log("nominalManagementKonstruksi: ", nominalManagementKonstruksi);
+            console.log("nominalPengelolaanKegiatan: ", nominalPengelolaanKegiatan);
+            console.log("rekapitulasiBiayaKonstruksi: ", asb.rekapitulasiBiayaKonstruksi);
+            console.log("rekapitulasiBiayaKonstruksiRounded: ", asb.rekapitulasiBiayaKonstruksiRounded);
 
             // 5. Update ASB status to 4
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 4,
                 nominalBpns: BPNS,
                 bobotTotalBpns: jumlahBobot,
-                totalBiayaPembangunan: totalBiayaPembangunan
+                totalBiayaPembangunan: totalBiayaPembangunan,
+                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
+                pengawasanKonstruksi: nominalPengawasanKonstruksi,
+                managementKonstruksi: nominalManagementKonstruksi,
+                pengelolaanKegiatan: nominalPengelolaanKegiatan,
+                rekapitulasiBiayaKonstruksi: asb.rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: asb.rekapitulasiBiayaKonstruksiRounded,
             });
 
             return {
@@ -810,7 +902,7 @@ export class AsbServiceImpl implements AsbService {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.ADBANG) {
                     throw new ForbiddenException(`User not allowed to verify Rekening ASB`);
                 }
             }
@@ -824,6 +916,8 @@ export class AsbServiceImpl implements AsbService {
             console.log(dto.id_rekening_review);
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idRekeningReview: dto.id_rekening_review,
+                idVerifikatorBPKAD: Number(userId),
+                verifiedBpkadAt: new Date(),
                 idAsbStatus: 12
             });
 
@@ -861,6 +955,8 @@ export class AsbServiceImpl implements AsbService {
                 pengawasanKonstruksi: dto.pengawasan_konstruksi,
                 managementKonstruksi: dto.management_konstruksi,
                 pengelolaanKegiatan: dto.pengelolaan_kegiatan,
+                idVerifikatorAdpem: Number(userId),
+                verifiedAdpemAt: new Date(),
                 idAsbStatus: 13
             });
 
@@ -887,13 +983,14 @@ export class AsbServiceImpl implements AsbService {
             }
             const verificatorType = verificatorUser.jenisVerifikator;
 
+            if (verificatorType === JenisVerifikator.ADBANG || verificatorType === JenisVerifikator.BPKAD) {
+                throw new ForbiddenException(`User not allowed to verify ASB`);
+            }
+
             await this.repository.update(id_asb, {
-                idVerifikatorAdpem: verificatorType === JenisVerifikator.ADBANG ? verificatorUser.id : null,
-                verifiedAdpemAt: verificatorType === JenisVerifikator.ADBANG ? new Date() : null,
-                idVerifikatorBPKAD: verificatorType === JenisVerifikator.BPKAD ? verificatorUser.id : null,
-                verifiedBpkadAt: verificatorType === JenisVerifikator.BPKAD ? new Date() : null,
-                idVerifikatorBappeda: verificatorType === JenisVerifikator.BAPPEDA ? verificatorUser.id : null,
-                verifiedBappedaAt: verificatorType === JenisVerifikator.BAPPEDA ? new Date() : null,
+                idAsbStatus: 8,
+                idVerifikatorBappeda: Number(userId),
+                verifiedBappedaAt: new Date(),
             });
 
             const asb = await this.findById(id_asb, userIdOpd, userRoles)

@@ -85,10 +85,134 @@ export class AsbWithRelationsDto {
         username: string;
     } | null;
 
-    asbDetails?: any[];
-    asbDetailReviews?: any[];
-    asbBipekStandards?: any[];
-    asbBipekStandardReviews?: any[];
-    asbBipekNonStds?: any[];
-    asbBipekNonStdReviews?: any[];
+    asbDetails?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbLantai: number | null;
+        idAsbFungsiRuang: number | null;
+        asbFungsiRuangKoef: number | null;
+        lantaiKoef: number | null;
+        luas: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbLantai?: {
+            id: number;
+            lantai: string;
+            type: string;
+            koef: number;
+            idSatuan: number;
+        } | null;
+    }>;
+
+    asbDetailReviews?: Array<{
+        id: number;
+        idAsbDetail: number | null;
+        files: string;
+        idAsbLantai: number | null;
+        idAsbFungsiRuang: number | null;
+        idAsb: number | null;
+        asbFungsiRuangKoef: number | null;
+        lantaiKoef: number | null;
+        luas: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbLantai?: {
+            id: number;
+            lantai: string;
+            type: string;
+            koef: number;
+            idSatuan: number;
+        } | null;
+    }>;
+
+    asbBipekStandards?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbKomponenBangunanStd: number | null;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanStd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekStandardReviews?: Array<{
+        id: number;
+        idAsbBipekStandard: number | null;
+        idAsbKomponenBangunanStd: number | null;
+        idAsb: number | null;
+        files: string;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanStd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekNonStds?: Array<{
+        id: number;
+        idAsb: number | null;
+        files: string;
+        idAsbKomponenBangunanNonstd: number | null;
+        bobotInput: number | null;
+        bobotInputProsentase: number | null;
+        calculationMethod: string | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanNonstd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
+
+    asbBipekNonStdReviews?: Array<{
+        id: number;
+        idAsbBipekNonStd: number;
+        idAsbKomponenBangunanNonstd: number | null;
+        idAsb: number | null;
+        files: string;
+        bobotInput: number | null;
+        calculationMethod: string | null;
+        bobotInputProsentase: number | null;
+        jumlahBobot: number | null;
+        rincianHarga: number | null;
+        createdAt: Date;
+        updatedAt: Date;
+        deletedAt: Date | null;
+        asbKomponenBangunanNonstd?: {
+            id: number;
+            komponen: string;
+            files: string;
+            idAsbJenis: number;
+            idAsbTipeBangunan: number;
+        } | null;
+    }>;
 }

@@ -192,7 +192,7 @@ export class AsbOrmEntity {
     @Column({
         name: 'rekapitulasi_biaya_konstruksi',
         type: 'decimal',
-        precision: 10,
+        precision: 20,
         scale: 2,
         nullable: true,
     })
@@ -201,7 +201,7 @@ export class AsbOrmEntity {
     @Column({
         name: 'rekapitulasi_biaya_konstruksi_rounded',
         type: 'decimal',
-        precision: 10,
+        precision: 20,
         scale: 2,
         nullable: true,
     })
