@@ -96,10 +96,7 @@ export class AsbRepositoryImpl implements AsbRepository {
                 whereClause.idTipeBangunan = dto.idTipeBangunan;
             }
 
-            if (dto.page && dto.amount) {
-                whereClause.skip = (dto.page - 1) * dto.amount;
-                whereClause.take = dto.amount;
-            }
+            dto.amount = dto.amount ?? 10;
 
             const [entities, total] = await this.repo.findAndCount({
                 where: whereClause,
@@ -128,6 +125,8 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'asbBipekNonStdReviews',
                     'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
                 ],
+                skip: (dto.page || 1 - 1) * dto.amount,
+                take: dto.amount,
                 order: { createdAt: 'DESC' },
             });
 
