@@ -54,12 +54,17 @@ export class AsbKlasifikasiRepositoryImpl implements AsbKlasifikasiRepository {
 
     async findAll(pagination: GetAsbKlasifikasisDto): Promise<{ data: AsbKlasifikasi[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
+            const findOptions: any = {
                 order: { id: 'DESC' },
                 relations: ['asbTipeBangunan']
-            });
+            };
+
+            if (pagination.page !== undefined && pagination.amount !== undefined) {
+                findOptions.skip = (pagination.page - 1) * pagination.amount;
+                findOptions.take = pagination.amount;
+            }
+
+            const [data, total] = await this.repo.findAndCount(findOptions);
 
             return { data, total };
         } catch (error) {

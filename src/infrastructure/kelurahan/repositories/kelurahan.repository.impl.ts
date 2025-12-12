@@ -46,7 +46,7 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
         }
     }
 
-    async findAll(page: number, amount: number, filter?: any): Promise<{ data: Kelurahan[]; total: number }> {
+    async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kelurahan[]; total: number }> {
         try {
             const queryBuilder = this.repo.createQueryBuilder('kelurahan');
 
@@ -58,9 +58,11 @@ export class KelurahanRepositoryImpl implements KelurahanRepository {
                 queryBuilder.andWhere('kelurahan.nama_kelurahan ILIKE :search', { search: `%${filter.search}%` });
             }
 
+            if (page !== undefined && amount !== undefined) {
+                queryBuilder.skip((page - 1) * amount).take(amount);
+            }
+
             const [data, total] = await queryBuilder
-                .skip((page - 1) * amount)
-                .take(amount)
                 .orderBy('kelurahan.nama_kelurahan', 'ASC')
                 .getManyAndCount();
 

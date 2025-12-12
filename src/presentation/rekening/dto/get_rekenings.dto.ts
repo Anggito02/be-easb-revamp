@@ -2,13 +2,15 @@ import { IsNumber, IsOptional, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetRekeningsDto {
+  @IsOptional()
   @IsNumber()
-      @Min(1)
-      @Transform(({ value }) => parseInt(value, 10))
-      page!: number;
+  @Min(1)
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  page?: number;
   
-      @IsNumber()
-      @Min(1)
-      @Transform(({ value }) => parseInt(value, 10))
-      amount!: number;
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  amount?: number;
 }

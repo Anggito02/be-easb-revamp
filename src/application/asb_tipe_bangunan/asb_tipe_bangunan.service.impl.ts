@@ -71,9 +71,9 @@ export class AsbTipeBangunanServiceImpl implements AsbTipeBangunanService {
             return {
                 data: result.data,
                 total: result.total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(result.total / dto.amount)
+                page: dto.page ?? 1,
+                amount: dto.amount ?? result.total,
+                totalPages: dto.amount ? Math.ceil(result.total / dto.amount) : 1
             };
         } catch (error) {
             throw error;

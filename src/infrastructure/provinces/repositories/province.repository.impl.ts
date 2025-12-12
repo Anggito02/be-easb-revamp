@@ -64,11 +64,16 @@ export class ProvinceRepositoryImpl implements ProvinceRepository {
 
     async findAll(pagination: GetProvincesDto): Promise<{ data: Province[], total: number }> {
         try {
-            const [provinces, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
+            const findOptions: any = {
                 order: { id: 'DESC' }
-            }).catch((error) => {
+            };
+
+            if (pagination.page !== undefined && pagination.amount !== undefined) {
+                findOptions.skip = (pagination.page - 1) * pagination.amount;
+                findOptions.take = pagination.amount;
+            }
+
+            const [provinces, total] = await this.repo.findAndCount(findOptions).catch((error) => {
                 console.error('Error fetching provinces:', error);
                 throw error;
             });

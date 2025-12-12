@@ -90,9 +90,9 @@ export class KecamatanServiceImpl implements KecamatanService {
             return {
                 data,
                 total,
-                page: dto.page,
-                amount: dto.amount,
-                totalPages: Math.ceil(total / dto.amount),
+                page: dto.page ?? 1,
+                amount: dto.amount ?? total,
+                totalPages: dto.amount ? Math.ceil(total / dto.amount) : 1,
             };
         } catch (error) {
             throw error;

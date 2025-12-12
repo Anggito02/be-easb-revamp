@@ -47,7 +47,7 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
         }
     }
 
-    async findAll(page: number, amount: number, filter?: any): Promise<{ data: Kecamatan[]; total: number }> {
+    async findAll(page: number | undefined, amount: number | undefined, filter?: any): Promise<{ data: Kecamatan[]; total: number }> {
         try {
             const queryBuilder = this.repo.createQueryBuilder('kecamatan');
 
@@ -62,9 +62,11 @@ export class KecamatanRepositoryImpl implements KecamatanRepository {
                 );
             }
 
+            if (page !== undefined && amount !== undefined) {
+                queryBuilder.skip((page - 1) * amount).take(amount);
+            }
+
             const [data, total] = await queryBuilder
-                .skip((page - 1) * amount)
-                .take(amount)
                 .orderBy('kecamatan.nama_kecamatan', 'ASC')
                 .getManyAndCount();
 

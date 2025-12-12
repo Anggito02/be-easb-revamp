@@ -85,9 +85,9 @@ export class AsbStatusServiceImpl implements AsbStatusService {
       return {
                 data: result.data,
                 total: result.total,
-                page: pagination.page,
-                limit: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page: pagination.page ?? 1,
+                limit: pagination.amount ?? result.total,
+                totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
             };
     } catch (error) {
       throw error;

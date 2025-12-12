@@ -2,17 +2,17 @@ import { IsInt, IsOptional, Min, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class GetKelurahansDto {
+    @IsOptional()
     @IsInt()
     @Min(1)
     @Type(() => Number)
-    @IsOptional()
-    page: number = 1;
+    page?: number;
 
+    @IsOptional()
     @IsInt()
     @Min(1)
     @Type(() => Number)
-    @IsOptional()
-    amount: number = 10;
+    amount?: number;
 
     @IsInt()
     @Type(() => Number)

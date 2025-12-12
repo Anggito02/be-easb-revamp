@@ -67,9 +67,9 @@ export class AsbKomponenBangunanNonstdServiceImpl implements AsbKomponenBangunan
             return {
                 komponenBangunanNonstds: result.data,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page: pagination.page ?? 1,
+                amount: pagination.amount ?? result.total,
+                totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
             };
         } catch (error) {
             throw error;

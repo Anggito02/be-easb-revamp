@@ -53,18 +53,23 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
+            const findOptions: any = {
                 order: { id: 'DESC' }
-            });
+            };
+
+            if (pagination.page !== undefined && pagination.amount !== undefined) {
+                findOptions.skip = (pagination.page - 1) * pagination.amount;
+                findOptions.take = pagination.amount;
+            }
+
+            const [data, total] = await this.repo.findAndCount(findOptions);
 
             return {
                 data,
                 total,
-                page: pagination.page,
-                limit: pagination.amount,
-                totalPages: Math.ceil(total / pagination.amount)
+                page: pagination.page ?? 1,
+                limit: pagination.amount ?? total,
+                totalPages: pagination.amount ? Math.ceil(total / pagination.amount) : 1
             }
         } catch (error) {
             throw error;

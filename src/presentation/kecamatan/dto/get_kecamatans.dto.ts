@@ -3,18 +3,18 @@ import { Type } from 'class-transformer';
 
 export class GetKecamatansDto {
 
+    @IsOptional()
     @IsInt()
     @Min(1)
     @Type(() => Number)
+    page?: number;
+
+
     @IsOptional()
-    page: number = 1;
-
-
     @IsInt()
     @Min(1)
     @Type(() => Number)
-    @IsOptional()
-    amount: number = 10;
+    amount?: number;
 
 
     @IsInt()

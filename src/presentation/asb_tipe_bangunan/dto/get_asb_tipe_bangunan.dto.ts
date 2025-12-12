@@ -1,14 +1,16 @@
 import { Type } from "class-transformer";
-import { IsNumber, IsNotEmpty, Min } from "class-validator";
+import { IsNumber, IsOptional, Min } from "class-validator";
 
 export class GetAsbTipeBangunanDto {
+    @IsOptional()
     @IsNumber()
     @Min(1)
     @Type(() => Number)
-    page!: number;
+    page?: number;
 
+    @IsOptional()
     @IsNumber()
     @Min(1)
     @Type(() => Number)
-    amount!: number;
+    amount?: number;
 }

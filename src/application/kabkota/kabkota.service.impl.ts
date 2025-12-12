@@ -109,9 +109,9 @@ export class KabKotaServiceImpl implements KabKotaService {
             return {
                 kabkotas: result.data,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page: pagination.page ?? 1,
+                amount: pagination.amount ?? result.total,
+                totalPages: pagination.amount ? Math.ceil(result.total / pagination.amount) : 1
             };
         } catch (error) {
             console.error('Error fetching kabkotas:', error);
@@ -164,7 +164,7 @@ export class KabKotaServiceImpl implements KabKotaService {
             // Get all kabkotas for the province
             const kabkotas = await this.kabKotaRepository.findByProvinceId(provinceId);
             
-            if (!pagination) {
+            if (!pagination || pagination.page === undefined || pagination.amount === undefined) {
                 return {
                     kabkotas,
                     total: kabkotas.length,
