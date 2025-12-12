@@ -2,16 +2,18 @@ import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class FindAllAsbDto {
-    // Pagination (required)
+    // Pagination
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => Number(value))
-    page!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => Number(value))
-    amount!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
 
     // Filters (optional)
     @IsOptional()
