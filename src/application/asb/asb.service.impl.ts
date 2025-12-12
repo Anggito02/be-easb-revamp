@@ -143,7 +143,7 @@ export class AsbServiceImpl implements AsbService {
             total: result.total,
             page: dto.page,
             amount: dto.amount,
-            totalPages: Math.ceil(result.total / dto.amount),
+            totalPages: Math.ceil(result.total / (dto.amount ?? 1)),
         };
     }
 
