@@ -67,20 +67,22 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
         }
     }
 
-    async findAll(page: number, limit: number): Promise<{ data: Verifikator[]; total: number }> {
-        try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (page - 1) * limit,
-                take: limit,
-                order: { id: 'DESC' },
-                relations: ['user']
-            });
+    async findAll(page?: number, amount?: number): Promise<{ data: Verifikator[]; total: number }> {
+        const safePage = Math.max(page ?? 1, 1);
+        const safeAmount = Math.max(amount ?? 10, 1); // default 10 items
 
-            return { data, total };
-        } catch (error) {
-            throw error;
-        }
+        const skip = (safePage - 1) * safeAmount;
+
+        const [data, total] = await this.repo.findAndCount({
+            skip,
+            take: safeAmount,
+            order: { id: 'DESC' },
+            relations: ['user'],
+        });
+
+        return { data, total };
     }
+
 
     async checkVerifikatorType(userId: number): Promise<string | null> {
         try {

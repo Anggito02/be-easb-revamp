@@ -756,12 +756,12 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions and existence
             if (userRoles.includes(Role.VERIFIKATOR)) {
-                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
                     throw new ForbiddenException(`User not allowed to verify BPS ASB`);
                 }
             }
@@ -826,12 +826,12 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions and existence
             if (userRoles.includes(Role.VERIFIKATOR)) {
-                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
                     throw new ForbiddenException(`User not allowed to verify BPNS ASB`);
                 }
             }
@@ -897,12 +897,12 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions and existence
             if (userRoles.includes(Role.VERIFIKATOR)) {
-                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.ADBANG) {
+                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.ADBANG) {
                     throw new ForbiddenException(`User not allowed to verify Rekening ASB`);
                 }
             }
@@ -934,12 +934,12 @@ export class AsbServiceImpl implements AsbService {
         try {
             // 1. Check permissions and existence
             if (userRoles.includes(Role.VERIFIKATOR)) {
-                const verificatorType = await this.verifikatorService.findByUserId(Number(userIdOpd));
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType.jenisVerifikator === JenisVerifikator.BAPPEDA || verificatorType.jenisVerifikator === JenisVerifikator.BPKAD) {
+                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
                     throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
                 }
             }
@@ -977,14 +977,18 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            const verificatorUser = await this.verifikatorService.findByUserId(Number(userIdOpd));
+            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
             if (!verificatorUser) {
                 throw new NotFoundException(`User not sync with verifikator`);
             }
-            const verificatorType = verificatorUser.jenisVerifikator;
 
             if (verificatorType === JenisVerifikator.ADBANG || verificatorType === JenisVerifikator.BPKAD) {
                 throw new ForbiddenException(`User not allowed to verify ASB`);
+            }
+
+            // if not all verifikator verified
+            if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD || !asb?.idVerifikatorBappeda) {
+                throw ForbiddenException(`All verificators must verify ASB first`);
             }
 
             await this.repository.update(id_asb, {
@@ -997,14 +1001,6 @@ export class AsbServiceImpl implements AsbService {
 
             if (!asb) {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
-            }
-
-            // if not all verifikator verified
-            if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD || !asb?.idVerifikatorBappeda) {
-                return {
-                    id: asb.id,
-                    status: asb.asbStatus
-                };
             }
 
             const opdAsb = await this.opdService.getOpdById({ id: asb.idOpd })

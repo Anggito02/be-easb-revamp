@@ -67,77 +67,83 @@ export class AsbRepositoryImpl implements AsbRepository {
         try {
             const whereClause: any = {};
 
-            // Add OPD filter if provided (for OPD users)
+            // OPD filter
             if (idOpd) {
-                whereClause.idOpd = idOpd;
+            whereClause.idOpd = idOpd;
             }
 
-            // Add optional filters
+            // Optional filters
             if (dto.idAsbJenis) {
-                whereClause.idAsbJenis = dto.idAsbJenis;
+            whereClause.idAsbJenis = dto.idAsbJenis;
             }
 
             if (dto.idAsbStatus) {
-                whereClause.idAsbStatus = dto.idAsbStatus;
+            whereClause.idAsbStatus = dto.idAsbStatus;
             }
 
             if (dto.tahunAnggaran) {
-                whereClause.tahunAnggaran = dto.tahunAnggaran;
+            whereClause.tahunAnggaran = dto.tahunAnggaran;
             }
 
             if (dto.namaAsb) {
-                whereClause.namaAsb = Raw(
-                    (alias) => `LOWER(${alias}) LIKE :namaAsb`,
-                    { namaAsb: `%${dto.namaAsb.toLowerCase()}%` },
-                );
+            whereClause.namaAsb = Raw(
+                (alias) => `LOWER(${alias}) LIKE :namaAsb`,
+                { namaAsb: `%${dto.namaAsb.toLowerCase()}%` },
+            );
             }
 
             if (dto.idTipeBangunan) {
-                whereClause.idTipeBangunan = dto.idTipeBangunan;
+            whereClause.idTipeBangunan = dto.idTipeBangunan;
             }
 
-            dto.amount = dto.amount ?? 10;
+            // ✅ SAFE pagination
+            const page = Math.max(dto.page ?? 1, 1);
+            const amount = Math.max(dto.amount ?? 10, 1);
+            const skip = (page - 1) * amount;
 
             const [entities, total] = await this.repo.findAndCount({
-                where: whereClause,
-                relations: [
-                    'kabkota',
-                    'asbStatus',
-                    'asbJenis',
-                    'opd',
-                    'asbTipeBangunan',
-                    'asbKlasifikasi',
-                    'rekening',
-                    'rekeningReview',
-                    'verifikatorAdpem',
-                    'verifikatorBPKAD',
-                    'verifikatorBappeda',
-                    'asbDetails',
-                    'asbDetails.asbLantai',
-                    'asbDetailReviews',
-                    'asbDetailReviews.asbLantai',
-                    'asbBipekStandards',
-                    'asbBipekStandards.asbKomponenBangunanStd',
-                    'asbBipekStandardReviews',
-                    'asbBipekStandardReviews.asbKomponenBangunanStd',
-                    'asbBipekNonStds',
-                    'asbBipekNonStds.asbKomponenBangunanNonstd',
-                    'asbBipekNonStdReviews',
-                    'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
-                ],
-                skip: (dto.page || 1 - 1) * dto.amount,
-                take: dto.amount,
-                order: { createdAt: 'DESC' },
+            where: whereClause,
+            relations: [
+                'kabkota',
+                'asbStatus',
+                'asbJenis',
+                'opd',
+                'asbTipeBangunan',
+                'asbKlasifikasi',
+                'rekening',
+                'rekeningReview',
+                'verifikatorAdpem',
+                'verifikatorBPKAD',
+                'verifikatorBappeda',
+                'asbDetails',
+                'asbDetails.asbLantai',
+                'asbDetailReviews',
+                'asbDetailReviews.asbLantai',
+                'asbBipekStandards',
+                'asbBipekStandards.asbKomponenBangunanStd',
+                'asbBipekStandardReviews',
+                'asbBipekStandardReviews.asbKomponenBangunanStd',
+                'asbBipekNonStds',
+                'asbBipekNonStds.asbKomponenBangunanNonstd',
+                'asbBipekNonStdReviews',
+                'asbBipekNonStdReviews.asbKomponenBangunanNonstd',
+            ],
+            skip,
+            take: amount,
+            order: { createdAt: 'DESC' },
             });
 
-            const data = entities.map(entity => plainToInstance(AsbWithRelationsDto, entity));
+            const data = entities.map((entity) =>
+            plainToInstance(AsbWithRelationsDto, entity),
+            );
 
             return { data, total };
         } catch (error) {
-            console.log("Error finding all ASBs:", error);
+            console.error('Error finding all ASBs:', error);
             throw error;
         }
-    }
+        }
+
 
     async getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]> {
         try {
