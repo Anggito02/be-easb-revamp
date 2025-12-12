@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, ILike, DeepPartial, EntityManager } from 'typeorm';
+import { Repository, DeepPartial, EntityManager, Raw } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { AsbRepository } from '../../../domain/asb/asb.repository';
 import { AsbOrmEntity } from '../orm/asb.orm_entity';
@@ -86,11 +86,19 @@ export class AsbRepositoryImpl implements AsbRepository {
             }
 
             if (dto.namaAsb) {
-                whereClause.namaAsb = ILike(`%${dto.namaAsb}%`);
+                whereClause.namaAsb = Raw(
+                    (alias) => `LOWER(${alias}) LIKE :namaAsb`,
+                    { namaAsb: `%${dto.namaAsb.toLowerCase()}%` },
+                );
             }
 
             if (dto.idTipeBangunan) {
                 whereClause.idTipeBangunan = dto.idTipeBangunan;
+            }
+
+            if (dto.page && dto.amount) {
+                whereClause.skip = (dto.page - 1) * dto.amount;
+                whereClause.take = dto.amount;
             }
 
             const [entities, total] = await this.repo.findAndCount({
@@ -120,8 +128,6 @@ export class AsbRepositoryImpl implements AsbRepository {
                     'asbBipekNonStdReviews',
                     'asbBipekNonStdReviews.asbKomponenBangunanNonstd'
                 ],
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
                 order: { createdAt: 'DESC' },
             });
 
