@@ -63,4 +63,13 @@ export class JalanJenisPerkerasanRepositoryImpl implements JalanJenisPerkerasanR
             throw error;
         }
     }
+
+    async findByJenis(jenis: string): Promise<JalanJenisPerkerasan | null> {
+        try {
+            const entity = await this.repo.findOne({ where: { jenis } });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
