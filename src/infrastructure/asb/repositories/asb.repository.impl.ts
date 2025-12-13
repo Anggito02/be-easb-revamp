@@ -267,6 +267,57 @@ export class AsbRepositoryImpl implements AsbRepository {
             const persentaseTolak = totalUsulan > 0 ? (totalTolakBangunan / totalUsulan) * 100 : 0;
             const persentaseProses = totalUsulan > 0 ? (totalProsesBangunan / totalUsulan) * 100 : 0;
 
+            // Query to count by jenis (Pembangunan and Pemeliharaan)
+            const jenisQb = this.repo
+                .createQueryBuilder('e')
+                .innerJoin('e.asbJenis', 'aj')
+                .select('aj.jenis', 'jenis')
+                .addSelect('COUNT(e.id)', 'count');
+
+            if (idOpd) {
+                jenisQb.where('e.id_opd = :idOpd', { idOpd });
+            }
+
+            // Apply month filter if provided
+            if (filter?.bulan !== undefined) {
+                if (idOpd) {
+                    jenisQb.andWhere('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
+                } else {
+                    jenisQb.where('EXTRACT(MONTH FROM e.created_at) = :bulan', { bulan: filter.bulan });
+                }
+            }
+
+            // Apply year filter if provided
+            if (filter?.tahun !== undefined) {
+                if (idOpd || filter?.bulan !== undefined) {
+                    jenisQb.andWhere('EXTRACT(YEAR FROM e.created_at) = :tahun', { tahun: filter.tahun });
+                } else {
+                    jenisQb.where('EXTRACT(YEAR FROM e.created_at) = :tahun', { tahun: filter.tahun });
+                }
+            }
+
+            jenisQb.groupBy('aj.jenis');
+
+            const jenisRows = await jenisQb.getRawMany<{ jenis: string; count: string }>();
+
+            // Initialize jenis counters
+            let totalPembangunan = 0;
+            let totalPemeliharaan = 0;
+
+            // Aggregate counts by jenis
+            jenisRows.forEach(row => {
+                const count = Number(row.count);
+                if (row.jenis === 'Pembangunan') {
+                    totalPembangunan = count;
+                } else if (row.jenis === 'Pemeliharaan') {
+                    totalPemeliharaan = count;
+                }
+            });
+
+            // Calculate percentages for jenis (avoid division by zero)
+            const persentasePembangunan = totalUsulan > 0 ? (totalPembangunan / totalUsulan) * 100 : 0;
+            const persentasePemeliharaan = totalUsulan > 0 ? (totalPemeliharaan / totalUsulan) * 100 : 0;
+
             return {
                 totalSuksesBangunan,
                 totalTolakBangunan,
@@ -275,6 +326,10 @@ export class AsbRepositoryImpl implements AsbRepository {
                 persentaseSukses: Number(persentaseSukses.toFixed(2)),
                 persentaseTolak: Number(persentaseTolak.toFixed(2)),
                 persentaseProses: Number(persentaseProses.toFixed(2)),
+                totalPembangunan,
+                totalPemeliharaan,
+                persentasePembangunan: Number(persentasePembangunan.toFixed(2)),
+                persentasePemeliharaan: Number(persentasePemeliharaan.toFixed(2)),
             };
         } catch (error) {
             console.log("Error getting ASB analytics:", error);
