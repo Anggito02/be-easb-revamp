@@ -9,4 +9,5 @@ export abstract class JalanMutuBetonRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanMutuBeton | null>;
     abstract findAll(dto: GetJalanMutuBetonDto): Promise<{data: JalanMutuBeton[], total: number}>;
+    abstract findByJenis(jenis: string): Promise<JalanMutuBeton | null>;
 }
