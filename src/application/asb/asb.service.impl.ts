@@ -32,6 +32,7 @@ import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
+import { AsbAnalyticsDto } from './dto/asb_analytics.dto';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
@@ -212,6 +213,36 @@ export class AsbServiceImpl implements AsbService {
 
             return result;
 
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getAsbAnalytics(userIdOpd: number | null, userRoles: Role[]): Promise<AsbAnalyticsDto> {
+        try {
+            // Check if user is ADMIN or SUPERADMIN
+            const isAdmin = userRoles.includes(Role.ADMIN);
+            const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+
+            if (isAdmin || isSuperAdmin) {
+                // ADMIN/SUPERADMIN can access ALL ASB without OPD filter
+                return await this.repository.getAsbAnalytics();
+            } else {
+                // For OPD users
+                const isOpd = userRoles.includes(Role.OPD);
+
+                if (isOpd) {
+                    // OPD users must have an idOpd
+                    if (!userIdOpd) {
+                        throw new ForbiddenException('OPD user has no associated OPD');
+                    }
+
+                    // Fetch with OPD filter
+                    return await this.repository.getAsbAnalytics(userIdOpd);
+                } else {
+                    throw new ForbiddenException('User is not authorized to access ASB analytics');
+                }
+            }
         } catch (error) {
             throw error;
         }
@@ -984,7 +1015,7 @@ export class AsbServiceImpl implements AsbService {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
 
-                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
+                if (verificatorType === JenisVerifikator.ADBANG || verificatorType === JenisVerifikator.BPKAD) {
                     throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
                 }
             }

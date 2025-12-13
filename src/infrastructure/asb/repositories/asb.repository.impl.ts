@@ -7,6 +7,7 @@ import { AsbOrmEntity } from '../orm/asb.orm_entity';
 import { AsbWithRelationsDto } from 'src/application/asb/dto/asb_with_relations.dto';
 import { FindAllAsbDto } from 'src/application/asb/dto/find_all_asb.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { AsbAnalyticsDto } from 'src/application/asb/dto/asb_analytics.dto';
 
 @Injectable()
 export class AsbRepositoryImpl implements AsbRepository {
@@ -202,6 +203,62 @@ export class AsbRepositoryImpl implements AsbRepository {
             }));
         } catch (error) {
             console.log("Error getting ASB status counts:", error);
+            throw error;
+        }
+    }
+
+    async getAsbAnalytics(idOpd?: number): Promise<AsbAnalyticsDto> {
+        try {
+            const qb = this.repo
+                .createQueryBuilder('e')
+                .select("e.id_asb_status", "idAsbStatus")
+                .addSelect("COUNT(e.id)", "count");
+
+            if (idOpd) {
+                qb.where("e.id_opd = :idOpd", { idOpd });
+            }
+
+            qb.groupBy("e.id_asb_status");
+
+            const rows = await qb.getRawMany<{ idAsbStatus: number; count: string }>();
+
+            // Initialize counters
+            let totalSuksesBangunan = 0; // Status 8
+            let totalTolakBangunan = 0; // Status 7
+            let totalProsesBangunan = 0; // Status 1-6
+
+            // Aggregate counts by status
+            rows.forEach(r => {
+                const count = Number(r.count);
+                const statusId = Number(r.idAsbStatus);
+
+                if (statusId === 8) {
+                    totalSuksesBangunan += count;
+                } else if (statusId === 7) {
+                    totalTolakBangunan += count;
+                } else if (statusId >= 1 && statusId <= 6) {
+                    totalProsesBangunan += count;
+                }
+            });
+
+            const totalUsulan = totalSuksesBangunan + totalTolakBangunan + totalProsesBangunan;
+
+            // Calculate percentages (avoid division by zero)
+            const persentaseSukses = totalUsulan > 0 ? (totalSuksesBangunan / totalUsulan) * 100 : 0;
+            const persentaseTolak = totalUsulan > 0 ? (totalTolakBangunan / totalUsulan) * 100 : 0;
+            const persentaseProses = totalUsulan > 0 ? (totalProsesBangunan / totalUsulan) * 100 : 0;
+
+            return {
+                totalSuksesBangunan,
+                totalTolakBangunan,
+                totalProsesBangunan,
+                totalUsulan,
+                persentaseSukses: Number(persentaseSukses.toFixed(2)),
+                persentaseTolak: Number(persentaseTolak.toFixed(2)),
+                persentaseProses: Number(persentaseProses.toFixed(2)),
+            };
+        } catch (error) {
+            console.log("Error getting ASB analytics:", error);
             throw error;
         }
     }
