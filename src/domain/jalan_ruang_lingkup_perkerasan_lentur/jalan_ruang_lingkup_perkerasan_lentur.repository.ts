@@ -9,4 +9,5 @@ export abstract class JalanRuangLingkupPerkerasanLenturRepository {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanRuangLingkupPerkerasanLentur | null>;
     abstract findAll(dto: GetJJalanRuangLingkupPerkerasanLenturDto): Promise<{data: JalanRuangLingkupPerkerasanLentur[], total: number}>;
+    abstract findByJenis(jenis: string): Promise<JalanRuangLingkupPerkerasanLentur | null>;
 }

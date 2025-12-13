@@ -10,4 +10,5 @@ export abstract class JalanSpesifikasiDesainKakuService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanSpesifikasiDesainKaku | null>;
     abstract findAll(dto: GetJalanSpesifikasiDesainKakuDto): Promise<JalanSpesifikasiDesainKakuPaginationResultDto>;
+    abstract findBySpec(spec: string): Promise<JalanSpesifikasiDesainKaku | null>;
 }

@@ -10,4 +10,5 @@ export abstract class JalanMutuBetonService {
     abstract delete(id: number): Promise<boolean>;
     abstract findById(id: number): Promise<JalanMutuBeton | null>;
     abstract findAll(dto: GetJalanMutuBetonDto): Promise<JalanMutuBetonPaginationResultDto>;
+    abstract findByJenis(jenis: string): Promise<JalanMutuBeton | null>;
 }
