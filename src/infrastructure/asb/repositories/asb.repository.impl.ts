@@ -228,12 +228,12 @@ export class AsbRepositoryImpl implements AsbRepository {
                 }
             }
 
-            // Apply year filter if provided
+            // Apply year filter if provided (using tahun_anggaran field)
             if (filter?.tahun !== undefined) {
                 if (idOpd || filter?.bulan !== undefined) {
-                    qb.andWhere("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+                    qb.andWhere("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
                 } else {
-                    qb.where("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+                    qb.where("e.tahun_anggaran = :tahun", { tahun: filter.tahun });
                 }
             }
 
@@ -287,12 +287,12 @@ export class AsbRepositoryImpl implements AsbRepository {
                 }
             }
 
-            // Apply year filter if provided
+            // Apply year filter if provided (using tahun_anggaran field)
             if (filter?.tahun !== undefined) {
                 if (idOpd || filter?.bulan !== undefined) {
-                    jenisQb.andWhere('EXTRACT(YEAR FROM e.created_at) = :tahun', { tahun: filter.tahun });
+                    jenisQb.andWhere('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
                 } else {
-                    jenisQb.where('EXTRACT(YEAR FROM e.created_at) = :tahun', { tahun: filter.tahun });
+                    jenisQb.where('e.tahun_anggaran = :tahun', { tahun: filter.tahun });
                 }
             }
 
