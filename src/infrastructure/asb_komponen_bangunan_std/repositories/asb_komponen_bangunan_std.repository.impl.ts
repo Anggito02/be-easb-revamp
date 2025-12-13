@@ -67,7 +67,18 @@ export class AsbKomponenBangunanStdRepositoryImpl implements AsbKomponenBangunan
 
     async findAll(pagination: GetAsbKomponenBangunanStdsDto): Promise<{ data: AsbKomponenBangunanStd[], total: number }> {
         try {
+            const where: any = {};
+
+            if (pagination.id_asb_jenis !== undefined) {
+                where.idAsbJenis = pagination.id_asb_jenis;
+            }
+
+            if (pagination.id_asb_tipe_bangunan !== undefined) {
+                where.idAsbTipeBangunan = pagination.id_asb_tipe_bangunan;
+            }
+
             const findOptions: any = {
+                where: Object.keys(where).length > 0 ? where : undefined,
                 order: { id: 'DESC' }
             };
 
