@@ -63,4 +63,13 @@ export class JalanMutuBetonRepositoryImpl implements JalanMutuBetonRepository {
             throw error;
         }
     }
+
+    async findByJenis(jenis: string): Promise<JalanMutuBeton | null> {
+        try {
+            const entity = await this.repo.findOne({ where: { jenis } });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

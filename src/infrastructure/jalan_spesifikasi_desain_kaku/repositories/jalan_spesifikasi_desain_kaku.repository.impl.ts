@@ -63,4 +63,13 @@ export class JalanSpesifikasiDesainKakuRepositoryImpl implements JalanSpesifikas
             throw error;
         }
     }
+
+    async findBySpec(spec: string): Promise<JalanSpesifikasiDesainKaku | null> {
+        try {
+            const entity = await this.repo.findOne({ where: { spec } });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

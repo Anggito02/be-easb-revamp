@@ -1,7 +1,7 @@
 import { Transform } from "class-transformer";
 import { IsNumber, Min } from "class-validator";
 
-export class GetJJalanRuangLingkupPerkerasanLenturDto {
+export class GetJalanRuangLingkupPerkerasanLenturDto {
     @IsNumber()
     @Min(1)
     @Transform(({ value }) => parseInt(value, 10))

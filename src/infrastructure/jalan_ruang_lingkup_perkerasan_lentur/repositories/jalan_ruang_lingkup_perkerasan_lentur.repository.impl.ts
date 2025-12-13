@@ -63,4 +63,13 @@ export class JalanRuangLingkupPerkerasanLenturRepositoryImpl implements JalanRua
             throw error;
         }
     }
+    
+    async findByJenis(jenis: string): Promise<JalanRuangLingkupPerkerasanLentur | null> {
+        try {
+            const entity = await this.repo.findOne({ where: { jenis } });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
