@@ -1,0 +1,66 @@
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { JalanMutuBetonRepository } from "../../../domain/jalan_mutu_beton/jalan_mutu_beton.repository";
+import { JalanMutuBetonOrmEntity } from "../orm/jalan_mutu_beton.orm_entity";
+import { Repository } from "typeorm";
+import { JalanMutuBeton } from "../../../domain/jalan_mutu_beton/jalan_mutu_beton.entity";
+import { CreateJalanMutuBetonDto } from "../../../presentation/jalan_mutu_beton/dto/create_jalan_mutu_beton.dto";
+import { plainToInstance } from "class-transformer";
+import { UpdateJalanMutuBetonDto } from "../../../presentation/jalan_mutu_beton/dto/update_jalan_mutu_beton.dto";
+import { GetJalanMutuBetonDto } from "../../../presentation/jalan_mutu_beton/dto/get_jalan_mutu_beton.dto";
+
+@Injectable()
+export class JalanMutuBetonRepositoryImpl implements JalanMutuBetonRepository {
+    constructor(@InjectRepository(JalanMutuBetonOrmEntity) private readonly repo: Repository<JalanMutuBetonOrmEntity>) {}
+
+    async create(dto: CreateJalanMutuBetonDto): Promise<JalanMutuBeton> {
+        try {
+            const ormEntity = plainToInstance(JalanMutuBetonOrmEntity, dto);
+            const newEntity = await this.repo.save(ormEntity);
+            return newEntity;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async update(dto: UpdateJalanMutuBetonDto): Promise<JalanMutuBeton> {
+        try {
+            const { id, ...updateData } = dto;
+            await this.repo.update(id, updateData);
+            const updatedEntity = await this.repo.findOne({ where: { id } });
+            return updatedEntity!;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async delete(id: number): Promise<boolean> {
+        try {
+            return await this.repo.softDelete(id).then(() => true).catch(() => false);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findById(id: number): Promise<JalanMutuBeton | null> {
+        try {
+            const entity = await this.repo.findOne({ where: { id } });
+            return entity || null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findAll(dto: GetJalanMutuBetonDto): Promise<{ data: JalanMutuBeton[]; total: number; }> {
+        try {
+            const [data, total] = await this.repo.findAndCount({
+                skip: (dto.page - 1) * dto.amount,
+                take: dto.amount,
+                order: { id: "DESC" }
+            });
+            return { data, total };
+        } catch (error) {
+            throw error;
+        }
+    }
+}
