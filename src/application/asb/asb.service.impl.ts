@@ -562,7 +562,6 @@ export class AsbServiceImpl implements AsbService {
                 asb.luasTotalBangunan || 0,
                 asb.bobotTotalBps || 0
             );
-            console.log("bpns", BPNS);
 
             // Update total biaya pembangunan
             const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
@@ -645,13 +644,6 @@ export class AsbServiceImpl implements AsbService {
             asb.rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
 
             asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
-
-            console.log("nominalPerencanaanKonstruksi: ", nominalPerencanaanKonstruksi);
-            console.log("nominalPengawasanKonstruksi: ", nominalPengawasanKonstruksi);
-            console.log("nominalManagementKonstruksi: ", nominalManagementKonstruksi);
-            console.log("nominalPengelolaanKegiatan: ", nominalPengelolaanKegiatan);
-            console.log("rekapitulasiBiayaKonstruksi: ", asb.rekapitulasiBiayaKonstruksi);
-            console.log("rekapitulasiBiayaKonstruksiRounded: ", asb.rekapitulasiBiayaKonstruksiRounded);
 
             // 5. Update ASB status to 4
             const updatedAsb = await this.repository.update(dto.id_asb, {
@@ -1028,7 +1020,7 @@ export class AsbServiceImpl implements AsbService {
 
 
             // if not all verifikator verified
-            if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD || !asb?.idVerifikatorBappeda) {
+            if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD) {
                 throw new ForbiddenException(`All verificators must verify ASB first`);
             }
 

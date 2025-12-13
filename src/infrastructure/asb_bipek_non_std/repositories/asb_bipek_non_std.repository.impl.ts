@@ -19,7 +19,9 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
 
     async create(dto: CreateAsbBipekNonStdDto): Promise<AsbBipekNonStd> {
         try {
+            console.log("dto", dto);
             const ormEntity = this.repository.create(dto);
+            console.log("ormEntity", ormEntity);
 
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbBipekNonStd, saved);

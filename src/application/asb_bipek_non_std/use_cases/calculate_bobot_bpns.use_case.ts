@@ -90,7 +90,7 @@ export class CalculateBobotBPNSUseCase {
 
                 const asbBipekNonStd = {
                     idAsb,
-                    idAsbKomponenBangunanNonStd: komponenIds[i],
+                    idAsbKomponenBangunanNonstd: komponenIds[i],
                     bobotInput: bobotInputs[i],
                     calculationMethod: calculationMethod,
                     bobotInputProsentase: bobotInputs[i],

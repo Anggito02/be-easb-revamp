@@ -25,6 +25,12 @@ export class CalculateBobotBPNSReviewUseCase {
         let jumlahBobot = 0;
         let kompBangProsList: AsbKomponenBangunanProsNonstd[] = [];
         let calculationMethod: CalculationMethod;
+        console.log("komponenIds ", komponenIds);
+        console.log("bobotInputs ", bobotInputs);
+        console.log("shst ", shst);
+        console.log("totalLantai ", totalLantai);
+        console.log("idAsbBipekNonStd ", idAsbBipekNonStd);
+        console.log("idAsb ", idAsb);
 
         // Set calculation method
         if (totalLantai <= 2) {
