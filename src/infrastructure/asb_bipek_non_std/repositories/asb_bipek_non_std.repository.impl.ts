@@ -19,10 +19,7 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
 
     async create(dto: CreateAsbBipekNonStdDto): Promise<AsbBipekNonStd> {
         try {
-            console.log("dto", dto);
             const ormEntity = this.repository.create(dto);
-            console.log("ormEntity", ormEntity);
-
             const saved = await this.repository.save(ormEntity);
             return plainToInstance(AsbBipekNonStd, saved);
         } catch (error) {
@@ -101,6 +98,14 @@ export class AsbBipekNonStdRepositoryImpl extends AsbBipekNonStdRepository {
             });
             const domainEntities = entities.map((e) => plainToInstance(AsbBipekNonStd, e));
             return [domainEntities, total];
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.softDelete({ idAsb });
         } catch (error) {
             throw error;
         }

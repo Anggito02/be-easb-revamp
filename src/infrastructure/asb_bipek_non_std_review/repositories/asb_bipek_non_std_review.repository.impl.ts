@@ -134,4 +134,12 @@ export class AsbBipekNonStdReviewRepositoryImpl extends AsbBipekNonStdReviewRepo
             throw error;
         }
     }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.softDelete({ idAsb });
+        } catch (error) {
+            throw error;
+        }
+    }
 }

@@ -20,10 +20,6 @@ export class UpdateAsbStoreLantaiDto {
     @IsInt({ each: true })
     id_asb_fungsi_ruang: number[];
 
-    // Internal use - will be populated by service if needed
-    @IsOptional()
-    id_asb_detail?: number[];
-
     @IsOptional()
     id_asb_bipek_standard?: number[];
 

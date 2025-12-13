@@ -82,4 +82,12 @@ export class AsbBipekStandardServiceImpl extends AsbBipekStandardService {
             throw error;
         }
     }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.deleteByAsbId(idAsb);
+        } catch (error) {
+            throw error;
+        }
+    }
 }

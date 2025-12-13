@@ -393,13 +393,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found or access denied`);
             }
 
-            // Step 1: Delete existing records if provided
-            if (dto.id_asb_detail && dto.id_asb_detail.length > 0) {
-                await this.asbDetailService.deleteByIds(dto.id_asb_detail);
-            }
-
-            // For bipek_standard and bipek_nonstd, we'd need services injected
-            // For now, we'll delete all AsbDetail records for this ASB to ensure clean state
+            // Step 1: Always delete all AsbDetail records for this ASB (by id_asb) to ensure clean state
             await this.asbDetailService.deleteByAsbId(dto.id_asb);
 
             // Step 2: Validate arrays length
@@ -432,12 +426,8 @@ export class AsbServiceImpl implements AsbService {
             if (existingAsb.idAsbTipeBangunan === 1) {
                 existingAsb.idAsbKlasifikasi = totalLantaiExistingAsb > 2 ? 2 : 1;
             } else {
-                existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai < 250 ? 5 : 4;
+                existingAsb.idAsbKlasifikasi = totalLuasLantai < 120 ? 3 : totalLuasLantai > 250 ? 5 : 4;
             }
-
-            await this.repository.update(dto.id_asb, {
-                idAsbKlasifikasi: existingAsb.idAsbKlasifikasi
-            });
 
             // REQUEST_TULUNGAGUNG //
 
@@ -454,10 +444,9 @@ export class AsbServiceImpl implements AsbService {
             const shstDto = new GetShstNominalDto();
             shstDto.id_asb_tipe_bangunan = existingAsb.idAsbTipeBangunan;
             shstDto.id_asb_klasifikasi = existingAsb.idAsbKlasifikasi;
-            shstDto.id_kabkota = existingAsb.idKabkota || 0;
-            shstDto.tahun = existingAsb.tahunAnggaran || 0;
+            shstDto.id_kabkota = existingAsb.idKabkota ?? 0;
+            shstDto.tahun = existingAsb.tahunAnggaran ?? 0;
 
-            console.log("shst: ", shstDto);
             const shstNominal = await this.shstService.getNominal(shstDto);
             console.log("Shst nominal:", shstNominal);
 
@@ -465,11 +454,11 @@ export class AsbServiceImpl implements AsbService {
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 2,
                 shst: shstNominal,
+                idAsbKlasifikasi: existingAsb.idAsbKlasifikasi,
                 luasTotalBangunan: existingAsb.luasTotalBangunan,
                 koefisienLantaiTotal: existingAsb.koefisienLantaiTotal,
                 koefisienFungsiRuangTotal: existingAsb.koefisienFungsiRuangTotal
             });
-            console.log("Updated ASB:", updatedAsb);
 
             return { id: updatedAsb.id, status: updatedAsb.idAsbStatus };
         } catch (error) {
@@ -487,12 +476,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Delete old records if requested
-            if (dto.id_asb_bipek_standard) {
-                await this.asbBipekStandardService.delete(dto.id_asb_bipek_standard);
-            }
+            // 2. Always delete all AsbBipekStandard records for this ASB (by id_asb) to ensure clean state
+            await this.asbBipekStandardService.deleteByAsbId(dto.id_asb);
 
-            // 4. Calculate BPS
+            // 3. Calculate BPS
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
@@ -511,7 +498,6 @@ export class AsbServiceImpl implements AsbService {
             // 5. Update ASB status
             const updatedAsb = await this.repository.update(dto.id_asb, {
                 idAsbStatus: 3,
-                shst: asb.shst || 0,
                 nominalBps: BPS,
                 bobotTotalBps: jumlahBobot
             });
@@ -534,14 +520,8 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Delete old records if requested
-            if (dto.id_asb_bipek_nonstd) {
-                await this.asbBipekNonStdService.delete(dto.id_asb_bipek_nonstd);
-            }
-
-            // 3. Get SHST Nominal using asb data
-            const shstDto = new GetShstNominalDto();
-            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            // 2. Always delete all AsbBipekNonStd records for this ASB (by id_asb) to ensure clean state
+            await this.asbBipekNonStdService.deleteByAsbId(dto.id_asb);
 
             // Ensure optional fields are present or handle error
             if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
@@ -567,21 +547,11 @@ export class AsbServiceImpl implements AsbService {
 
             // Update total biaya pembangunan
             const totalBiayaPembangunan = BPNS + Number(asb.nominalBps || 0);
-            console.log("totalBiayaPembangunan: ", totalBiayaPembangunan);
 
             // Save jakon price variables
             if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
                 throw new Error("ASB is missing required classification or location data for Jakon lookup");
             }
-
-            // Simpan field jakon
-            console.log("variables: ", {
-                id_asb_klasifikasi: asb.idAsbKlasifikasi,
-                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
-                id_asb_jenis: asb.idAsbJenis,
-                type: AsbJakonType.PERENCANAAN,
-                total_biaya_pembangunan: asb.totalBiayaPembangunan
-            })
 
             const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
@@ -615,7 +585,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
             }
 
-            const managementKonstruksi = (asb.totalLantai >= 4 && asb.jumlahKontraktor >= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
+            const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
                 id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
                 id_asb_jenis: asb.idAsbJenis,
@@ -623,11 +593,16 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
 
-            if (!managementKonstruksi) {
-                throw new Error("ASB is missing required managementKonstruksi data for Jakon lookup");
+            if (managementKonstruksi === null) {
+                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
             }
 
-            const nominalManagementKonstruksi = managementKonstruksi.standard;
+            let nominalManagementKonstruksi = 0;
+            if (managementKonstruksi === 0) {
+                nominalManagementKonstruksi = 0;
+            } else {
+                nominalManagementKonstruksi = managementKonstruksi.standard;
+            }
 
             const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
@@ -637,15 +612,16 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: totalBiayaPembangunan
             });
 
+
             if (!pengelolaanKegiatan) {
                 throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
             }
 
             const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
 
-            asb.rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
+            const rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi);
 
-            asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
+            const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
 
             // 5. Update ASB status to 4
             const updatedAsb = await this.repository.update(dto.id_asb, {
@@ -657,8 +633,8 @@ export class AsbServiceImpl implements AsbService {
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
                 pengelolaanKegiatan: nominalPengelolaanKegiatan,
-                rekapitulasiBiayaKonstruksi: asb.rekapitulasiBiayaKonstruksi,
-                rekapitulasiBiayaKonstruksiRounded: asb.rekapitulasiBiayaKonstruksiRounded,
+                rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
             });
 
             return {
@@ -739,21 +715,22 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            // 2. Get all AsbDetail records
+            // 2. Always delete all AsbDetailReview records for this ASB (by id_asb) to ensure clean state
+            await this.asbDetailReviewService.deleteByAsbId(dto.id_asb);
+
+            // 3. Get all AsbDetail records
             const asbDetails = await this.asbDetailService.getByAsb({
                 idAsb: dto.id_asb,
                 page: 1,
                 amount: 1000
             });
 
-            console.log("Get asb detail", asbDetails);
-
-            // 3. Create AsbDetailReview records for each lantai
+            // 4. Create AsbDetailReview records for each lantai
             for (let i = 0; i < asb.totalLantai; i++) {
                 const createDetailReviewDto = new CreateAsbDetailReviewDto();
                 createDetailReviewDto.idAsb = dto.id_asb;
                 createDetailReviewDto.idAsbDetail = asbDetails.data[i].id; // Will be set by the service if needed
-                createDetailReviewDto.files = Files.ORIGIN;
+                createDetailReviewDto.files = Files.REVIEW;
                 createDetailReviewDto.idAsbLantai = dto.verif_id_asb_lantai[i];
                 createDetailReviewDto.idAsbFungsiRuang = dto.verif_id_asb_fungsi_ruang[i];
                 createDetailReviewDto.idAsbTipeBangunan = asb.idAsbTipeBangunan;
@@ -762,9 +739,39 @@ export class AsbServiceImpl implements AsbService {
                 await this.asbDetailReviewService.create(createDetailReviewDto);
             }
 
-            // 4. Update ASB status to 9
+            // Set ASB Klasifikasi
+            const totalLantaiReview = asb.totalLantai || 0;
+            const totalLuasLantaiReview = dto.verif_luas_lantai.reduce((total, luas) => total + luas, 0);
+            let idAsbKlasifikasiReview = 0;
+            
+            if (asb.idAsbTipeBangunan === 1) {
+                idAsbKlasifikasiReview = totalLantaiReview > 2 ? 2 : 1;
+            } else {
+                idAsbKlasifikasiReview = totalLuasLantaiReview < 120 ? 3 : totalLuasLantaiReview > 250 ? 5 : 4;
+            }
+
+            // Calculate Koef Lantai Total
+            const koefLantaiTotalReview = await this.asbDetailReviewService.calculateKoefLantaiTotal(dto.id_asb, totalLuasLantaiReview);
+
+            // Calculate Koef Fungsi Ruang Total
+            const koefFungsiRuangTotalReview = await this.asbDetailReviewService.calculateKoefFungsiRuangTotal(dto.id_asb, totalLuasLantaiReview);
+
+            // Calculate Nominal Shst
+            const shstDto = new GetShstNominalDto();
+            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
+            shstDto.id_asb_klasifikasi = idAsbKlasifikasiReview;
+            shstDto.id_kabkota = asb.idKabkota ?? 0;
+            shstDto.tahun = asb.tahunAnggaran ?? 0;
+            const nominalShstReview = await this.shstService.getNominal(shstDto);
+
+            // 5. Update ASB status to 9
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 9
+                idAsbStatus: 9,
+                luasTotalBangunan: totalLuasLantaiReview,
+                idAsbKlasifikasi: idAsbKlasifikasiReview,
+                shst: nominalShstReview,
+                koefisienLantaiTotal: koefLantaiTotalReview,
+                koefisienFungsiRuangTotal: koefFungsiRuangTotalReview
             });
 
             return {
@@ -795,17 +802,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Get SHST Nominal
-            const shstDto = new GetShstNominalDto();
-            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
-            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
-                throw new Error("ASB is missing required classification or location data for SHST lookup");
-            }
-            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
-            shstDto.id_kabkota = asb.idKabkota;
-            const shstNominal = await this.shstService.getNominal(shstDto);
+            // 3. Always delete all AsbBipekStandardReview records for this ASB (by id_asb) to ensure clean state
+            await this.asbBipekStandardReviewService.deleteByAsbId(dto.id_asb);
 
-            // 3. Calculate AsbBipekStandard
+            // 4. Calculate AsbBipekStandard
             const getAsbBipekStandardByAsbDto = {
                 idAsb: dto.id_asb,
                 page: 1,
@@ -817,23 +817,28 @@ export class AsbServiceImpl implements AsbService {
             }
             const asbBipekStandardIds = asbBipekStandard.data.map((asbBipekStandard) => asbBipekStandard.id);
 
-            // 4. Calculate BPS Review
+            // 5. Calculate BPS Review
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            await this.calculateBobotBPSReviewUseCase.execute(
+            const [BPSReview, jumlahBobot] = await this.calculateBobotBPSReviewUseCase.execute(
                 dto.id_asb,
                 asbBipekStandardIds,
                 dto.verif_komponen_std,
                 dto.verif_bobot_acuan_std,
-                shstNominal,
-                asb.totalLantai
+                asb.shst || 0,
+                asb.totalLantai,
+                asb.koefisienLantaiTotal || 0,
+                asb.koefisienFungsiRuangTotal || 0,
+                asb.luasTotalBangunan || 0,
             );
 
-            // 5. Update ASB status to 10
+            // 6. Update ASB status to 10
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 10
+                idAsbStatus: 10,
+                nominalBps: BPSReview,
+                bobotTotalBps: jumlahBobot
             });
 
             return {
@@ -866,18 +871,10 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${dto.id_asb} not found`);
             }
 
-            // 2. Get SHST Nominal
-            const shstDto = new GetShstNominalDto();
-            shstDto.id_asb_tipe_bangunan = asb.idAsbTipeBangunan;
-            if (!asb.idAsbKlasifikasi || !asb.idKabkota) {
-                throw new Error("ASB is missing required classification or location data for SHST lookup");
-            }
-            shstDto.id_asb_klasifikasi = asb.idAsbKlasifikasi;
-            shstDto.id_kabkota = asb.idKabkota;
+            // 3. Always delete all AsbBipekNonStdReview records for this ASB (by id_asb) to ensure clean state
+            await this.asbBipekNonStdReviewService.deleteByAsbId(dto.id_asb);
 
-            const shstNominal = await this.shstService.getNominal(shstDto);
-
-            // 3. Get AsbBipekNonstd
+            // 4. Get AsbBipekNonstd
             const getAsbBipekNonstdByAsbDto = {
                 idAsb: dto.id_asb,
                 page: 1,
@@ -890,23 +887,113 @@ export class AsbServiceImpl implements AsbService {
             }
             const asbBipekNonstdIds = asbBipekNonstd.data.map((asbBipekNonstd) => asbBipekNonstd.id);
 
-            // 4. Calculate BPNS Review
+            // 5. Calculate BPNS Review
             if (!asb.totalLantai) {
                 throw new Error("ASB is missing totalLantai");
             }
 
-            await this.calculateBobotBPNSReviewUseCase.execute(
+            const [BPNSReview, jumlahBobot] = await this.calculateBobotBPNSReviewUseCase.execute(
                 dto.id_asb,
                 asbBipekNonstdIds,
                 dto.verif_komponen_nonstd,
                 dto.verif_bobot_acuan_nonstd,
-                shstNominal,
-                asb.totalLantai
+                asb.shst || 0,
+                asb.totalLantai,
+                asb.koefisienLantaiTotal || 0,
+                asb.koefisienFungsiRuangTotal || 0,
+                asb.luasTotalBangunan || 0,
+                asb.bobotTotalBpns || 0
             );
 
-            // 5. Update ASB status to 11
+            const totalBiayaPembangunan = BPNSReview + Number(asb.nominalBps || 0);
+
+            // Set Jakon prices
+            if (!asb.idAsbKlasifikasi || !asb.idAsbTipeBangunan || !asb.idAsbJenis || !totalBiayaPembangunan) {
+                throw new Error("ASB is missing required classification or location data for Jakon lookup");
+            }
+
+            const perencanaanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PERENCANAAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!perencanaanKonstruksi) {
+                throw new Error("ASB is missing required perencanaanKonstruksi data for Jakon lookup");
+            }
+
+            const nominalPerencanaanKonstruksi = perencanaanKonstruksi.standard;
+
+            const pengawasanKonstruksi = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGAWASAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (!pengawasanKonstruksi) {
+                throw new Error("ASB is missing required pengawasanKonstruksi data for Jakon lookup");
+            }
+
+            const nominalPengawasanKonstruksi = pengawasanKonstruksi.standard;
+
+            if (!asb.totalLantai || !asb.jumlahKontraktor) {
+                throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
+            }
+
+            const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.MANAGEMENT,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+            if (managementKonstruksi === null) {
+                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
+            }
+
+            let nominalManagementKonstruksi = 0;
+            if (managementKonstruksi === 0) {
+                nominalManagementKonstruksi = 0;
+            } else {
+                nominalManagementKonstruksi = managementKonstruksi.standard;
+            }
+
+            const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
+                id_asb_klasifikasi: asb.idAsbKlasifikasi,
+                id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
+                id_asb_jenis: asb.idAsbJenis,
+                type: AsbJakonType.PENGELOLAAN,
+                total_biaya_pembangunan: totalBiayaPembangunan
+            });
+
+
+            if (!pengelolaanKegiatan) {
+                throw new Error("ASB is missing required pengelolaanKegiatan data for Jakon lookup");
+            }
+
+            const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
+
+            const rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
+
+            const rekapitulasiBiayaKonstruksiRounded = Math.round(rekapitulasiBiayaKonstruksi / 100) * 100;
+
+            // 6. Update ASB status to 11
             const updatedAsb = await this.repository.update(dto.id_asb, {
-                idAsbStatus: 11
+                idAsbStatus: 11,
+                nominalBpns: BPNSReview,
+                bobotTotalBpns: jumlahBobot,
+                rekapitulasiBiayaKonstruksi: rekapitulasiBiayaKonstruksi,
+                rekapitulasiBiayaKonstruksiRounded: rekapitulasiBiayaKonstruksiRounded,
+                totalBiayaPembangunan: totalBiayaPembangunan,
+                perencanaanKonstruksi: nominalPerencanaanKonstruksi,
+                pengawasanKonstruksi: nominalPengawasanKonstruksi,
+                managementKonstruksi: nominalManagementKonstruksi,
+                pengelolaanKegiatan: nominalPengelolaanKegiatan,
             });
 
             return {
@@ -963,6 +1050,8 @@ export class AsbServiceImpl implements AsbService {
                 if (!verificatorType) {
                     throw new NotFoundException(`User not sync with verifikator`);
                 }
+
+                console.log(verificatorType, userId);
 
                 if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
                     throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
@@ -1081,7 +1170,7 @@ export class AsbServiceImpl implements AsbService {
                 throw new Error("ASB is missing required totalLantai or jumlahKontraktor data for Jakon lookup");
             }
 
-            const managementKonstruksi = (asb.totalLantai >= 4 && asb.jumlahKontraktor >= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
+            const managementKonstruksi = (asb.totalLantai <= 4 && asb.jumlahKontraktor <= 2) ? 0 : await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
                 id_asb_tipe_bangunan: asb.idAsbTipeBangunan,
                 id_asb_jenis: asb.idAsbJenis,
@@ -1089,11 +1178,16 @@ export class AsbServiceImpl implements AsbService {
                 total_biaya_pembangunan: asb.totalBiayaPembangunan
             });
 
-            if (!managementKonstruksi) {
-                throw new Error("ASB is missing required managementKonstruksi data for Jakon lookup");
+            if (managementKonstruksi === null) {
+                throw new NotFoundException("ASB is missing required managementKonstruksi data for Jakon lookup");
             }
-
-            const nominalManagementKonstruksi = managementKonstruksi.standard;
+            
+            let nominalManagementKonstruksi = 0;
+            if (managementKonstruksi === 0) {
+                nominalManagementKonstruksi = 0;
+            } else {
+                nominalManagementKonstruksi = managementKonstruksi.standard;
+            }
 
             const pengelolaanKegiatan = await this.asbJakonService.getJakonByPriceRange({
                 id_asb_klasifikasi: asb.idAsbKlasifikasi,
@@ -1109,15 +1203,17 @@ export class AsbServiceImpl implements AsbService {
 
             const nominalPengelolaanKegiatan = pengelolaanKegiatan.standard;
 
-            asb.rekapitulasiBiayaKonstruksi = nominalPerencanaanKonstruksi + nominalPengawasanKonstruksi + nominalManagementKonstruksi;
+            asb.rekapitulasiBiayaKonstruksi = Number(asb.totalBiayaPembangunan ?? 0) + Number(nominalPerencanaanKonstruksi) + Number(nominalPengawasanKonstruksi) + Number(nominalManagementKonstruksi); // perencanaan kegiatan belum ditambah
+
+            console.log('rekapitulasiBiayaKonstruksi: ', asb.rekapitulasiBiayaKonstruksi);
 
             asb.rekapitulasiBiayaKonstruksiRounded = Math.round(asb.rekapitulasiBiayaKonstruksi / 100) * 100;
 
             // 4. Update ASB - track which verifikator approved this
             const updatedAsb = await this.repository.update(id_asb, {
                 idAsbStatus: 8,
-                idVerifikatorAdpem: Number(userId),
-                verifiedAdpemAt: new Date(),
+                idVerifikatorBappeda: Number(userId),
+                verifiedBappedaAt: new Date(),
                 perencanaanKonstruksi: nominalPerencanaanKonstruksi,
                 pengawasanKonstruksi: nominalPengawasanKonstruksi,
                 managementKonstruksi: nominalManagementKonstruksi,
@@ -1144,6 +1240,7 @@ export class AsbServiceImpl implements AsbService {
                 amount: 10000
             })
 
+            console.log("databpsreview: ", dataBpsReview);
             const dataBpsKomponen = dataBpsReview.data.map((data) => {
                 return {
                     komponen: data.asbKomponenBangunanStd?.komponen,
@@ -1167,15 +1264,14 @@ export class AsbServiceImpl implements AsbService {
 
             // Ambil data asb detail
             const dataAsbDetailReview = await this.asbDetailReviewService.getAsbDetailReviewWithRelation(id_asb);
-            console.log("dataAsbDetailReview", dataAsbDetailReview);
 
             const now = new Date();
             const date = new Intl.DateTimeFormat('en-GB').format(now); // DD/MM/YYYY
             const time = now.toTimeString().split(' ')[0].replace(/:/g, ':'); // HH:mm:ss
             const dateFormatted = `${date.replace(/\//g, '-')} ${time}`;
 
-            console.log(asbData);
-
+            console.log("dataAsb: ", asbData);
+            
             const kertasKerjaDto = {
                 title: `Kertas Kerja - Analisis Kebutuhan Biaya ${asbData.asbJenis?.jenis}.`,
                 usernameOpd,

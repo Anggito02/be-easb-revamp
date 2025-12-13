@@ -114,4 +114,35 @@ export class AsbDetailReviewServiceImpl extends AsbDetailReviewService {
             throw error;
         }
     }
+
+    async deleteByAsbId(idAsb: number): Promise<void> {
+        try {
+            await this.repository.deleteByAsbId(idAsb);
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async calculateKoefLantaiTotal(idAsb: number, luasTotal: number): Promise<number> {
+        try {
+            const details = await this.repository.findByAsb(idAsb, 1, 100);
+
+            const totalKoefLantai = details[0].reduce((total, detail) => total + (detail.lantaiKoef || 0), 0);
+
+            return Number((totalKoefLantai / luasTotal).toPrecision(3));
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async calculateKoefFungsiRuangTotal(idAsb: number, luasTotal: number): Promise<number> {
+        try {
+            const details = await this.repository.findByAsb(idAsb, 1, 100);
+            const totalKoefFungsiRuang = details[0].reduce((total, detail) => total + (detail.asbFungsiRuangKoef || 0), 0);
+
+            return Number((totalKoefFungsiRuang / luasTotal).toPrecision(3));
+        } catch (error) {
+            throw error;
+        }
+    }
 }
