@@ -15,6 +15,7 @@ import { VerifyBpnsDto } from 'src/presentation/asb/dto/verify_bpns.dto';
 import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { GetAsbAnalyticsFilterDto } from 'src/application/asb/dto/get_asb_analytics_filter.dto';
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { AsbAnalyticsDto } from 'src/application/asb/dto/asb_analytics.dto';
 
@@ -23,7 +24,7 @@ export abstract class AsbService {
     abstract findAll(dto: FindAllAsbDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbListResultDto>;
     abstract getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]>;
     abstract getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]>;
-    abstract getAsbAnalytics(userIdOpd: number | null, userRoles: Role[]): Promise<AsbAnalyticsDto>;
+    abstract getAsbAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto>;
     abstract createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[], username: string): Promise<{ id: number; status: any }>;
     abstract updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;

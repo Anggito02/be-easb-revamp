@@ -33,6 +33,7 @@ import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
 import { AsbAnalyticsDto } from './dto/asb_analytics.dto';
+import { GetAsbAnalyticsFilterDto } from './dto/get_asb_analytics_filter.dto';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
@@ -218,15 +219,16 @@ export class AsbServiceImpl implements AsbService {
         }
     }
 
-    async getAsbAnalytics(userIdOpd: number | null, userRoles: Role[]): Promise<AsbAnalyticsDto> {
+    async getAsbAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto> {
         try {
-            // Check if user is ADMIN or SUPERADMIN
+            // Check if user is ADMIN, SUPERADMIN, or VERIFIKATOR
             const isAdmin = userRoles.includes(Role.ADMIN);
             const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+            const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
 
-            if (isAdmin || isSuperAdmin) {
-                // ADMIN/SUPERADMIN can access ALL ASB without OPD filter
-                return await this.repository.getAsbAnalytics();
+            if (isAdmin || isSuperAdmin || isVerifikator) {
+                // ADMIN/SUPERADMIN/VERIFIKATOR can access ALL ASB without OPD filter
+                return await this.repository.getAsbAnalytics(undefined, filter);
             } else {
                 // For OPD users
                 const isOpd = userRoles.includes(Role.OPD);
@@ -238,7 +240,7 @@ export class AsbServiceImpl implements AsbService {
                     }
 
                     // Fetch with OPD filter
-                    return await this.repository.getAsbAnalytics(userIdOpd);
+                    return await this.repository.getAsbAnalytics(userIdOpd, filter);
                 } else {
                     throw new ForbiddenException('User is not authorized to access ASB analytics');
                 }

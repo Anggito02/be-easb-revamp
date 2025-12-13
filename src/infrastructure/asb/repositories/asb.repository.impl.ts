@@ -8,6 +8,7 @@ import { AsbWithRelationsDto } from 'src/application/asb/dto/asb_with_relations.
 import { FindAllAsbDto } from 'src/application/asb/dto/find_all_asb.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
 import { AsbAnalyticsDto } from 'src/application/asb/dto/asb_analytics.dto';
+import { GetAsbAnalyticsFilterDto } from 'src/application/asb/dto/get_asb_analytics_filter.dto';
 
 @Injectable()
 export class AsbRepositoryImpl implements AsbRepository {
@@ -207,7 +208,7 @@ export class AsbRepositoryImpl implements AsbRepository {
         }
     }
 
-    async getAsbAnalytics(idOpd?: number): Promise<AsbAnalyticsDto> {
+    async getAsbAnalytics(idOpd?: number, filter?: GetAsbAnalyticsFilterDto): Promise<AsbAnalyticsDto> {
         try {
             const qb = this.repo
                 .createQueryBuilder('e')
@@ -216,6 +217,24 @@ export class AsbRepositoryImpl implements AsbRepository {
 
             if (idOpd) {
                 qb.where("e.id_opd = :idOpd", { idOpd });
+            }
+
+            // Apply month filter if provided
+            if (filter?.bulan !== undefined) {
+                if (idOpd) {
+                    qb.andWhere("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                } else {
+                    qb.where("EXTRACT(MONTH FROM e.created_at) = :bulan", { bulan: filter.bulan });
+                }
+            }
+
+            // Apply year filter if provided
+            if (filter?.tahun !== undefined) {
+                if (idOpd || filter?.bulan !== undefined) {
+                    qb.andWhere("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+                } else {
+                    qb.where("EXTRACT(YEAR FROM e.created_at) = :tahun", { tahun: filter.tahun });
+                }
             }
 
             qb.groupBy("e.id_asb_status");
