@@ -253,12 +253,15 @@ export class UserServiceImpl implements UserService {
                 return safe as User;
             }).filter(user => !user.roles.includes(Role.SUPERADMIN));
 
+            const page = pagination.page || 1;
+            const amount = pagination.amount || result.total;
+            const totalPages = Math.ceil(result.total / (pagination.amount || result.total))
             return {
                 users: sanitizedUsers,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page,
+                amount,
+                totalPages
             };
         } catch (error) {
             if (error instanceof HttpException) {

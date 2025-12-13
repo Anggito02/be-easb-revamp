@@ -977,18 +977,28 @@ export class AsbServiceImpl implements AsbService {
                 throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
 
-            const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
-            if (!verificatorUser) {
-                throw new NotFoundException(`User not sync with verifikator`);
+             // 1. Check permissions and existence
+             if (userRoles.includes(Role.VERIFIKATOR)) {
+                const verificatorType = await this.verifikatorService.checkVerifikatorType(Number(userId));
+                if (!verificatorType) {
+                    throw new NotFoundException(`User not sync with verifikator`);
+                }
+
+                if (verificatorType === JenisVerifikator.BAPPEDA || verificatorType === JenisVerifikator.BPKAD) {
+                    throw new ForbiddenException(`User not allowed to verify Pekerjaan ASB`);
+                }
             }
 
-            if (verificatorType === JenisVerifikator.ADBANG || verificatorType === JenisVerifikator.BPKAD) {
-                throw new ForbiddenException(`User not allowed to verify ASB`);
+            const asb = await this.findById(id_asb, userIdOpd, userRoles)
+
+            if (!asb) {
+                throw new NotFoundException(`ASB with id ${id_asb} not found`);
             }
+
 
             // if not all verifikator verified
             if (!asb?.idVerifikatorAdpem || !asb?.idVerifikatorBPKAD || !asb?.idVerifikatorBappeda) {
-                throw ForbiddenException(`All verificators must verify ASB first`);
+                throw new ForbiddenException(`All verificators must verify ASB first`);
             }
 
             await this.repository.update(id_asb, {
@@ -996,12 +1006,6 @@ export class AsbServiceImpl implements AsbService {
                 idVerifikatorBappeda: Number(userId),
                 verifiedBappedaAt: new Date(),
             });
-
-            const asb = await this.findById(id_asb, userIdOpd, userRoles)
-
-            if (!asb) {
-                throw new NotFoundException(`ASB with id ${id_asb} not found`);
-            }
 
             const opdAsb = await this.opdService.getOpdById({ id: asb.idOpd })
             const userOpdAsb = await this.userService.findById(opdAsb?.id_user || 0)

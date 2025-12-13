@@ -92,19 +92,26 @@ export class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    async getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }> {
+    async getUsers(
+        pagination: GetUsersDto,
+      ): Promise<{ data: User[]; total: number }> {
         try {
-            const [users, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
-
-            return { data: users, total };
+          // Normalize pagination
+          const page = Math.max(Number(pagination?.page) || 1, 1);
+          const amount = Math.max(Number(pagination?.amount) || 10, 1);
+      
+          const [users, total] = await this.repo.findAndCount({
+            skip: (page - 1) * amount,
+            take: amount,
+            order: { id: 'DESC' },
+          });
+      
+          return { data: users, total };
         } catch (error) {
-            throw error;
+          throw error;
         }
-    }
+      }
+      
 
     async getUserDetail(user: GetUserDetailDto): Promise<User | null> {
         try {

@@ -1,3 +1,4 @@
+import { Transform } from 'class-transformer';
 import { IsNumber, IsNotEmpty } from 'class-validator';
 
 export class GetUserDetailDto {
