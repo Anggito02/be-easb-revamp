@@ -310,8 +310,8 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                         throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
                     }
 
-                    if (!komponenSmkk.ruangLingkup) {
-                        throw new NotFoundException(`RuangLingkup for JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    if (!komponenSmkk.id_jenis_usulan) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
                     }
 
                     if (!komponenSmkk.pengali) {
@@ -332,7 +332,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     console.log('jumlahBarang', jumlahBarang);
 
                     const createSpesifikasiSmkkDto: CreateJalanSaluranSpesifikasiSmkkDto = {
-                        id_jenis_usulan: komponenSmkk.ruangLingkup.id_jenis_usulan,
+                        id_jenis_usulan: komponenSmkk.id_jenis_usulan,
                         id_usulan_jalan: dto.idUsulanJalan,
                         id_jalan_saluran_smkk: smkk.id_smkk,
                         harga_spec: hargaSpec,
@@ -568,8 +568,8 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                         throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
                     }
 
-                    if (!komponenSmkk.ruangLingkup) {
-                        throw new NotFoundException(`RuangLingkup for JalanSaluranSmkk with id ${smkk.id_smkk} not found`);
+                    if (!komponenSmkk.id_jenis_usulan) {
+                        throw new NotFoundException(`JalanSaluranSmkk with id ${smkk.id_smkk} has no id_jenis_usulan`);
                     }
 
                     if (!komponenSmkk.pengali) {
@@ -586,7 +586,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
                     const jumlahBarang = Math.floor(hargaSpec / komponenSmkk.harga_satuan);
 
                     const createSpesifikasiSmkkReviewDto: CreateJalanSaluranSpesifikasiSmkkReviewDto = {
-                        id_jenis_usulan: komponenSmkk.ruangLingkup.id_jenis_usulan,
+                        id_jenis_usulan: komponenSmkk.id_jenis_usulan,
                         id_usulan_jalan: dto.idUsulanJalan,
                         id_jalan_saluran_smkk: smkk.id_smkk,
                         harga_spec: hargaSpec,

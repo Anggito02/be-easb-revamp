@@ -61,6 +61,22 @@ export class JalanSaluranSmkkController {
         }
     }
 
+    @Get('jenis-usulan/:idJenisUsulan')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async findByJenisUsulan(@Param('idJenisUsulan') idJenisUsulan: string): Promise<ResponseDto> {
+        try {
+            const result = await this.service.findByJenisUsulan(Number(idJenisUsulan));
+            return {
+                status: "success",
+                responseCode: HttpStatus.OK,
+                message: "JalanSaluranSmkk by jenis usulan retrieved successfully",
+                data: result
+            };
+        } catch (error) {
+            throw error;
+        }
+    }
+
     @Get(':id')
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findById(@Param('id') id: string): Promise<ResponseDto> {
