@@ -19,6 +19,7 @@ export class MainDashboardServiceImpl implements MainDashboardService {
 
             const { data, total } = await this.repository.findAll(
                 dto.search,
+                dto.tahunAnggaran,
                 page,
                 limit,
             );
