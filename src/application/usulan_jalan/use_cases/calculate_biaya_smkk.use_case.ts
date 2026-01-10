@@ -13,9 +13,6 @@ export class CalculateBiayaSmkkUseCase {
             if (latestPersentaseSmkk === null) {
                 return null;
             }
-
-            // Calculate: biaya_smkk = totalHarga * persentase_smkk
-            // persentase_smkk is already in decimal format (e.g., 0.02 for 2%)
             const biayaSmkk = totalHarga * latestPersentaseSmkk;
 
             return biayaSmkk;

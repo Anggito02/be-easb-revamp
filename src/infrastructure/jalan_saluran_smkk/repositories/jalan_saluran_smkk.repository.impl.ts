@@ -51,7 +51,6 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
                     'jss.id_jenis_usulan',
                     'jss.no_mata_pembayaran',
                     'jss.satuan',
-                    'jss.harga_satuan',
                     'jss.uraian',
                     'jss.pengali'
                 ])
@@ -72,7 +71,6 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
                     'jss.id_jenis_usulan',
                     'jss.no_mata_pembayaran',
                     'jss.satuan',
-                    'jss.harga_satuan',
                     'jss.uraian',
                     'jss.pengali'
                 ])
@@ -100,7 +98,6 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
                     'jss.id_jenis_usulan',
                     'jss.no_mata_pembayaran',
                     'jss.satuan',
-                    'jss.harga_satuan',
                     'jss.uraian',
                     'jss.pengali'
                 ])

@@ -43,11 +43,9 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
                 .leftJoinAndSelect('uj.spesifikasiSmkk', 'spesifikasiSmkk')
                 .leftJoinAndSelect('spesifikasiSmkk.jenisUsulan', 'spesifikasiSmkkJenisUsulan')
                 .leftJoinAndSelect('spesifikasiSmkk.jalanSaluranSmkk', 'spesifikasiSmkkJalanSaluranSmkk')
-                .leftJoinAndSelect('spesifikasiSmkkJalanSaluranSmkk.ruangLingkup', 'spesifikasiSmkkJalanSaluranSmkkRuangLingkup')
                 .leftJoinAndSelect('uj.spesifikasiSmkkReview', 'spesifikasiSmkkReview')
                 .leftJoinAndSelect('spesifikasiSmkkReview.jenisUsulan', 'spesifikasiSmkkReviewJenisUsulan')
                 .leftJoinAndSelect('spesifikasiSmkkReview.jalanSaluranSmkk', 'spesifikasiSmkkReviewJalanSaluranSmkk')
-                .leftJoinAndSelect('spesifikasiSmkkReviewJalanSaluranSmkk.ruangLingkup', 'spesifikasiSmkkReviewJalanSaluranSmkkRuangLingkup')
                 .where('uj.id = :id', { id });
 
             if (idOpd) {
