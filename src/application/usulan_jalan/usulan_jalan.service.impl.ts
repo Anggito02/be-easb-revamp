@@ -282,7 +282,12 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const deskripsiDesain = '';
 
             // Calculate biaya_smkk = totalHarga * latest SMKK Global persentase
+            console.log('cek')
+            console.log()
+            console.log()
             const biayaSmkk = await this.calculateBiayaSmkkUseCase.execute(totalHarga);
+            console.log('biayaSmkk', biayaSmkk);
+            console.log('totalHarga', totalHarga);
 
             // Step 4: Update Usulan Jalan with new information and status 2 (Input Ruang Lingkup dan Spesifikasi Jalan)
             const updatedUsulanJalan = await this.repository.update(dto.idUsulanJalan, {

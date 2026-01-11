@@ -81,14 +81,15 @@ export class SmkkGlobalRepositoryImpl implements SmkkGlobalRepository {
 
     async getLatest(): Promise<SmkkGlobal | null> {
         try {
-            const entity = await this.repo.findOne({
-                order: { tahun: 'DESC', bulan: 'DESC' }
-            }).catch(error => {
-                console.log("Error getting latest SMKK Global:", error);
-                return null;
-            });
+            const entity = await this.repo
+                .createQueryBuilder('smkk')
+                .where('smkk.deletedAt IS NULL')
+                .orderBy('smkk.tahun', 'DESC')
+                .addOrderBy('smkk.bulan', 'DESC')
+                .getOne();
             return entity || null;
         } catch (error) {
+            console.error('Error in getLatest:', error);
             throw error;
         }
     }
