@@ -67,5 +67,13 @@ export class JalanSaluranSmkkServiceImpl implements JalanSaluranSmkkService {
             throw error;
         }
     }
+
+    async findByJenisUsulan(idJenisUsulan: number): Promise<JalanSaluranSmkk[]> {
+        try {
+            return await this.repository.findByJenisUsulan(idJenisUsulan);
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 

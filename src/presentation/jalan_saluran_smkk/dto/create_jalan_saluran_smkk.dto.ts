@@ -5,7 +5,7 @@ export class CreateJalanSaluranSmkkDto {
     @IsNotEmpty()
     @IsNumber()
     @Transform(({ value }) => parseInt(value, 10))
-    id_ruang_lingkup!: number;
+    id_jenis_usulan!: number;
 
     @IsNotEmpty()
     @IsString()
@@ -14,11 +14,6 @@ export class CreateJalanSaluranSmkkDto {
     @IsNotEmpty()
     @IsString()
     satuan!: string;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value ? parseFloat(value) : null)
-    harga_satuan?: number | null;
 
     @IsNotEmpty()
     @IsString()

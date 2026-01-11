@@ -48,18 +48,11 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
                 .createQueryBuilder('jss')
                 .select([
                     'jss.id',
-                    'jss.id_ruang_lingkup',
+                    'jss.id_jenis_usulan',
                     'jss.no_mata_pembayaran',
                     'jss.satuan',
-                    'jss.harga_satuan',
                     'jss.uraian',
                     'jss.pengali'
-                ])
-                .leftJoin('jss.ruangLingkup', 'ruang_lingkup')
-                .addSelect([
-                    'ruang_lingkup.id',
-                    'ruang_lingkup.id_jenis_usulan',
-                    'ruang_lingkup.deskripsi_ruang_lingkup'
                 ])
                 .where('jss.id = :id', { id })
                 .getOne();
@@ -75,18 +68,11 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
                 .createQueryBuilder('jss')
                 .select([
                     'jss.id',
-                    'jss.id_ruang_lingkup',
+                    'jss.id_jenis_usulan',
                     'jss.no_mata_pembayaran',
                     'jss.satuan',
-                    'jss.harga_satuan',
                     'jss.uraian',
                     'jss.pengali'
-                ])
-                .leftJoin('jss.ruangLingkup', 'ruang_lingkup')
-                .addSelect([
-                    'ruang_lingkup.id',
-                    'ruang_lingkup.id_jenis_usulan',
-                    'ruang_lingkup.deskripsi_ruang_lingkup'
                 ])
                 .orderBy('jss.id', 'DESC');
 
@@ -98,6 +84,27 @@ export class JalanSaluranSmkkRepositoryImpl implements JalanSaluranSmkkRepositor
             const [data, total] = await queryBuilder.getManyAndCount();
 
             return { data, total };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByJenisUsulan(idJenisUsulan: number): Promise<JalanSaluranSmkk[]> {
+        try {
+            const entities = await this.repo
+                .createQueryBuilder('jss')
+                .select([
+                    'jss.id',
+                    'jss.id_jenis_usulan',
+                    'jss.no_mata_pembayaran',
+                    'jss.satuan',
+                    'jss.uraian',
+                    'jss.pengali'
+                ])
+                .where('jss.id_jenis_usulan = :idJenisUsulan', { idJenisUsulan })
+                .orderBy('jss.id', 'ASC')
+                .getMany();
+            return entities;
         } catch (error) {
             throw error;
         }

@@ -39,7 +39,8 @@ export class JalanSaluranSpesifikasiSmkkReviewRepositoryImpl implements JalanSal
                     'jsss_review.id_usulan_jalan',
                     'jsss_review.id_jalan_saluran_smkk',
                     'jsss_review.harga_spec',
-                    'jsss_review.jumlah_barang'
+                    'jsss_review.jumlah_barang',
+                    'jsss_review.harga_satuan'
                 ])
                 .where('jsss_review.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
                 .orderBy('jsss_review.id', 'DESC');

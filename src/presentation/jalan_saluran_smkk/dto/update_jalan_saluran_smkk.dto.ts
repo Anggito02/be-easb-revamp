@@ -10,7 +10,7 @@ export class UpdateJalanSaluranSmkkDto {
     @IsOptional()
     @IsNumber()
     @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
-    id_ruang_lingkup?: number;
+    id_jenis_usulan?: number;
 
     @IsOptional()
     @IsString()
@@ -19,11 +19,6 @@ export class UpdateJalanSaluranSmkkDto {
     @IsOptional()
     @IsString()
     satuan?: string;
-
-    @IsOptional()
-    @IsNumber()
-    @Transform(({ value }) => value !== null && value !== undefined ? parseFloat(value) : null)
-    harga_satuan?: number | null;
 
     @IsOptional()
     @IsString()
