@@ -12,21 +12,13 @@ export class JalanSaluranSpesifikasiSmkkReviewRepositoryImpl implements JalanSal
     constructor(@InjectRepository(JalanSaluranSpesifikasiSmkkReviewOrmEntity) private readonly repo: Repository<JalanSaluranSpesifikasiSmkkReviewOrmEntity>) { }
 
     async create(dto: CreateJalanSaluranSpesifikasiSmkkReviewDto): Promise<JalanSaluranSpesifikasiSmkkReview> {
-        try {
-            const ormEntity = plainToInstance(JalanSaluranSpesifikasiSmkkReviewOrmEntity, dto);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(JalanSaluranSpesifikasiSmkkReviewOrmEntity, dto);
+        const newEntity = await this.repo.save(ormEntity);
+        return newEntity;
     }
 
     async deleteByUsulanJalanId(idUsulanJalan: number): Promise<void> {
-        try {
-            await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
-        } catch (error) {
-            throw error;
-        }
+        await this.repo.softDelete({ id_usulan_jalan: idUsulanJalan });
     }
 
     async findByUsulanJalan(idUsulanJalan: number, page?: number, amount?: number): Promise<[JalanSaluranSpesifikasiSmkkReview[], number]> {
@@ -45,16 +37,13 @@ export class JalanSaluranSpesifikasiSmkkReviewRepositoryImpl implements JalanSal
                 .where('jsss_review.id_usulan_jalan = :idUsulanJalan', { idUsulanJalan })
                 .orderBy('jsss_review.id', 'DESC');
 
-            if (page !== undefined && amount !== undefined) {
-                const skip = (page - 1) * amount;
-                queryBuilder.skip(skip).take(amount);
-            }
-
-            const [entities, total] = await queryBuilder.getManyAndCount();
-            return [entities, total];
-        } catch (error) {
-            throw error;
+        if (page !== undefined && amount !== undefined) {
+            const skip = (page - 1) * amount;
+            queryBuilder.skip(skip).take(amount);
         }
+
+        const [entities, total] = await queryBuilder.getManyAndCount();
+        return [entities, total];
     }
 }
 
