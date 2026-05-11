@@ -7,10 +7,13 @@ import { RoomOrmEntity } from '../../infrastructure/room/orm/room.orm_entity';
 import { RoomTahunAnggaranOrmEntity } from '../../infrastructure/room/orm/room_tahun_anggaran.orm_entity';
 import { RoomService } from '../../domain/room/room.service';
 import { RoomRepository } from '../../domain/room/room.repository';
+import { RoomDinasService } from '../../application/room/room_dinas.service';
+import { UserOrmEntity } from '../../infrastructure/user/orm/user.orm_entity';
+import { OpdOrmEntity } from '../../infrastructure/opd/orm/opd.orm_entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([RoomOrmEntity, RoomTahunAnggaranOrmEntity]),
+        TypeOrmModule.forFeature([RoomOrmEntity, RoomTahunAnggaranOrmEntity, UserOrmEntity, OpdOrmEntity]),
     ],
     controllers: [RoomController],
     providers: [
@@ -22,10 +25,12 @@ import { RoomRepository } from '../../domain/room/room.repository';
             provide: RoomRepository,
             useClass: RoomRepositoryImpl,
         },
+        RoomDinasService,
     ],
     exports: [
         RoomService,
         RoomRepository,
+        RoomDinasService,
     ],
 })
 export class RoomModule {}

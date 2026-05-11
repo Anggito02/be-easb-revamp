@@ -12,6 +12,7 @@ import {
     HttpException,
 } from '@nestjs/common';
 import { RoomService } from '../../domain/room/room.service';
+import { RoomDinasService } from '../../application/room/room_dinas.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { ResponseDto } from '../../common/dto/response.dto';
@@ -21,11 +22,17 @@ import { GetRoomsDto } from './dto/get_rooms.dto';
 import { ActivateRoomDto } from './dto/activate_room.dto';
 import { AddTahunAnggaranDto } from './dto/add_tahun_anggaran.dto';
 import { AssignKabkotaDto } from './dto/assign_kabkota.dto';
+import { CreateDinasDto } from './dto/create_dinas.dto';
+import { BulkDinasDto } from './dto/bulk_dinas.dto';
+import { CreateAdminAccountDto } from './dto/create_admin_account.dto';
 
 @Controller('rooms')
 @Roles(Role.SUPERADMIN)
 export class RoomController {
-    constructor(private readonly roomService: RoomService) {}
+    constructor(
+        private readonly roomService: RoomService,
+        private readonly roomDinasService: RoomDinasService,
+    ) {}
 
     @Post()
     async create(@Body() dto: CreateRoomDto): Promise<ResponseDto> {
@@ -189,6 +196,130 @@ export class RoomController {
                 responseCode: HttpStatus.OK,
                 message: 'KabKota assigned',
                 data: room,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    // --- Dinas OPD endpoints ---
+
+    @Get(':id/dinas')
+    async listDinas(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
+        try {
+            const dinas = await this.roomDinasService.listDinas(id);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Dinas retrieved',
+                data: dinas,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    @Post(':id/dinas')
+    async createDinas(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: CreateDinasDto,
+    ): Promise<ResponseDto> {
+        try {
+            const dinas = await this.roomDinasService.createDinas(id, dto);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
+                message: 'Dinas created',
+                data: dinas,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    @Post(':id/dinas/bulk')
+    async bulkCreateDinas(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: BulkDinasDto,
+    ): Promise<ResponseDto> {
+        try {
+            const result = await this.roomDinasService.bulkCreateDinas(id, dto);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
+                message: `Bulk dinas creation completed: ${result.created} created`,
+                data: result,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    @Delete(':id/dinas/:opdId')
+    async deleteDinas(
+        @Param('id', ParseIntPipe) id: number,
+        @Param('opdId', ParseIntPipe) opdId: number,
+    ): Promise<ResponseDto> {
+        try {
+            const deleted = await this.roomDinasService.deleteDinas(id, opdId);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Dinas deleted',
+                data: deleted,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    // --- Admin account endpoints ---
+
+    @Get(':id/admins')
+    async listAdmins(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
+        try {
+            const admins = await this.roomDinasService.listAdmins(id);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Admins retrieved',
+                data: admins,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    @Post(':id/admins')
+    async createAdmin(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() dto: CreateAdminAccountDto,
+    ): Promise<ResponseDto> {
+        try {
+            const admin = await this.roomDinasService.createAdmin(id, dto);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.CREATED,
+                message: 'Admin account created',
+                data: admin,
+            };
+        } catch (error) {
+            return this.handleError(error);
+        }
+    }
+
+    @Delete(':id/admins/:userId')
+    async deleteAdmin(
+        @Param('id', ParseIntPipe) id: number,
+        @Param('userId', ParseIntPipe) userId: number,
+    ): Promise<ResponseDto> {
+        try {
+            const deleted = await this.roomDinasService.deleteAdmin(id, userId);
+            return {
+                status: 'success',
+                responseCode: HttpStatus.OK,
+                message: 'Admin account deleted',
+                data: deleted,
             };
         } catch (error) {
             return this.handleError(error);
