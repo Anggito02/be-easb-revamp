@@ -31,6 +31,9 @@ export class AsbBpsGalleryStdOrmEntity {
     @Column({ name: 'rincian_harga', type: 'double precision', nullable: true })
     rincianHarga: number | null;
 
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt: Date;
 

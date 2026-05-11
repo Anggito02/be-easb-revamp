@@ -24,6 +24,9 @@ export class AsbKomponenBangunanProsNonstdOrmEntity {
     @Column({ type: 'double precision' })
     max!: number;
 
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;
 

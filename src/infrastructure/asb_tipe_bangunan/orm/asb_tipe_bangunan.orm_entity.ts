@@ -9,6 +9,9 @@ export class AsbTipeBangunanOrmEntity {
     @Column({ type: "varchar", length: 255 })
     tipe_bangunan!: string;
 
+    @Column({ name: "room_id", type: "integer", nullable: true })
+    room_id!: number | null;
+
     @CreateDateColumn({ name: "created_at", type: "timestamptz" })
     createdAt!: Date;
 

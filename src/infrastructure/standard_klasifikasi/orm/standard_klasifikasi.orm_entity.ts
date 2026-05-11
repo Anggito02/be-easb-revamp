@@ -22,6 +22,9 @@ export class StandardKlasifikasiOrmEntity {
     @Column()
     id_kabkota!: number;
 
+    @Column({ name: "room_id", type: "integer", nullable: true })
+    room_id!: number | null;
+
     @ManyToOne(() => AsbKlasifikasiOrmEntity)
     @JoinColumn({ name: "id_asb_klasifikasi" })
     asbKlasifikasi?: AsbKlasifikasiOrmEntity;

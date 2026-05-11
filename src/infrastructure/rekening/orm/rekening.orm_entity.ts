@@ -5,8 +5,11 @@ export class RekeningOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'rekening_kode', type: 'varchar', length: 255, unique: true })
+    @Column({ name: 'rekening_kode', type: 'varchar', length: 255 })
     rekening_kode: string;
+
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
 
     @Column({ name: 'rekening_uraian', type: 'varchar', length: 500 })
     rekening_uraian: string;

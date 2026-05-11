@@ -22,4 +22,7 @@ export class ShstOrmEntity {
 
   @Column()
   file!: string;
+
+  @Column({ name: "room_id", type: "integer", nullable: true })
+  room_id!: number | null;
 }

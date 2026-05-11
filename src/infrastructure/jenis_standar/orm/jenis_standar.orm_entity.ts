@@ -8,6 +8,9 @@ export class JenisStandarOrmEntity {
   @Column({ type: "varchar", length: 255 })
   jenis!: string;
 
+  @Column({ name: "room_id", type: "integer", nullable: true })
+  room_id!: number | null;
+
   @CreateDateColumn({ name: "created_at", type: "timestamptz" })
   createdAt!: Date;
 

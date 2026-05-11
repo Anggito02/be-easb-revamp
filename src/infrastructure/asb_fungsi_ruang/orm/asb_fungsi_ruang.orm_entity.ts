@@ -14,6 +14,9 @@ export class AsbFungsiRuangOrmEntity {
     @Column({ name: 'is_active', type: 'boolean', default: true })
     isActive: boolean;
 
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
+
     @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
     createdAt!: Date;
 

@@ -20,6 +20,9 @@ export class AsbKomponenBangunanStdOrmEntity {
     @Column({ name: 'id_asb_tipe_bangunan', type: 'integer' })
     idAsbTipeBangunan!: number;
 
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
+
     @ManyToOne(() => AsbJenisOrmEntity)
     @JoinColumn({ name: 'id_asb_jenis' })
     asbJenis?: AsbJenisOrmEntity;

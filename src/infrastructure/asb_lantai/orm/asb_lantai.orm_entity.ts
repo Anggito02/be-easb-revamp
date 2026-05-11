@@ -18,6 +18,9 @@ export class AsbLantaiOrmEntity {
     @Column({ name: "id_satuan", type: "integer" })
     idSatuan!: number;
 
+    @Column({ name: "room_id", type: "integer", nullable: true })
+    room_id!: number | null;
+
     @ManyToOne(() => SatuanOrmEntity)
     @JoinColumn({ name: "id_satuan", referencedColumnName: "id" })
     satuan!: SatuanOrmEntity;

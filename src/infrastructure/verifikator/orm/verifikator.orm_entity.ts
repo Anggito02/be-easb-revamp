@@ -20,6 +20,9 @@ export class VerifikatorOrmEntity {
     @Column({ type: 'varchar', length: 255 })
     verifikator: string;
 
+    @Column({ name: 'room_id', type: 'integer', nullable: true })
+    room_id!: number | null;
+
     @OneToOne(() => UserOrmEntity)
     @JoinColumn({ name: 'id_user' })
     user: UserOrmEntity;
