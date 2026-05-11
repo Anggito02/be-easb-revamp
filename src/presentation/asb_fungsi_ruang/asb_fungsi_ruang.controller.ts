@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { AsbFungsiRuangService } from '../../domain/asb_fungsi_ruang/asb_fungsi_ruang.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbFungsiRuangDto } from './dto/create_asb_fungsi_ruang.dto';
 import { UpdateAsbFungsiRuangDto } from './dto/update_asb_fungsi_ruang.dto';
 import { DeleteAsbFungsiRuangDto } from './dto/delete_asb_fungsi_ruang.dto';

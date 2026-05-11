@@ -63,16 +63,15 @@ export class SatuanRepositoryImpl implements SatuanRepository {
 
     async findAll(pagination: GetSatuansDto): Promise<{ data: Satuan[], total: number }> {
         try {
-            const [satuans, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            }).catch((error) => {
-                console.error('Error fetching satuans:', error);
-                throw error;
-            });
-
-            return { data: satuans, total };
+            const qb = this.repo.createQueryBuilder('satuan');
+            if (pagination.room_id) {
+                qb.andWhere('satuan.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('satuan.id', 'DESC');
+            qb.skip((pagination.page - 1) * pagination.amount);
+            qb.take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
+            return { data, total };
         } catch (error) {
             throw error;
         }

@@ -53,11 +53,14 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
 
     async findAll(pagination: GetAsbLantaisDto): Promise<AsbLantaiPaginationResultDto> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+            const qb = this.repo.createQueryBuilder('asb_lantai');
+            if (pagination.room_id) {
+                qb.andWhere('asb_lantai.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('asb_lantai.id', 'DESC');
+            qb.skip((pagination.page - 1) * pagination.amount);
+            qb.take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
 
             return {
                 data,
@@ -65,7 +68,7 @@ export class AsbLantaiRepositoryImpl implements AsbLantaiRepository {
                 page: pagination.page,
                 limit: pagination.amount,
                 totalPages: Math.ceil(total / pagination.amount)
-            }
+            };
         } catch (error) {
             throw error;
         }

@@ -63,12 +63,14 @@ export class AsbJenisRepositoryImpl implements AsbJenisRepository {
 
   async findAll(dto: GetAsbJenisDto): Promise<{ data: AsbJenis[], total: number }> {
     try {
-      const [data, total] = await this.repo.findAndCount({
-        skip: (dto.page - 1) * dto.amount,
-        take: dto.amount,
-        order: { id: "DESC" }
-      });
-
+      const qb = this.repo.createQueryBuilder('asb_jenis');
+      if (dto.room_id) {
+        qb.andWhere('asb_jenis.room_id = :room_id', { room_id: dto.room_id });
+      }
+      qb.orderBy('asb_jenis.id', 'DESC');
+      qb.skip((dto.page - 1) * dto.amount);
+      qb.take(dto.amount);
+      const [data, total] = await qb.getManyAndCount();
       return { data, total };
     } catch (error) {
       throw error;

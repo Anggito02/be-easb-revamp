@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { RekeningService } from '../../domain/rekening/rekening.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateRekeningDto } from './dto/create_rekening.dto';
 import { UpdateRekeningDto } from './dto/update_rekening.dto';
 import { DeleteRekeningDto } from './dto/delete_rekening.dto';
@@ -25,9 +26,15 @@ export class RekeningController {
     constructor(private readonly rekeningService: RekeningService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateRekeningDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateRekeningDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const rekening = await this.rekeningService.create(dto);
 
             return {
@@ -167,8 +174,14 @@ export class RekeningController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getRekenings(@Query() dto: GetRekeningsDto): Promise<ResponseDto> {
+    async getRekenings(
+        @Query() dto: GetRekeningsDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.rekeningService.findAll(dto);
 
             return {

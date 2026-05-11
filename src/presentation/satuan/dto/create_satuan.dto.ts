@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, Length, IsOptional, IsBoolean } from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 
 export class CreateSatuanDto {
     @IsString()
@@ -9,4 +9,8 @@ export class CreateSatuanDto {
     @IsBoolean()
     @IsOptional()
     isActive?: boolean;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

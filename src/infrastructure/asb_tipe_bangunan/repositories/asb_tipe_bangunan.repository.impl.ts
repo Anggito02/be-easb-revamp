@@ -63,12 +63,14 @@ export class AsbTipeBangunanRepositoryImpl implements AsbTipeBangunanRepository 
 
     async findAll(dto: GetAsbTipeBangunanDto): Promise<{ data: AsbTipeBangunan[], total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (dto.page - 1) * dto.amount,
-                take: dto.amount,
-                order: { id: "DESC" }
-            });
-
+            const qb = this.repo.createQueryBuilder('asb_tipe_bangunan');
+            if (dto.room_id) {
+                qb.andWhere('asb_tipe_bangunan.room_id = :room_id', { room_id: dto.room_id });
+            }
+            qb.orderBy('asb_tipe_bangunan.id', 'DESC');
+            qb.skip((dto.page - 1) * dto.amount);
+            qb.take(dto.amount);
+            const [data, total] = await qb.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;

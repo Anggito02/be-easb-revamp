@@ -4,7 +4,7 @@ import { UpdateRekeningDto } from '../../presentation/rekening/dto/update_rekeni
 import { GetRekeningsDto } from '../../presentation/rekening/dto/get_rekenings.dto';
 
 export abstract class RekeningRepository {
-  abstract findByKode(rekeningKode: string): Promise<Rekening | null>;
+  abstract findByKode(rekeningKode: string, roomId?: number): Promise<Rekening | null>;
   abstract findById(id: number): Promise<Rekening | null>;
   abstract create(data: CreateRekeningDto): Promise<Rekening>;
   abstract update(id: number, data: UpdateRekeningDto): Promise<Rekening>;

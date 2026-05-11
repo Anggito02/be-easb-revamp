@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { SatuanService } from '../../domain/satuan/satuan.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateSatuanDto } from './dto/create_satuan.dto';
 import { UpdateSatuanDto } from './dto/update_satuan.dto';
 import { DeleteSatuanDto } from './dto/delete_satuan.dto';
@@ -26,9 +27,15 @@ export class SatuanController {
     constructor(private readonly satuanService: SatuanService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateSatuanDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateSatuanDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const satuan = await this.satuanService.create(dto);
 
             return {
@@ -168,8 +175,14 @@ export class SatuanController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getSatuans(@Query() dto: GetSatuansDto): Promise<ResponseDto> {
+    async getSatuans(
+        @Query() dto: GetSatuansDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.satuanService.getSatuans(dto);
 
             return {

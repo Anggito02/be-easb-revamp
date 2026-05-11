@@ -50,12 +50,15 @@ export class RekeningRepositoryImpl implements RekeningRepository {
         }
     }
 
-    async findByKode(rekeningKode: string): Promise<Rekening | null> {
+    async findByKode(rekeningKode: string, roomId?: number): Promise<Rekening | null> {
         try {
-            const entity = await this.repo
+            const qb = this.repo
                 .createQueryBuilder('rekening')
-                .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
-                .getOne();
+                .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` });
+            if (roomId !== undefined) {
+                qb.andWhere('rekening.room_id = :roomId', { roomId });
+            }
+            const entity = await qb.getOne();
             return entity || null;
         } catch (error) {
             throw error;
@@ -64,12 +67,14 @@ export class RekeningRepositoryImpl implements RekeningRepository {
 
     async findAll(pagination: GetRekeningsDto): Promise<{ data: Rekening[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
-
+            const qb = this.repo.createQueryBuilder('rekening');
+            if (pagination.room_id) {
+                qb.andWhere('rekening.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('rekening.id', 'DESC');
+            qb.skip((pagination.page - 1) * pagination.amount);
+            qb.take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;

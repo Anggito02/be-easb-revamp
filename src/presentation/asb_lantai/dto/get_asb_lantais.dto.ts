@@ -11,4 +11,9 @@ export class GetAsbLantaisDto {
     @Min(1)
     @Transform(({ value }) => parseInt(value, 10))
     amount!: number;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => parseInt(value, 10))
+    room_id?: number;
 }

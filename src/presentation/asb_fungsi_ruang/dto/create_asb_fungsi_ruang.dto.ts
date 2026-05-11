@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsBoolean, IsNotEmpty } from 'class-validator';
+import { IsString, IsNumber, IsBoolean, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAsbFungsiRuangDto {
   @IsString()
@@ -12,4 +12,8 @@ export class CreateAsbFungsiRuangDto {
   @IsBoolean()
   @IsNotEmpty()
   isActive!: boolean;
+
+  @IsOptional()
+  @IsNumber()
+  room_id?: number;
 }

@@ -51,12 +51,14 @@ export class AsbFungsiRuangRepositoryImpl implements AsbFungsiRuangRepository {
 
     async findAll(pagination: GetAsbFungsiRuangsDto): Promise<{ data: AsbFungsiRuang[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
-
+            const qb = this.repo.createQueryBuilder('asb_fungsi_ruang');
+            if (pagination.room_id) {
+                qb.andWhere('asb_fungsi_ruang.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('asb_fungsi_ruang.id', 'DESC');
+            qb.skip((pagination.page - 1) * pagination.amount);
+            qb.take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;
