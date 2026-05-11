@@ -16,6 +16,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { AsbBpsGalleryNonstdService } from '../../domain/asb_bps_gallery_nonstd/asb_bps_gallery_nonstd.service';
 import { CreateAsbBpsGalleryNonstdDto } from './dto/create_asb_bps_gallery_nonstd.dto';
@@ -34,14 +35,20 @@ export class AsbBpsGalleryNonstdController {
     constructor(private readonly service: AsbBpsGalleryNonstdService) { }
 
     @Post()
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     @UseInterceptors(FileInterceptor('file'))
     async create(
         @Body() dto: CreateAsbBpsGalleryNonstdDto,
         @UploadedFile() file: Express.Multer.File,
+        @CurrentRoom() roomId: number | null,
     ) {
         try {
             if (!file) {
                 throw new HttpException('File is required', HttpStatus.BAD_REQUEST);
+            }
+
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
             }
 
             const result = await this.service.create(dto, file);
@@ -56,11 +63,16 @@ export class AsbBpsGalleryNonstdController {
     }
 
     @Get()
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
     async findAll(
         @Query() paginationDto: GetAsbBpsGalleryNonstdListDto,
         @Query() filterDto: GetAsbBpsGalleryNonstdListFilterDto,
+        @CurrentRoom() roomId: number | null,
     ) {
         try {
+            if (roomId !== null) {
+                filterDto.room_id = roomId;
+            }
             const result = await this.service.findAll(
                 paginationDto.page,
                 paginationDto.amount,

@@ -21,4 +21,9 @@ export class GetStandardKlasifikasisDto {
     @IsNumber()
     @IsOptional()
     id_kabkota?: number;
+
+    @Type(() => Number)
+    @IsNumber()
+    @IsOptional()
+    room_id?: number;
 }

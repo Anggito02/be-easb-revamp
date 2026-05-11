@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsEnum, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { AsbKomponenBangunanStdFiles } from '../../../domain/asb_komponen_bangunan_std/asb_komponen_bangunan_std_files.enum';
 
 export class CreateAsbKomponenBangunanStdDto {
@@ -17,4 +17,8 @@ export class CreateAsbKomponenBangunanStdDto {
     @IsNumber()
     @IsNotEmpty()
     idAsbTipeBangunan!: number;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

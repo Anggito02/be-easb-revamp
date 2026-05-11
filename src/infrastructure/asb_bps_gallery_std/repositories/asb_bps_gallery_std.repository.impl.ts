@@ -103,6 +103,10 @@ export class AsbBpsGalleryStdRepositoryImpl extends AsbBpsGalleryStdRepository {
         try {
             const queryBuilder = this.repository.createQueryBuilder('gallery');
 
+            if (filters?.room_id) {
+                queryBuilder.andWhere('gallery.room_id = :room_id', { room_id: filters.room_id });
+            }
+
             if (filters?.idAsbKomponenBangunanStd) {
                 queryBuilder.andWhere(
                     'gallery.idAsbKomponenBangunanStd = :idAsbKomponenBangunanStd',

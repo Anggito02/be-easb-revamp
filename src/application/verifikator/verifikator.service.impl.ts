@@ -26,7 +26,8 @@ export class VerifikatorServiceImpl implements VerifikatorService {
                 id: 0, // Will be auto-generated
                 idUser: dto.idUser,
                 jenisVerifikator: dto.jenisVerifikator,
-                verifikator: dto.verifikator
+                verifikator: dto.verifikator,
+                ...(dto.room_id !== undefined && { room_id: dto.room_id } as any),
             };
 
             return await this.verifikatorRepository.create(verifikator);
@@ -91,9 +92,9 @@ export class VerifikatorServiceImpl implements VerifikatorService {
         }
     }
 
-    async findAll(page: number, amount: number): Promise<{ data: Verifikator[]; total: number; page: number; amount: number; totalPages: number }> {
+    async findAll(page: number, amount: number, room_id?: number): Promise<{ data: Verifikator[]; total: number; page: number; amount: number; totalPages: number }> {
         try {
-            const result = await this.verifikatorRepository.findAll(page, amount);
+            const result = await this.verifikatorRepository.findAll(page, amount, room_id);
 
             return {
                 data: result.data,

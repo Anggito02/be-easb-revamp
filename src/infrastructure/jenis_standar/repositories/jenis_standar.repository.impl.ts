@@ -66,12 +66,14 @@ export class JenisStandarRepositoryImpl implements JenisStandarRepository {
 
   async findAll(dto: GetJenisStandarDto): Promise<{ data: JenisStandar[], total: number }> {
     try {
-      const [data, total] = await this.repo.findAndCount({
-        skip: (dto.page - 1) * dto.amount,
-        take: dto.amount,
-        order: { id: "DESC" }
-      });
-
+      const qb = this.repo.createQueryBuilder("jenis_standar");
+      if (dto.room_id) {
+        qb.andWhere("jenis_standar.room_id = :room_id", { room_id: dto.room_id });
+      }
+      qb.orderBy("jenis_standar.id", "DESC")
+        .skip((dto.page - 1) * dto.amount)
+        .take(dto.amount);
+      const [data, total] = await qb.getManyAndCount();
       return { data, total };
     } catch (error) {
       throw error;

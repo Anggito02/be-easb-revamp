@@ -24,4 +24,8 @@ export class GetShstDto {
   @IsOptional()
   @IsNumber()
   id_kabkota?: number;
+
+  @IsOptional()
+  @IsNumber()
+  room_id?: number;
 }

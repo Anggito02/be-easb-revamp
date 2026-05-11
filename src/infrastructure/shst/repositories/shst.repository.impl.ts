@@ -52,6 +52,9 @@ export class ShstRepositoryImpl extends ShstRepository {
             const queryBuilder = this.repo.createQueryBuilder("shst");
 
             // Apply filters
+            if (dto.room_id) {
+                queryBuilder.andWhere("shst.room_id = :room_id", { room_id: dto.room_id });
+            }
             if (dto.tahun) {
                 queryBuilder.andWhere("shst.tahun = :tahun", { tahun: dto.tahun });
             }

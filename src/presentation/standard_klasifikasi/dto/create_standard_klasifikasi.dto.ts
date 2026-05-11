@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, Length, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateStandardKlasifikasiDto {
     @IsString()
@@ -22,4 +22,8 @@ export class CreateStandardKlasifikasiDto {
     @IsNumber()
     @IsNotEmpty()
     id_kabkota: number;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

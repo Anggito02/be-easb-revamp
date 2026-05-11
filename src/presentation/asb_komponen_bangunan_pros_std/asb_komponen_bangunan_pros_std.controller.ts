@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AsbKomponenBangunanProsStdService } from '../../domain/asb_komponen_bangunan_pros_std/asb_komponen_bangunan_pros_std.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbKomponenBangunanProsStdDto } from './dto/create_asb_komponen_bangunan_pros_std.dto';
 import { UpdateAsbKomponenBangunanProsStdDto } from './dto/update_asb_komponen_bangunan_pros_std.dto';
 import { DeleteAsbKomponenBangunanProsStdDto } from './dto/delete_asb_komponen_bangunan_pros_std.dto';
@@ -25,9 +26,15 @@ export class AsbKomponenBangunanProsStdController {
     constructor(private readonly service: AsbKomponenBangunanProsStdService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbKomponenBangunanProsStdDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbKomponenBangunanProsStdDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const result = await this.service.create(dto);
             return {
                 status: 'success',
@@ -73,9 +80,15 @@ export class AsbKomponenBangunanProsStdController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
-    async getAll(@Query() dto: GetAsbKomponenBangunanProsStdListDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAll(
+        @Query() dto: GetAsbKomponenBangunanProsStdListDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.service.getAll(dto);
             return {
                 status: 'success',

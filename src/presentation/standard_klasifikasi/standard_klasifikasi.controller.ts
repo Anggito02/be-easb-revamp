@@ -5,13 +5,13 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
     Query,
 } from '@nestjs/common';
 import { StandardKlasifikasiService } from '../../domain/standard_klasifikasi/standard_klasifikasi.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateStandardKlasifikasiDto } from './dto/create_standard_klasifikasi.dto';
 import { UpdateStandardKlasifikasiDto } from './dto/update_standard_klasifikasi.dto';
 import { DeleteStandardKlasifikasiDto } from './dto/delete_standard_klasifikasi.dto';
@@ -26,9 +26,15 @@ export class StandardKlasifikasiController {
     constructor(private readonly standardKlasifikasiService: StandardKlasifikasiService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateStandardKlasifikasiDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateStandardKlasifikasiDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const standardKlasifikasi = await this.standardKlasifikasiService.create(dto);
 
             return {
@@ -168,8 +174,14 @@ export class StandardKlasifikasiController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getStandardKlasifikasis(@Query() dto: GetStandardKlasifikasisDto): Promise<ResponseDto> {
+    async getStandardKlasifikasis(
+        @Query() dto: GetStandardKlasifikasisDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.standardKlasifikasiService.findAll(dto);
 
             return {

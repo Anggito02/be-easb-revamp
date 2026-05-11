@@ -1,4 +1,4 @@
-import { IsNumber, IsString, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateAsbKlasifikasiDto {
   @IsNumber()
@@ -8,4 +8,8 @@ export class CreateAsbKlasifikasiDto {
   @IsString()
   @IsNotEmpty()
   klasifikasi!: string;
+
+  @IsOptional()
+  @IsNumber()
+  room_id?: number;
 }

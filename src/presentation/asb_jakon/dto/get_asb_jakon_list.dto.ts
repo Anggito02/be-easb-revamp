@@ -12,5 +12,8 @@ export class GetAsbJakonListDto {
     @Transform(({ value }) => Number(value))
     amount!: number;
 
-    // optional filters could be added here
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => Number(value))
+    room_id?: number;
 }

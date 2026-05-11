@@ -20,4 +20,9 @@ export class GetAsbBpsGalleryNonstdListFilterDto {
     @Transform(({ value }) => parseFloat(value))
     @IsNumber()
     rincianHarga?: number;
+
+    @IsOptional()
+    @Transform(({ value }) => parseInt(value))
+    @IsNumber()
+    room_id?: number;
 }

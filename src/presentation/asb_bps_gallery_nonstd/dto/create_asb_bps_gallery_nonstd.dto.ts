@@ -14,4 +14,8 @@ export class CreateAsbBpsGalleryNonstdDto {
     @IsOptional()
     @IsNumber()
     rincianHarga?: number;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

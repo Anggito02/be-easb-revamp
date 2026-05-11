@@ -5,13 +5,13 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
     Query,
 } from '@nestjs/common';
 import { AsbKlasifikasiService } from '../../domain/asb_klasifikasi/asb_klasifikasi.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbKlasifikasiDto } from './dto/create_asb_klasifikasi.dto';
 import { UpdateAsbKlasifikasiDto } from './dto/update_asb_klasifikasi.dto';
 import { DeleteAsbKlasifikasiDto } from './dto/delete_asb_klasifikasi.dto';
@@ -26,9 +26,15 @@ export class AsbKlasifikasiController {
     constructor(private readonly asbKlasifikasiService: AsbKlasifikasiService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbKlasifikasiDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbKlasifikasiDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const asbKlasifikasi = await this.asbKlasifikasiService.create(dto);
 
             return {
@@ -167,9 +173,15 @@ export class AsbKlasifikasiController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
-    async getAsbKlasifikasis(@Query() dto: GetAsbKlasifikasisDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbKlasifikasis(
+        @Query() dto: GetAsbKlasifikasisDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.asbKlasifikasiService.findAll(dto);
 
             return {

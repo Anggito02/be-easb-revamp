@@ -56,12 +56,15 @@ export class AsbKomponenBangunanProsStdRepositoryImpl implements AsbKomponenBang
 
     async findAll(pagination: GetAsbKomponenBangunanProsStdListDto): Promise<{ data: AsbKomponenBangunanProsStd[], total: number }> {
         try {
-            const [items, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
-            return { data: items, total };
+            const qb = this.repo.createQueryBuilder('asb_komponen_bangunan_pros_std');
+            if (pagination.room_id) {
+                qb.andWhere('asb_komponen_bangunan_pros_std.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('asb_komponen_bangunan_pros_std.id', 'DESC')
+              .skip((pagination.page - 1) * pagination.amount)
+              .take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
+            return { data, total };
         } catch (error) {
             throw error;
         }

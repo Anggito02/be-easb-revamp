@@ -14,6 +14,7 @@ import {
 import type { Request } from 'express';
 import { VerifikatorService } from '../../domain/verifikator/verifikator.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateVerifikatorDto } from '../../application/verifikator/dto/create_verifikator.dto';
 import { UpdateVerifikatorDto } from '../../application/verifikator/dto/update_verifikator.dto';
 import { DeleteVerifikatorDto } from '../../application/verifikator/dto/delete_verifikator.dto';
@@ -79,8 +80,14 @@ export class VerifikatorController {
 
     @Post()
     @Roles(Role.SUPERADMIN, Role.ADMIN)
-    async createVerifikator(@Body() dto: CreateVerifikatorDto): Promise<ResponseDto> {
+    async createVerifikator(
+        @Body() dto: CreateVerifikatorDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const verifikator = await this.verifikatorService.create(dto);
 
             return {
@@ -221,9 +228,15 @@ export class VerifikatorController {
 
     @Get()
     @Roles(Role.SUPERADMIN, Role.ADMIN)
-    async getVerifikators(@Query() dto: GetVerifikatorsDto): Promise<ResponseDto> {
+    async getVerifikators(
+        @Query() dto: GetVerifikatorsDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
-            const result = await this.verifikatorService.findAll(dto.page, dto.amount);
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
+            const result = await this.verifikatorService.findAll(dto.page, dto.amount, dto.room_id);
 
             return {
                 status: 'success',

@@ -103,6 +103,10 @@ export class AsbBpsGalleryNonstdRepositoryImpl extends AsbBpsGalleryNonstdReposi
         try {
             const queryBuilder = this.repository.createQueryBuilder('gallery');
 
+            if (filters?.room_id) {
+                queryBuilder.andWhere('gallery.room_id = :room_id', { room_id: filters.room_id });
+            }
+
             if (filters?.idAsbKomponenBangunanNonstd) {
                 queryBuilder.andWhere(
                     'gallery.idAsbKomponenBangunanNonstd = :idAsbKomponenBangunanNonstd',

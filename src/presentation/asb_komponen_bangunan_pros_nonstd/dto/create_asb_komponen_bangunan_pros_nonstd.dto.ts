@@ -24,4 +24,8 @@ export class CreateAsbKomponenBangunanProsNonstdDto {
     @IsNumber()
     @IsOptional()
     max?: number;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

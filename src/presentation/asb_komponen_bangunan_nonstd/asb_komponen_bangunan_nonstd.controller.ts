@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AsbKomponenBangunanNonstdService } from '../../domain/asb_komponen_bangunan_nonstd/asb_komponen_bangunan_nonstd.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbKomponenBangunanNonstdDto } from './dto/create_asb_komponen_bangunan_nonstd.dto';
 import { UpdateAsbKomponenBangunanNonstdDto } from './dto/update_asb_komponen_bangunan_nonstd.dto';
 import { DeleteAsbKomponenBangunanNonstdDto } from './dto/delete_asb_komponen_bangunan_nonstd.dto';
@@ -25,9 +26,15 @@ export class AsbKomponenBangunanNonstdController {
     constructor(private readonly service: AsbKomponenBangunanNonstdService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbKomponenBangunanNonstdDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbKomponenBangunanNonstdDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const result = await this.service.create(dto);
             return {
                 status: 'success',
@@ -73,9 +80,15 @@ export class AsbKomponenBangunanNonstdController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
-    async getAll(@Query() dto: GetAsbKomponenBangunanNonstdsDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAll(
+        @Query() dto: GetAsbKomponenBangunanNonstdsDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.service.getAll(dto);
             return {
                 status: 'success',

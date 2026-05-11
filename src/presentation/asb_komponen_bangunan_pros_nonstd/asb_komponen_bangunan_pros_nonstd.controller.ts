@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AsbKomponenBangunanProsNonstdService } from '../../domain/asb_komponen_bangunan_pros_nonstd/asb_komponen_bangunan_pros_nonstd.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbKomponenBangunanProsNonstdDto } from './dto/create_asb_komponen_bangunan_pros_nonstd.dto';
 import { UpdateAsbKomponenBangunanProsNonstdDto } from './dto/update_asb_komponen_bangunan_pros_nonstd.dto';
 import { DeleteAsbKomponenBangunanProsNonstdDto } from './dto/delete_asb_komponen_bangunan_pros_nonstd.dto';
@@ -25,9 +26,15 @@ export class AsbKomponenBangunanProsNonstdController {
     constructor(private readonly service: AsbKomponenBangunanProsNonstdService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbKomponenBangunanProsNonstdDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbKomponenBangunanProsNonstdDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const result = await this.service.create(dto);
             return {
                 status: 'success',
@@ -73,9 +80,15 @@ export class AsbKomponenBangunanProsNonstdController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
-    async getAll(@Query() dto: GetAsbKomponenBangunanProsNonstdListDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAll(
+        @Query() dto: GetAsbKomponenBangunanProsNonstdListDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.service.getAll(dto);
             return {
                 status: 'success',

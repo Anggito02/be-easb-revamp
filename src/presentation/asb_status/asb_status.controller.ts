@@ -5,13 +5,13 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
     Query,
 } from "@nestjs/common";
 import { AsbStatusService } from "../../domain/asb_status/asb_status.service";
 import { Roles } from "../../common/decorators/roles.decorator";
+import { CurrentRoom } from "../../common/decorators/current_room.decorator";
 import { CreateAsbStatusDto } from "./dto/create_asb_status.dto";
 import { UpdateAsbStatusDto } from "./dto/update_asb_status.dto";
 import { DeleteAsbStatusDto } from "./dto/delete_asb_status.dto";
@@ -26,9 +26,15 @@ export class AsbStatusController {
     constructor(private readonly asbStatusService: AsbStatusService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbStatusDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbStatusDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const asbStatus = await this.asbStatusService.create(dto);
 
             return {
@@ -167,9 +173,15 @@ export class AsbStatusController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
-    async getAsbStatuses(@Query() dto: GetAsbStatusDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbStatuses(
+        @Query() dto: GetAsbStatusDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.asbStatusService.findAll(dto);
 
             return {

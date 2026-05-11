@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { AsbLantaiService } from '../../domain/asb_lantai/asb_lantai.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { CreateAsbLantaiDto } from './dto/create_asb_lantai.dto';
 import { UpdateAsbLantaiDto } from './dto/update_asb_lantai.dto';
 import { DeleteAsbLantaiDto } from './dto/delete_asb_lantai.dto';
@@ -25,9 +26,15 @@ export class AsbLantaiController {
     constructor(private readonly asbLantaiService: AsbLantaiService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbLantaiDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbLantaiDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const asbLantai = await this.asbLantaiService.create(dto);
 
             return {
@@ -166,9 +173,15 @@ export class AsbLantaiController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
-    async getAsbLantais(@Query() dto: GetAsbLantaisDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbLantais(
+        @Query() dto: GetAsbLantaisDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.asbLantaiService.findAll(dto);
 
             return {

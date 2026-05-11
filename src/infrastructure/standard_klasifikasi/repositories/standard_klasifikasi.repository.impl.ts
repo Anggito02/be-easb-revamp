@@ -55,6 +55,11 @@ export class StandardKlasifikasiRepositoryImpl extends StandardKlasifikasiReposi
             const queryBuilder = this.repo.createQueryBuilder("standard_klasifikasi");
 
             // Apply filters
+            if (dto.room_id) {
+                queryBuilder.andWhere("standard_klasifikasi.room_id = :room_id", {
+                    room_id: dto.room_id
+                });
+            }
             if (dto.id_asb_klasifikasi) {
                 queryBuilder.andWhere("standard_klasifikasi.id_asb_klasifikasi = :id_asb_klasifikasi", {
                     id_asb_klasifikasi: dto.id_asb_klasifikasi

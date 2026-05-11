@@ -5,13 +5,13 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
     Query,
 } from "@nestjs/common";
 import { AsbTipeBangunanService } from "../../domain/asb_tipe_bangunan/asb_tipe_bangunan.service";
 import { Roles } from "../../common/decorators/roles.decorator";
+import { CurrentRoom } from "../../common/decorators/current_room.decorator";
 import { CreateAsbTipeBangunanDto } from "./dto/create_asb_tipe_bangunan.dto";
 import { UpdateAsbTipeBangunanDto } from "./dto/update_asb_tipe_bangunan.dto";
 import { DeleteAsbTipeBangunanDto } from "./dto/delete_asb_tipe_bangunan.dto";
@@ -26,9 +26,15 @@ export class AsbTipeBangunanController {
     constructor(private readonly asbTipeBangunanService: AsbTipeBangunanService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateAsbTipeBangunanDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbTipeBangunanDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const asbTipeBangunan = await this.asbTipeBangunanService.create(dto);
 
             return {
@@ -167,9 +173,15 @@ export class AsbTipeBangunanController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN, Role.ADMIN, Role.VERIFIKATOR, Role.OPD)
-    async getAsbTipeBangunan(@Query() dto: GetAsbTipeBangunanDto): Promise<ResponseDto> {
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbTipeBangunan(
+        @Query() dto: GetAsbTipeBangunanDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.asbTipeBangunanService.findAll(dto);
 
             return {

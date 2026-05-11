@@ -45,4 +45,8 @@ export class CreateAsbJakonDto {
     @IsNumber()
     @IsNotEmpty()
     standard!: number;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

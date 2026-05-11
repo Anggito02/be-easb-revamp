@@ -5,13 +5,13 @@ import {
     Put,
     Delete,
     Body,
-    UseGuards,
     HttpStatus,
     HttpException,
     Query,
 } from "@nestjs/common";
 import { JenisStandarService } from "../../domain/jenis_standar/jenis_standar.service";
 import { Roles } from "../../common/decorators/roles.decorator";
+import { CurrentRoom } from "../../common/decorators/current_room.decorator";
 import { CreateJenisStandarDto } from "./dto/create_jenis_standar.dto";
 import { UpdateJenisStandarDto } from "./dto/update_jenis_standar.dto";
 import { DeleteJenisStandarDto } from "./dto/delete_jenis_standar.dto";
@@ -26,9 +26,15 @@ export class JenisStandarController {
     constructor(private readonly jenisStandarService: JenisStandarService) { }
 
     @Post()
-    @Roles(Role.SUPERADMIN)
-    async create(@Body() dto: CreateJenisStandarDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateJenisStandarDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const jenisStandar = await this.jenisStandarService.create(dto);
 
             return {
@@ -168,8 +174,14 @@ export class JenisStandarController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getJenisStandars(@Query() dto: GetJenisStandarDto): Promise<ResponseDto> {
+    async getJenisStandars(
+        @Query() dto: GetJenisStandarDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.jenisStandarService.findAll(dto);
 
             return {

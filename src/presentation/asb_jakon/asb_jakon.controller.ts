@@ -1,6 +1,7 @@
 import { Controller, Post, Put, Delete, Get, Body, HttpStatus, HttpException, Query } from '@nestjs/common';
 import { AsbJakonService } from '../../domain/asb_jakon/asb_jakon.service';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { CurrentRoom } from '../../common/decorators/current_room.decorator';
 import { Role } from '../../domain/user/user_role.enum';
 import { CreateAsbJakonDto } from './dto/create_asb_jakon.dto';
 import { UpdateAsbJakonDto } from './dto/update_asb_jakon.dto';
@@ -15,8 +16,15 @@ export class AsbJakonController {
     constructor(private readonly service: AsbJakonService) { }
 
     @Post()
-    async create(@Body() dto: CreateAsbJakonDto): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async create(
+        @Body() dto: CreateAsbJakonDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                (dto as any).room_id = roomId;
+            }
             const result = await this.service.create(dto);
             return { status: 'success', responseCode: HttpStatus.CREATED, message: 'AsbJakon created', data: result };
         } catch (error) {
@@ -46,8 +54,14 @@ export class AsbJakonController {
 
     @Get()
     @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getAll(@Query() dto: GetAsbJakonListDto): Promise<ResponseDto> {
+    async getAll(
+        @Query() dto: GetAsbJakonListDto,
+        @CurrentRoom() roomId: number | null,
+    ): Promise<ResponseDto> {
         try {
+            if (roomId !== null) {
+                dto.room_id = roomId;
+            }
             const result = await this.service.getAll(dto);
             return { status: 'success', responseCode: HttpStatus.OK, message: 'AsbJakon list retrieved', data: result };
         } catch (error) {

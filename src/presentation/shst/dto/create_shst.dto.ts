@@ -1,4 +1,4 @@
-import { IsNumber, IsNotEmpty, IsPositive } from "class-validator";
+import { IsNumber, IsNotEmpty, IsPositive, IsOptional } from "class-validator";
 
 export class CreateShstDto {
   @IsNumber()
@@ -22,4 +22,8 @@ export class CreateShstDto {
   @IsNotEmpty()
   @IsPositive()
   nominal!: number;
+
+  @IsOptional()
+  @IsNumber()
+  room_id?: number;
 }

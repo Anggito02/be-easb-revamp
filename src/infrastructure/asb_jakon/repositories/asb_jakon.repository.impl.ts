@@ -61,10 +61,14 @@ export class AsbJakonRepositoryImpl implements AsbJakonRepository {
 
     async findAll(pagination: GetAsbJakonListDto): Promise<{ data: AsbJakon[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-            });
+            const qb = this.repo.createQueryBuilder('asb_jakon');
+            if (pagination.room_id) {
+                qb.andWhere('asb_jakon.room_id = :room_id', { room_id: pagination.room_id });
+            }
+            qb.orderBy('asb_jakon.id', 'DESC')
+              .skip((pagination.page - 1) * pagination.amount)
+              .take(pagination.amount);
+            const [data, total] = await qb.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;

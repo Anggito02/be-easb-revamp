@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsEnum, IsOptional } from 'class-validator';
 import { JenisVerifikator } from '../../../domain/verifikator/jenis_verifikator.enum';
 
 export class CreateVerifikatorDto {
@@ -13,4 +13,8 @@ export class CreateVerifikatorDto {
     @IsString()
     @IsNotEmpty()
     verifikator!: string;
+
+    @IsOptional()
+    @IsNumber()
+    room_id?: number;
 }

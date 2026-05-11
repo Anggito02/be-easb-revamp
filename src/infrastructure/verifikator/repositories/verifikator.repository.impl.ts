@@ -67,15 +67,17 @@ export class VerifikatorRepositoryImpl implements VerifikatorRepository {
         }
     }
 
-    async findAll(page: number, limit: number): Promise<{ data: Verifikator[]; total: number }> {
+    async findAll(page: number, limit: number, room_id?: number): Promise<{ data: Verifikator[]; total: number }> {
         try {
-            const [data, total] = await this.repo.findAndCount({
-                skip: (page - 1) * limit,
-                take: limit,
-                order: { id: 'DESC' },
-                relations: ['user']
-            });
-
+            const qb = this.repo.createQueryBuilder('verifikator')
+                .leftJoinAndSelect('verifikator.user', 'user');
+            if (room_id) {
+                qb.andWhere('verifikator.room_id = :room_id', { room_id });
+            }
+            qb.orderBy('verifikator.id', 'DESC')
+              .skip((page - 1) * limit)
+              .take(limit);
+            const [data, total] = await qb.getManyAndCount();
             return { data, total };
         } catch (error) {
             throw error;
