@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, IsDateString, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsDateString } from 'class-validator';
 
 export class UpdateRoomDto {
     @IsString()
@@ -8,10 +8,6 @@ export class UpdateRoomDto {
     @IsString()
     @IsOptional()
     nama?: string;
-
-    @IsOptional()
-    @IsNumber()
-    kabkota_id?: number;
 
     @IsOptional()
     @IsDateString()

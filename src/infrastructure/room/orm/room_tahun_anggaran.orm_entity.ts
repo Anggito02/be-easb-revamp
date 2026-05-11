@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Unique } from 'typeorm';
 
 @Entity('room_tahun_anggarans')
+@Unique(['room_id', 'tahun'])
 export class RoomTahunAnggaranOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;

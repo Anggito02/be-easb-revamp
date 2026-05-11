@@ -10,13 +10,10 @@ import {
     Query,
     HttpStatus,
     HttpException,
-    UseGuards,
 } from '@nestjs/common';
 import { RoomService } from '../../domain/room/room.service';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../domain/user/user_role.enum';
-import { JwtAuthGuard } from '../../common/guards/jwt_auth.guard';
-import { RolesGuard } from '../../common/guards/roles.guard';
 import { ResponseDto } from '../../common/dto/response.dto';
 import { CreateRoomDto } from './dto/create_room.dto';
 import { UpdateRoomDto } from './dto/update_room.dto';
@@ -26,13 +23,11 @@ import { AddTahunAnggaranDto } from './dto/add_tahun_anggaran.dto';
 import { AssignKabkotaDto } from './dto/assign_kabkota.dto';
 
 @Controller('rooms')
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.SUPERADMIN)
 export class RoomController {
     constructor(private readonly roomService: RoomService) {}
 
     @Post()
-    @Roles(Role.SUPERADMIN)
     async create(@Body() dto: CreateRoomDto): Promise<ResponseDto> {
         try {
             const room = await this.roomService.create(dto);
@@ -48,7 +43,6 @@ export class RoomController {
     }
 
     @Get()
-    @Roles(Role.SUPERADMIN)
     async findAll(@Query() dto: GetRoomsDto): Promise<ResponseDto> {
         try {
             const result = await this.roomService.findAll(dto);
@@ -64,10 +58,12 @@ export class RoomController {
     }
 
     @Get(':id')
-    @Roles(Role.SUPERADMIN)
     async findById(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
         try {
             const room = await this.roomService.findById(id);
+            if (!room) {
+                return { status: 'error', responseCode: 404, message: `Room with id ${id} not found`, data: null };
+            }
             return {
                 status: 'success',
                 responseCode: HttpStatus.OK,
@@ -80,7 +76,6 @@ export class RoomController {
     }
 
     @Put(':id')
-    @Roles(Role.SUPERADMIN)
     async update(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: UpdateRoomDto,
@@ -99,7 +94,6 @@ export class RoomController {
     }
 
     @Delete(':id')
-    @Roles(Role.SUPERADMIN)
     async delete(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
         try {
             const deleted = await this.roomService.delete(id);
@@ -115,7 +109,6 @@ export class RoomController {
     }
 
     @Post(':id/activate')
-    @Roles(Role.SUPERADMIN)
     async activate(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: ActivateRoomDto,
@@ -134,7 +127,6 @@ export class RoomController {
     }
 
     @Get(':id/tahun-anggaran')
-    @Roles(Role.SUPERADMIN)
     async getTahunAnggarans(@Param('id', ParseIntPipe) id: number): Promise<ResponseDto> {
         try {
             const tahunAnggarans = await this.roomService.getTahunAnggarans(id);
@@ -150,7 +142,6 @@ export class RoomController {
     }
 
     @Post(':id/tahun-anggaran')
-    @Roles(Role.SUPERADMIN)
     async addTahunAnggaran(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: AddTahunAnggaranDto,
@@ -169,7 +160,6 @@ export class RoomController {
     }
 
     @Delete(':id/tahun-anggaran/:tahun')
-    @Roles(Role.SUPERADMIN)
     async removeTahunAnggaran(
         @Param('id', ParseIntPipe) id: number,
         @Param('tahun', ParseIntPipe) tahun: number,
@@ -188,7 +178,6 @@ export class RoomController {
     }
 
     @Put(':id/kabkota')
-    @Roles(Role.SUPERADMIN)
     async assignKabkota(
         @Param('id', ParseIntPipe) id: number,
         @Body() dto: AssignKabkotaDto,
