@@ -39,6 +39,7 @@ import { VerifikatorModule } from './presentation/verifikator/verifikator.module
 import { StandardKlasifikasiModule } from './presentation/standard_klasifikasi/standard_klasifikasi.module';
 import { KecamatanModule } from './presentation/kecamatan/kecamatan.module';
 import { KelurahanModule } from './presentation/kelurahan/kelurahan.module';
+import { RoomModule } from './presentation/room/room.module';
 
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { ResponseCaptureInterceptor } from './common/interceptors/response_capture.interceptors';
@@ -116,7 +117,8 @@ import { DataSourceOptions } from 'typeorm';
         StandardKlasifikasiModule,
         AsbJakonModule,
         KecamatanModule,
-        KelurahanModule
+        KelurahanModule,
+        RoomModule,
         // other modules...
     ],
     providers: [

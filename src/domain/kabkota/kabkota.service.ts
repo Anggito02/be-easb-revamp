@@ -16,4 +16,5 @@ export abstract class KabKotaService {
     abstract findById(id: number): Promise<KabKota | null>;
     abstract findByProvinceId(provinceId: number): Promise<KabKota[]>;
     abstract getKabKotasByProvince(provinceId: number, pagination?: GetKabKotasDto): Promise<KabKotasPaginationResult>;
+    abstract findAvailable(): Promise<KabKota[]>;
 }

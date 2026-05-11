@@ -159,6 +159,15 @@ export class KabKotaServiceImpl implements KabKotaService {
         }
     }
 
+    async findAvailable(): Promise<KabKota[]> {
+        try {
+            return await this.kabKotaRepository.findAvailable();
+        } catch (error) {
+            console.error('Error fetching available kabkotas:', error);
+            throw error;
+        }
+    }
+
     async getKabKotasByProvince(provinceId: number, pagination?: GetKabKotasDto): Promise<KabKotasPaginationResult> {
         try {
             // Get all kabkotas for the province

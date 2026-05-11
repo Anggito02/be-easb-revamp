@@ -90,4 +90,20 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
             throw error;
         }
     }
+
+    async findAvailable(): Promise<KabKota[]> {
+        try {
+            const kabkotas = await this.repo
+                .createQueryBuilder('kabkota')
+                .where(
+                    'kabkota.id NOT IN (SELECT kabkota_id FROM rooms WHERE deleted_at IS NULL AND kabkota_id IS NOT NULL)'
+                )
+                .orderBy('kabkota.nama', 'ASC')
+                .getMany();
+            return kabkotas;
+        } catch (error) {
+            console.error('Error fetching available kabkotas:', error);
+            throw error;
+        }
+    }
 }
