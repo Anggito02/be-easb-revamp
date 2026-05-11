@@ -109,7 +109,33 @@ export class UserServiceImpl implements UserService {
             if (error instanceof HttpException) {
                 throw error;
             }
-            throw new InternalServerErrorException('Failed to find userby id')
+            throw new InternalServerErrorException('Failed to find user by id');
+        }
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        try {
+            return await this.userRepo.findByEmail(email);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to find user by email');
+        }
+    }
+
+    async updateRoomId(userId: number, roomId: number | null): Promise<User> {
+        try {
+            const existingUser = await this.userRepo.findById(userId);
+            if (!existingUser) {
+                throw new NotFoundException('User not found');
+            }
+            return await this.userRepo.updateRoomId(userId, roomId);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to update room_id for user');
         }
     }
 

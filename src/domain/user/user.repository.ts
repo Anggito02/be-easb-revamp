@@ -10,9 +10,11 @@ import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto
 export abstract class UserRepository {
     abstract findByUsername(username: string): Promise<User | null>;
     abstract findById(id: number): Promise<User | null>;
+    abstract findByEmail(email: string): Promise<User | null>;
     abstract create(user: CreateUserDto): Promise<User>;
     abstract updateUser(user: UpdateUserDto): Promise<User>;
     abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>;
+    abstract updateRoomId(userId: number, roomId: number | null): Promise<User>;
     abstract deleteUser(user: DeleteUserDto): Promise<boolean>;
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>;
     abstract getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }>;

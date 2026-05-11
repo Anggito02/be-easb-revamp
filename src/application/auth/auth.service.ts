@@ -7,6 +7,7 @@ import { User } from 'src/domain/user/user.entity';
 import { AuthRepository } from './auth.repository';
 import { RevokeAllDto } from 'src/presentation/auth/dto/revoke_all.dto';
 import { OpdRepository } from 'src/domain/opd/opd.repository';
+import { RoomRepository } from 'src/domain/room/room.repository';
 import { Role } from 'src/domain/user/user_role.enum';
 
 type Tokens = { accessToken: string; refreshToken: string, maxAgeAccess: number, maxAgeRefresh: number };
@@ -35,6 +36,7 @@ export class AuthService {
         private readonly config: ConfigService,
         private readonly authRepo: AuthRepository,
         private readonly opdRepo: OpdRepository,
+        private readonly roomRepo: RoomRepository,
     ) { }
 
     async validateUser(dto: LoginDto): Promise<User> {
@@ -54,7 +56,8 @@ export class AuthService {
             idOpd = opd?.id ?? null;
         }
 
-        const payload = { sub: String(user.id), username: user.username, roles: user.roles, idOpd };
+        const roomId = user.room_id ?? null;
+        const payload = { sub: String(user.id), username: user.username, roles: user.roles, idOpd, roomId };
         const expiresIn = this.config.getOrThrow<string>('jwt.accessTtl');
         return this.jwt.sign(payload, { expiresIn } as any);
     }
@@ -70,18 +73,41 @@ export class AuthService {
             idOpd = opd?.id ?? null;
         }
 
+        const roomId = user.room_id ?? null;
         const payload = {
             sub: String(user.id),
             username: user.username,
             roles: user.roles,
             idOpd,
+            roomId,
             tokenVersion: user.refreshTokenVersion ?? 0,
         };
         const expiresIn = this.config.getOrThrow<string>('jwt.refreshTtl');
         return this.jwt.sign(payload, { expiresIn } as any);
     }
 
+    private async validateRoomAccess(user: User): Promise<void> {
+        // SUPERADMIN bypasses room validation
+        if (user.roles.includes(Role.SUPERADMIN)) return;
+
+        if (user.room_id) {
+            const room = await this.roomRepo.findById(user.room_id);
+            if (!room || !room.is_active) {
+                throw new UnauthorizedException('Room is not active. Contact Samarta to activate your access.');
+            }
+            const now = new Date();
+            if (room.contract_start && now < new Date(room.contract_start)) {
+                throw new UnauthorizedException('Room contract has not started yet.');
+            }
+            if (room.contract_end && now > new Date(room.contract_end)) {
+                throw new UnauthorizedException('Room contract has expired. Contact Samarta to renew.');
+            }
+        }
+    }
+
     async login(user: User): Promise<Tokens> {
+        await this.validateRoomAccess(user);
+
         const accessTtl = this.config.getOrThrow<string>('jwt.accessTtl');
         const refreshTtl = this.config.getOrThrow<string>('jwt.refreshTtl');
 

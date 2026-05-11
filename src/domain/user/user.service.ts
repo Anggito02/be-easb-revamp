@@ -15,8 +15,10 @@ export abstract class UserService {
     abstract validateUser(loginDto: LoginDto): Promise<User | null>
     abstract findByUsername(username: string): Promise<User | null>
     abstract findById(id: number): Promise<User | null>
+    abstract findByEmail(email: string): Promise<User | null>
     abstract updateUser(user: UpdateUserDto): Promise<User>
     abstract updateUserByAdmin(user: UpdateUserByAdminDto): Promise<User>
+    abstract updateRoomId(userId: number, roomId: number | null): Promise<User>
     abstract deleteUser(user: DeleteUserDto): Promise<boolean>
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>
     abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>

@@ -5,4 +5,5 @@ export type UserContext = {
     username: string;
     roles: Role[];
     idOpd: number | null;
+    roomId: number | null;
 };

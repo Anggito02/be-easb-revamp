@@ -18,6 +18,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
 import { AuthRepository } from 'src/application/auth/auth.repository';
 import { OpdModule } from '../opd/opd.module';
+import { RoomModule } from '../room/room.module';
 
 @Module({
     imports: [
@@ -35,7 +36,8 @@ import { OpdModule } from '../opd/opd.module';
             },
         }),
         TypeOrmModule.forFeature([UserOrmEntity]),
-        OpdModule
+        OpdModule,
+        RoomModule,
     ],
     controllers: [AuthController],
     providers: [

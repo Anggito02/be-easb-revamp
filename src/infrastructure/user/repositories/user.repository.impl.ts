@@ -43,7 +43,7 @@ export class UserRepositoryImpl implements UserRepository {
         }
     }
 
-    async findById(id: number): Promise<User | null> { 
+    async findById(id: number): Promise<User | null> {
         try {
             const u = await this.repo.findOne({ where: { id } });
 
@@ -52,6 +52,25 @@ export class UserRepositoryImpl implements UserRepository {
             }
 
             return u;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async findByEmail(email: string): Promise<User | null> {
+        try {
+            const u = await this.repo.findOne({ where: { email } });
+            return u ?? null;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async updateRoomId(userId: number, roomId: number | null): Promise<User> {
+        try {
+            await this.repo.update(userId, { room_id: roomId });
+            const updated = await this.repo.findOneOrFail({ where: { id: userId } });
+            return updated;
         } catch (error) {
             throw error;
         }

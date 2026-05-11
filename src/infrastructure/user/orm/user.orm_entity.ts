@@ -15,6 +15,12 @@ export class UserOrmEntity {
   @Column('text', { array: true, default: () => "'{}'" })
   roles!: Role[];
 
+  @Column({ type: 'varchar', length: 255, nullable: true, unique: true })
+  email!: string | null;
+
+  @Column({ name: 'room_id', type: 'integer', nullable: true })
+  room_id!: number | null;
+
   @Column({ name: 'refresh_token_version', type: 'int', default: 0 })
   refreshTokenVersion!: number;
 
