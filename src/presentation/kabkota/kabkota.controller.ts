@@ -215,9 +215,17 @@ export class KabKotaController {
 
     @Get('available')
     @Roles(Role.SUPERADMIN)
-    async getAvailableKabKotas(): Promise<ResponseDto> {
+    async getAvailableKabKotas(@Query('provinceId') provinceIdStr?: string): Promise<ResponseDto> {
         try {
-            const kabkotas = await this.kabKotaService.findAvailable();
+            let provinceId: number | undefined;
+            if (provinceIdStr !== undefined && provinceIdStr !== '') {
+                const parsed = parseInt(provinceIdStr, 10);
+                if (Number.isNaN(parsed)) {
+                    throw new HttpException('Invalid provinceId', HttpStatus.BAD_REQUEST);
+                }
+                provinceId = parsed;
+            }
+            const kabkotas = await this.kabKotaService.findAvailable(provinceId);
 
             return {
                 status: 'success',

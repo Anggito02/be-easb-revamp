@@ -159,9 +159,9 @@ export class KabKotaServiceImpl implements KabKotaService {
         }
     }
 
-    async findAvailable(): Promise<KabKota[]> {
+    async findAvailable(provinceId?: number): Promise<KabKota[]> {
         try {
-            return await this.kabKotaRepository.findAvailable();
+            return await this.kabKotaRepository.findAvailable(provinceId);
         } catch (error) {
             console.error('Error fetching available kabkotas:', error);
             throw error;

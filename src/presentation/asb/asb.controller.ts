@@ -21,6 +21,7 @@ import { VerifyRekeningDto } from './dto/verify_rekening.dto';
 import { UserContext } from '../../common/types/user-context.type';
 import { StoreVerifDto } from './dto/store_verif.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { GetAsbAnalyticDto } from 'src/application/asb/dto/get_asb_analytic.dto';
 import { VerifyBpsDto } from './dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from './dto/verify_pekerjaan.dto';
 import { VerifyDto } from './dto/verify.dto';
@@ -131,6 +132,23 @@ export class AsbController {
             status: 'success',
             responseCode: HttpStatus.OK,
             message: 'ASB status summary retrieved successfully',
+            data,
+        };
+    }
+
+    @Get('get-asb-analytic')
+    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
+    async getAsbAnalytic(
+        @Query() dto: GetAsbAnalyticDto,
+        @Req() req: Request,
+    ): Promise<{ status: string; responseCode: number; message: string; data: any }> {
+        const user = req.user as UserContext;
+        const data = await this.asbService.getAsbAnalytic(dto, user.idOpd, user.roles);
+
+        return {
+            status: 'success',
+            responseCode: HttpStatus.OK,
+            message: 'ASB analytics retrieved successfully',
             data,
         };
     }

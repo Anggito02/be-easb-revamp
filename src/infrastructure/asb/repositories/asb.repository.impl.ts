@@ -183,6 +183,57 @@ export class AsbRepositoryImpl implements AsbRepository {
         }
     }
 
+    async getAnalyticAggregates(
+        year: number,
+        month: number | undefined,
+        idOpd?: number,
+    ): Promise<{
+        totalUsulan: number;
+        totalPembangunan: number;
+        totalPemeliharaan: number;
+        totalSukses: number;
+        totalTolak: number;
+        totalProses: number;
+    }> {
+        const qb = this.repo
+            .createQueryBuilder('e')
+            .innerJoin('asb_jenis', 'j', 'j.id = e.id_asb_jenis AND j.deleted_at IS NULL')
+            .where('EXTRACT(YEAR FROM e.created_at) = :year', { year })
+            .andWhere('e.deleted_at IS NULL');
+
+        if (month !== undefined && month !== null) {
+            qb.andWhere('EXTRACT(MONTH FROM e.created_at) = :month', { month });
+        }
+        if (idOpd) {
+            qb.andWhere('e.id_opd = :idOpd', { idOpd });
+        }
+
+        const raw = await qb
+            .select('COUNT(e.id)', 'totalUsulan')
+            .addSelect(`COUNT(e.id) FILTER (WHERE j.jenis = 'Pembangunan')`, 'totalPembangunan')
+            .addSelect(`COUNT(e.id) FILTER (WHERE j.jenis = 'Pemeliharaan')`, 'totalPemeliharaan')
+            .addSelect('COUNT(e.id) FILTER (WHERE e.id_asb_status = 8)', 'totalSukses')
+            .addSelect('COUNT(e.id) FILTER (WHERE e.id_asb_status = 7)', 'totalTolak')
+            .addSelect('COUNT(e.id) FILTER (WHERE e.id_asb_status NOT IN (7, 8))', 'totalProses')
+            .getRawOne<{
+                totalUsulan: string;
+                totalPembangunan: string;
+                totalPemeliharaan: string;
+                totalSukses: string;
+                totalTolak: string;
+                totalProses: string;
+            }>();
+
+        return {
+            totalUsulan: Number(raw?.totalUsulan ?? 0),
+            totalPembangunan: Number(raw?.totalPembangunan ?? 0),
+            totalPemeliharaan: Number(raw?.totalPemeliharaan ?? 0),
+            totalSukses: Number(raw?.totalSukses ?? 0),
+            totalTolak: Number(raw?.totalTolak ?? 0),
+            totalProses: Number(raw?.totalProses ?? 0),
+        };
+    }
+
     async create(data: DeepPartial<AsbOrmEntity>): Promise<AsbWithRelationsDto> {
         try {
             const entity = this.repo.create(data);

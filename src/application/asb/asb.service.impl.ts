@@ -32,6 +32,8 @@ import { CalculateBobotBPNSReviewUseCase } from '../asb_bipek_non_std_review/use
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from './dto/get_asb_by_moth_year.dto';
+import { GetAsbAnalyticDto } from './dto/get_asb_analytic.dto';
+import { AsbAnalyticResult } from 'src/domain/asb/asb.service';
 import { AsbBipekStandardReviewService } from 'src/domain/asb_bipek_standard_review/asb_bipek_standard_review.service';
 import { AsbBipekNonStdReviewService } from 'src/domain/asb_bipek_non_std_review/asb_bipek_non_std_review.service';
 import { CalculateBobotBPSReviewUseCase } from '../asb_bipek_standard_review/use_cases/calculate_bobot_bps_review.use_case';
@@ -215,6 +217,45 @@ export class AsbServiceImpl implements AsbService {
         } catch (error) {
             throw error;
         }
+    }
+
+    async getAsbAnalytic(
+        dto: GetAsbAnalyticDto,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<AsbAnalyticResult> {
+        const isOpd = userRoles.includes(Role.OPD);
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isVerifikator = userRoles.includes(Role.VERIFIKATOR);
+
+        let row: Awaited<ReturnType<AsbRepository['getAnalyticAggregates']>>;
+        if (isAdmin || isSuperAdmin || isVerifikator) {
+            row = await this.repository.getAnalyticAggregates(dto.tahun, dto.bulan);
+        } else if (isOpd && userIdOpd) {
+            row = await this.repository.getAnalyticAggregates(dto.tahun, dto.bulan, userIdOpd);
+        } else {
+            row = await this.repository.getAnalyticAggregates(dto.tahun, dto.bulan);
+        }
+
+        const total = row.totalUsulan;
+        const pct = (n: number) => (total === 0 ? 0 : Math.round((n / total) * 10000) / 100);
+        const jenisTotal = row.totalPembangunan + row.totalPemeliharaan;
+        const pctJenis = (n: number) => (jenisTotal === 0 ? 0 : Math.round((n / jenisTotal) * 10000) / 100);
+
+        return {
+            totalSuksesBangunan: row.totalSukses,
+            totalTolakBangunan: row.totalTolak,
+            totalProsesBangunan: row.totalProses,
+            totalUsulan: total,
+            persentaseSukses: pct(row.totalSukses),
+            persentaseTolak: pct(row.totalTolak),
+            persentaseProses: pct(row.totalProses),
+            totalPembangunan: row.totalPembangunan,
+            totalPemeliharaan: row.totalPemeliharaan,
+            persentasePembangunan: pctJenis(row.totalPembangunan),
+            persentasePemeliharaan: pctJenis(row.totalPemeliharaan),
+        };
     }
 
     async createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[], username: string): Promise<{ id: number; status: any }> {

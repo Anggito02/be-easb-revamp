@@ -15,13 +15,29 @@ import { VerifyBpnsDto } from 'src/presentation/asb/dto/verify_bpns.dto';
 import { VerifyRekeningDto } from 'src/presentation/asb/dto/verify_rekening.dto';
 import { VerifyPekerjaanDto } from 'src/presentation/asb/dto/verify_pekerjaan.dto';
 import { GetAsbByMonthYearDto } from 'src/application/asb/dto/get_asb_by_moth_year.dto';
+import { GetAsbAnalyticDto } from 'src/application/asb/dto/get_asb_analytic.dto';
 import { VerifyBpsDto } from 'src/presentation/asb/dto/verify_bps.dto';
+
+export type AsbAnalyticResult = {
+    totalSuksesBangunan: number;
+    totalTolakBangunan: number;
+    totalProsesBangunan: number;
+    totalUsulan: number;
+    persentaseSukses: number;
+    persentaseTolak: number;
+    persentaseProses: number;
+    totalPembangunan: number;
+    totalPemeliharaan: number;
+    persentasePembangunan: number;
+    persentasePemeliharaan: number;
+};
 
 export abstract class AsbService {
     abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<AsbWithRelationsDto | null>;
     abstract findAll(dto: FindAllAsbDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbListResultDto>;
     abstract getAsbByMonthYear(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ date: string; count: number }[]>;
     abstract getAsbByMonthYearStatus(dto: GetAsbByMonthYearDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ asbStatus: string; amount: number }[]>;
+    abstract getAsbAnalytic(dto: GetAsbAnalyticDto, userIdOpd: number | null, userRoles: Role[]): Promise<AsbAnalyticResult>;
     abstract createIndex(dto: CreateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[], username: string): Promise<{ id: number; status: any }>;
     abstract updateIndex(dto: UpdateAsbStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
     abstract deleteAsb(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }>;

@@ -9,6 +9,18 @@ export abstract class AsbRepository {
     abstract findAll(dto: FindAllAsbDto, idOpd?: number): Promise<{ data: AsbWithRelationsDto[]; total: number }>;
     abstract getAllByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ date: string; count: number }[]>;
     abstract getAsbStatusCountsByMonthYear(dto: GetAsbByMonthYearDto, idOpd?: number): Promise<{ idAsbStatus: number; count: number }[]>;
+    abstract getAnalyticAggregates(
+        year: number,
+        month: number | undefined,
+        idOpd?: number,
+    ): Promise<{
+        totalUsulan: number;
+        totalPembangunan: number;
+        totalPemeliharaan: number;
+        totalSukses: number;
+        totalTolak: number;
+        totalProses: number;
+    }>;
     abstract create(data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;
     abstract update(id: number, data: DeepPartial<Asb>): Promise<AsbWithRelationsDto>;
     abstract delete(id: number): Promise<void>;

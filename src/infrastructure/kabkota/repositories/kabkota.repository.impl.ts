@@ -91,16 +91,17 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
         }
     }
 
-    async findAvailable(): Promise<KabKota[]> {
+    async findAvailable(provinceId?: number): Promise<KabKota[]> {
         try {
-            const kabkotas = await this.repo
+            const qb = this.repo
                 .createQueryBuilder('kabkota')
                 .where(
-                    'kabkota.id NOT IN (SELECT kabkota_id FROM rooms WHERE deleted_at IS NULL AND kabkota_id IS NOT NULL)'
-                )
-                .orderBy('kabkota.nama', 'ASC')
-                .getMany();
-            return kabkotas;
+                    'kabkota.id NOT IN (SELECT kabkota_id FROM rooms WHERE deleted_at IS NULL AND kabkota_id IS NOT NULL)',
+                );
+            if (provinceId !== undefined && !Number.isNaN(provinceId)) {
+                qb.andWhere('kabkota.province_id = :provinceId', { provinceId });
+            }
+            return qb.orderBy('kabkota.nama', 'ASC').getMany();
         } catch (error) {
             console.error('Error fetching available kabkotas:', error);
             throw error;
