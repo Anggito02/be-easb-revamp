@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserRepository } from '../../domain/user/user.repository';
 import { User } from '../../domain/user/user.entity';
 import { ValidateUserUseCase } from './use_cases/validate_user.use_case';
@@ -12,12 +12,14 @@ import { DeleteUserByAdminDto } from 'src/presentation/users/dto/delete_user_by_
 import { GetUsersDto } from 'src/presentation/users/dto/get_users.dto';
 import { GetUserDetailDto } from 'src/presentation/users/dto/get_user_detail.dto';
 import { UsersPaginationResult } from 'src/presentation/users/dto/users_pagination.dto';
+import { ChangeUserPasswordDto } from 'src/presentation/users/dto/change_user_password.dto';
 import bcrypt from 'bcryptjs';
 import { Role } from 'src/domain/user/user_role.enum';
 
 @Injectable()
 export class UserServiceImpl implements UserService {
     private readonly validateUserUseCase: ValidateUserUseCase;
+    private readonly SALT_ROUNDS = 12;
 
     constructor(private readonly userRepo: UserRepository) {
         this.validateUserUseCase = new ValidateUserUseCase(userRepo);
@@ -32,7 +34,7 @@ export class UserServiceImpl implements UserService {
             }
 
             // hash password
-            userDto.password = bcrypt.hashSync(userDto.password);
+            userDto.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
 
             // create user
             const newUser = await this.userRepo.create(userDto);
@@ -62,7 +64,7 @@ export class UserServiceImpl implements UserService {
             }
 
             // hash password
-            userDto.password = bcrypt.hashSync(userDto.password);
+            userDto.password = bcrypt.hashSync(userDto.password, this.SALT_ROUNDS);
 
             // create user
             const newUser = await this.userRepo.create(userDto);
@@ -155,16 +157,8 @@ export class UserServiceImpl implements UserService {
                 }
             }
 
-            // prepare data untuk update
-            const updateData = { ...userDto };
-
-            // hash password jika ada
-            if (userDto.password) {
-                updateData.password = bcrypt.hashSync(userDto.password);
-            }
-
             // update user via repository
-            const updatedUser = await this.userRepo.updateUser(updateData);
+            const updatedUser = await this.userRepo.updateUser({ ...userDto });
 
             // return user tanpa passwordHash
             const { passwordHash: _, ...safe } = updatedUser as any;
@@ -202,16 +196,8 @@ export class UserServiceImpl implements UserService {
                 }
             }
 
-            // prepare data untuk update
-            const updateData = { ...userDto };
-
-            // hash password jika ada
-            if (userDto.password) {
-                updateData.password = bcrypt.hashSync(userDto.password);
-            }
-
             // update user via repository
-            const updatedUser = await this.userRepo.updateUserByAdmin(updateData);
+            const updatedUser = await this.userRepo.updateUserByAdmin({ ...userDto });
 
             // return user tanpa passwordHash
             const { passwordHash: _, ...safe } = updatedUser as any;
@@ -279,12 +265,15 @@ export class UserServiceImpl implements UserService {
                 return safe as User;
             }).filter(user => !user.roles.includes(Role.SUPERADMIN));
 
+            const page = pagination.page || 1;
+            const amount = pagination.amount || result.total;
+            const totalPages = Math.ceil(result.total / (pagination.amount || result.total))
             return {
                 users: sanitizedUsers,
                 total: result.total,
-                page: pagination.page,
-                amount: pagination.amount,
-                totalPages: Math.ceil(result.total / pagination.amount)
+                page,
+                amount,
+                totalPages
             };
         } catch (error) {
             if (error instanceof HttpException) {
@@ -314,6 +303,76 @@ export class UserServiceImpl implements UserService {
                 throw error;
             }
             throw new InternalServerErrorException('Failed to get user detail');
+        }
+    }
+
+    async changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User> {
+        try {
+            const authenticatedUser = await this.userRepo.findById(authenticatedUserId);
+            if (!authenticatedUser) {
+                throw new UnauthorizedException('Invalid credentials');
+            }
+
+            const isSuperadmin = authenticatedUser.roles.includes(Role.SUPERADMIN);
+            const isAdmin = authenticatedUser.roles.includes(Role.ADMIN);
+
+            if (!isSuperadmin && !isAdmin) {
+                throw new ForbiddenException('Forbidden: insufficient permissions');
+            }
+
+            // Verifikasi password milik pemanggil (bukan password target)
+            const passwordOk = await bcrypt.compare(
+                dto.currentPassword,
+                authenticatedUser.passwordHash ? authenticatedUser.passwordHash : '',
+            );
+            if (!passwordOk) {
+                // Gunakan 403 (bukan 401) agar frontend tidak memperlakukan ini sebagai sesi kadaluarsa
+                throw new ForbiddenException('Wrong current password');
+            }
+
+            if (dto.userId === authenticatedUserId) {
+                throw new ForbiddenException('Cannot change your own password through this endpoint');
+            }
+
+            const target = await this.userRepo.findById(dto.userId);
+            if (!target) {
+                throw new NotFoundException('User not found');
+            }
+
+            if (isSuperadmin) {
+                // Superadmin boleh mengubah password admin, verifikator, dan opd; tidak boleh sesama superadmin
+                const isSuperadminTarget = target.roles.includes(Role.SUPERADMIN);
+                if (isSuperadminTarget) {
+                    throw new ForbiddenException('Cannot change password for superadmin users');
+                }
+                const isAllowedTarget =
+                    target.roles.includes(Role.ADMIN) ||
+                    target.roles.includes(Role.VERIFIKATOR) ||
+                    target.roles.includes(Role.OPD);
+                if (!isAllowedTarget) {
+                    throw new ForbiddenException('Password can only be changed for Admin, Verifikator, or OPD users');
+                }
+            } else {
+                // Admin hanya boleh mengubah password verifikator dan opd
+                const isAllowedTarget =
+                    target.roles.includes(Role.VERIFIKATOR) ||
+                    target.roles.includes(Role.OPD);
+                if (!isAllowedTarget) {
+                    throw new ForbiddenException('Admin can only change password for Verifikator or OPD users');
+                }
+            }
+
+            const passwordHash = bcrypt.hashSync(dto.newPassword, this.SALT_ROUNDS);
+            await this.userRepo.updatePasswordHashAndIncrementRefreshTokenVersion(dto.userId, passwordHash);
+
+            const updated = await this.userRepo.findById(dto.userId);
+            const { passwordHash: _, ...safe } = updated as any;
+            return safe as User;
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new InternalServerErrorException('Failed to change user password');
         }
     }
 }

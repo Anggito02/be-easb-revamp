@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from '../../../domain/user/user.repository';
 import { User } from '../../../domain/user/user.entity';
 import { UserOrmEntity } from '../orm/user.orm_entity';
@@ -18,120 +18,107 @@ export class UserRepositoryImpl implements UserRepository {
   constructor(@InjectRepository(UserOrmEntity) private readonly repo: Repository<UserOrmEntity>) {}
 
     async create(user: CreateUserDto): Promise<User> {
-        try {
-            const userOrm = plainToInstance(UserOrmEntity, user);
-            userOrm.passwordHash = user.password;
-            console.log("UserORM: ", userOrm);
-
-            const newUser = await this.repo.save(userOrm);
-            return newUser;
-        } catch (error) {
-            throw error;
-        }
+        const userOrm = plainToInstance(UserOrmEntity, user);
+        userOrm.passwordHash = user.password;
+        const newUser = await this.repo.save(userOrm);
+        return newUser;
     }
 
     async findByUsername(username: string): Promise<User | null> {
-        try {
-            const u = await this.repo.findOne({ where: { username } });
-            if (!u) {
-                return null;
-            }
-
-            return u;
-        } catch (error) {
-            throw error;
+        const u = await this.repo.findOne({ where: { username } });
+        if (!u) {
+            return null;
         }
+
+        return u;
     }
 
-    async findById(id: number): Promise<User | null> {
-        try {
-            const u = await this.repo.findOne({ where: { id } });
+    async findById(id: number): Promise<User | null> { 
+        const u = await this.repo.findOne({ where: { id } });
 
-            if (!u) {
-                return null;
-            }
-
-            return u;
-        } catch (error) {
-            throw error;
+        if (!u) {
+            return null;
         }
+
+        return u;
     }
 
     async findByEmail(email: string): Promise<User | null> {
-        try {
-            const u = await this.repo.findOne({ where: { email } });
-            return u ?? null;
-        } catch (error) {
-            throw error;
-        }
+        const u = await this.repo.findOne({ where: { email } });
+        return u ?? null;
     }
 
     async updateRoomId(userId: number, roomId: number | null): Promise<User> {
-        try {
-            await this.repo.update(userId, { room_id: roomId });
-            const updated = await this.repo.findOneOrFail({ where: { id: userId } });
-            return updated;
-        } catch (error) {
-            throw error;
+        await this.repo.update({ id: userId }, { room_id: roomId });
+        const u = await this.repo.findOne({ where: { id: userId } });
+        if (!u) {
+            throw new Error(`User ${userId} not found after updateRoomId`);
         }
+        return u;
     }
 
-    // Database operations only - no business logic
     async updateUser(existingUser: UpdateUserDto): Promise<User> {
-        try {
-            const updatedUser = await this.repo.save(existingUser);
-            return updatedUser;
-        } catch (error) {
-            throw error;
-        }
+        const updatedUser = await this.repo.save(existingUser);
+        return updatedUser;
     }
 
     async updateUserByAdmin(existingUser: UpdateUserByAdminDto): Promise<User> {
-        try {
-            const updatedUser = await this.repo.save(existingUser);
-            return updatedUser;
-        } catch (error) {
-            throw error;
-        }
+        const updatedUser = await this.repo.save(existingUser);
+        return updatedUser;
     }
 
     async deleteUser(user: DeleteUserDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
     }
 
     async deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(user.id).then(() => true).catch(() => false);
     }
 
-    async getUsers(pagination: GetUsersDto): Promise<{ data: User[], total: number }> {
-        try {
-            const [users, total] = await this.repo.findAndCount({
-                skip: (pagination.page - 1) * pagination.amount,
-                take: pagination.amount,
-                order: { id: 'DESC' }
-            });
+    async getUsers(
+        pagination: GetUsersDto,
+      ): Promise<{ data: User[]; total: number }> {
+          const page = Math.max(Number(pagination?.page) || 1, 1);
+          const amount = Math.max(Number(pagination?.amount) || 10, 1);
 
-            return { data: users, total };
-        } catch (error) {
-            throw error;
-        }
-    }
+          const qb = this.repo
+            .createQueryBuilder('u')
+            .skip((page - 1) * amount)
+            .take(amount)
+            .orderBy('u.id', 'DESC')
+            .where('u.deleted_at IS NULL');
+
+          if (pagination.search) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.username LIKE :search', { search: `%${pagination.search}%` });
+            } else {
+              qb.andWhere('u.username ILIKE :search', { search: `%${pagination.search}%` });
+            }
+          }
+
+          if (pagination.role) {
+            const dbType = process.env.DB_TYPE || 'postgres';
+            if (dbType === 'mysql') {
+              qb.andWhere('u.roles LIKE :role', { role: `%${pagination.role}%` });
+            } else {
+              qb.andWhere(':role = ANY(u.roles)', { role: pagination.role });
+            }
+          }
+
+          const [users, total] = await qb.getManyAndCount();
+
+          return { data: users, total };
+      }
 
     async getUserDetail(user: GetUserDetailDto): Promise<User | null> {
-        try {
-            const existingUser = await this.repo.findOne({ where: { id: user.id } });
+        const existingUser = await this.repo.findOne({ where: { id: user.id } });
 
-            return existingUser ? existingUser : null;
-        } catch (error) {
-            throw error;
-        }
+        return existingUser ? existingUser : null;
+    }
+
+    async updatePasswordHashAndIncrementRefreshTokenVersion(userId: number, passwordHash: string): Promise<void> {
+        await this.repo.update({ id: userId }, { passwordHash });
+        await this.repo.increment({ id: userId }, 'refreshTokenVersion', 1);
     }
 }

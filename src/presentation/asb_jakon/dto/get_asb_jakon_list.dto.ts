@@ -1,19 +1,27 @@
-import { IsNumber, Min, IsOptional } from 'class-validator';
+import { IsNumber, Min, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbJakonListDto {
+    @IsOptional()
     @IsNumber()
     @Min(1)
-    @Transform(({ value }) => Number(value))
-    page!: number;
-
-    @IsNumber()
-    @Min(1)
-    @Transform(({ value }) => Number(value))
-    amount!: number;
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => Number(value))
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => (value !== undefined && value !== null && value !== '')
+        ? parseInt(value, 10)
+        : undefined)
     room_id?: number;
 }

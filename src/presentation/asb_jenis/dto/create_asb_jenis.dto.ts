@@ -1,15 +1,14 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional } from "class-validator";
+﻿import { IsString, IsNotEmpty } from "class-validator";
+import { Transform } from "class-transformer";
 
 export class CreateAsbJenisDto {
-    @IsString()
-    @IsNotEmpty()
-    jenis!: string;
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
+  jenis!: string;
 
-    @IsString()
-    @IsNotEmpty()
-    asb!: string;
-
-    @IsOptional()
-    @IsNumber()
-    room_id?: number;
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
+  asb!: string;
 }

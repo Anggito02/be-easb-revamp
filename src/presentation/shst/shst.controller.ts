@@ -1,21 +1,24 @@
-import {
+﻿import {
     Controller,
     Post,
     Get,
     Put,
     Delete,
     Body,
+    UseGuards,
     HttpStatus,
     HttpException,
     UploadedFile,
     UseInterceptors,
     Query,
+    Res,
 } from "@nestjs/common";
 import type { Express } from "express";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { StreamableFile } from "@nestjs/common";
+import type { Response } from "express";
 import { ShstService } from "../../domain/shst/shst.service";
 import { Roles } from "../../common/decorators/roles.decorator";
-import { CurrentRoom } from "../../common/decorators/current_room.decorator";
 import { CreateShstDto } from "./dto/create_shst.dto";
 import { UpdateNominalShstDto } from "./dto/update_nominal_shst.dto";
 import { GetShstDto } from "./dto/get_shst.dto";
@@ -31,22 +34,15 @@ export class ShstController {
     @Post()
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @UseInterceptors(FileInterceptor('file'))
-    async create(
-        @Body() dto: CreateShstDto,
-        @UploadedFile() file: Express.Multer.File,
-        @CurrentRoom() roomId: number | null,
-    ): Promise<ResponseDto> {
+    async create(@Body() dto: CreateShstDto, @UploadedFile() file: Express.Multer.File): Promise<ResponseDto> {
         try {
-            if (roomId !== null) {
-                (dto as any).room_id = roomId;
-            }
-            const shst = await this.shstService.create(dto, file);
+            const result = await this.shstService.create(dto, file);
 
             return {
                 status: "success",
                 responseCode: HttpStatus.CREATED,
-                message: "Shst created",
-                data: shst,
+                message: `${result.created} SHST record(s) created successfully`,
+                data: result,
             };
         } catch (error) {
             if (error instanceof HttpException) {
@@ -131,7 +127,7 @@ export class ShstController {
     }
 
     @Delete()
-    @Roles(Role.SUPERADMIN)
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
     async delete(@Body() dto: GetShstDetailDto): Promise<ResponseDto> {
         try {
             const deleted = await this.shstService.delete(dto);
@@ -178,15 +174,9 @@ export class ShstController {
     }
 
     @Get()
-    @Roles(Role.OPD, Role.VERIFIKATOR, Role.ADMIN, Role.SUPERADMIN)
-    async getAll(
-        @Query() dto: GetShstDto,
-        @CurrentRoom() roomId: number | null,
-    ): Promise<ResponseDto> {
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async getAll(@Query() dto: GetShstDto): Promise<ResponseDto> {
         try {
-            if (roomId !== null) {
-                dto.room_id = roomId;
-            }
             const result = await this.shstService.findAll(dto);
 
             return {
@@ -274,6 +264,29 @@ export class ShstController {
                 message: "Internal server error",
                 data: null,
             };
+        }
+    }
+
+    @Get("template")
+    @Roles(Role.SUPERADMIN, Role.ADMIN)
+    async downloadTemplate(@Res({ passthrough: true }) res: Response): Promise<StreamableFile> {
+        try {
+            const { buffer, filename } = await this.shstService.downloadTemplate();
+
+            res.set({
+                'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'Content-Disposition': `attachment; filename="${filename}"`,
+            });
+
+            return new StreamableFile(buffer);
+        } catch (error) {
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException(
+                'Internal server error',
+                HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 

@@ -1,17 +1,27 @@
-import { IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetAsbKomponenBangunanProsNonstdListDto {
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty()
-    page!: number;
-
-    @IsNumber()
-    @IsNotEmpty()
-    amount!: number;
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
     @IsOptional()
     @IsNumber()
-    @Transform(({ value }) => parseInt(value, 10))
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
+
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsNumber()
+    @Transform(({ value }) => (value !== undefined && value !== null && value !== '')
+        ? parseInt(value, 10)
+        : undefined)
     room_id?: number;
 }

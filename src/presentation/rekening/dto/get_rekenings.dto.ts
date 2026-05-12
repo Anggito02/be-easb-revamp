@@ -1,25 +1,32 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetRekeningsDto {
+  @IsOptional()
   @IsNumber()
-      @Min(1)
-      @Transform(({ value }) => parseInt(value, 10))
-      page!: number;
+  @Min(1)
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  page?: number;
+  
+  @IsOptional()
+  @IsNumber()
+  @Min(1)
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  amount?: number;
 
-      @IsNumber()
-      @Min(1)
-      @Transform(({ value }) => parseInt(value, 10))
-      amount!: number;
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+  id_jenis_usulan?: number;
 
-      @IsOptional()
-      @IsNumber()
-      @Transform(({ value }) => parseInt(value, 10))
-      room_id?: number;
+  @IsOptional()
+  @IsString()
+  search?: string;
 
-      /** Accepted for API compatibility; not used in filtering (no DB column). */
-      @IsOptional()
-      @IsNumber()
-      @Transform(({ value }) => parseInt(value, 10))
-      id_jenis_usulan?: number;
+  @IsOptional()
+  @IsNumber()
+  @Transform(({ value }) => (value !== undefined && value !== null && value !== '')
+    ? parseInt(value, 10)
+    : undefined)
+  room_id?: number;
 }

@@ -14,70 +14,88 @@ export class RekeningRepositoryImpl implements RekeningRepository {
     constructor(@InjectRepository(RekeningOrmEntity) private readonly repo: Repository<RekeningOrmEntity>) {}
 
     async create(rekening: CreateRekeningDto): Promise<Rekening> {
-        try {
-            const ormEntity = plainToInstance(RekeningOrmEntity, rekening);
-            const newEntity = await this.repo.save(ormEntity);
-            return newEntity;
-        } catch (error) {
-            throw error;
-        }
+        const ormEntity = plainToInstance(RekeningOrmEntity, {
+            ...rekening,
+            idJenisUsulan: rekening.id_jenis_usulan ?? null,
+        });
+        const newEntity = await this.repo.save(ormEntity);
+        // Reload with relation
+        const entityWithRelation = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.id = :id', { id: newEntity.id })
+            .getOne();
+        return entityWithRelation!;
     }
 
-    async update(id: number, rekening: Partial<Rekening>): Promise<Rekening> {
-        try {
-            await this.repo.update(id, rekening);
-            const updatedEntity = await this.repo.findOne({ where: { id } });
-            return updatedEntity!;
-        } catch (error) {
-            throw error;
-        }
+    async update(id: number, rekening: UpdateRekeningDto): Promise<Rekening> {
+        const updateData: Partial<RekeningOrmEntity> = {
+            rekening_kode: rekening.rekening_kode,
+            rekening_uraian: rekening.rekening_uraian,
+            bulan: rekening.bulan,
+            tahun: rekening.tahun,
+            idJenisUsulan: rekening.id_jenis_usulan ?? null,
+        };
+        await this.repo.update(id, updateData);
+        const updatedEntity = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.id = :id', { id })
+            .getOne();
+        return updatedEntity!;
     }
     
     async delete(id: number): Promise<boolean> {
-        try {
-            return await this.repo.softDelete(id).then(() => true).catch(() => false);
-        } catch (error) {
-            throw error;
-        }
+        return await this.repo.softDelete(id).then(() => true).catch(() => false);
     }
 
     async findById(id: number): Promise<Rekening | null> {
-        try {
-            const entity = await this.repo.findOne({ where: { id } });
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+        const entity = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.id = :id', { id })
+            .getOne();
+        return entity || null;
     }
 
-    async findByKode(rekeningKode: string, roomId?: number): Promise<Rekening | null> {
-        try {
-            const qb = this.repo
-                .createQueryBuilder('rekening')
-                .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` });
-            if (roomId !== undefined) {
-                qb.andWhere('rekening.room_id = :roomId', { roomId });
-            }
-            const entity = await qb.getOne();
-            return entity || null;
-        } catch (error) {
-            throw error;
-        }
+    async findByKode(rekeningKode: string): Promise<Rekening | null> {
+        const entity = await this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan')
+            .where('rekening.rekening_kode LIKE :rekeningKode', { rekeningKode: `%${rekeningKode}%` })
+            .getOne();
+        return entity || null;
     }
 
     async findAll(pagination: GetRekeningsDto): Promise<{ data: Rekening[]; total: number }> {
-        try {
-            const qb = this.repo.createQueryBuilder('rekening');
-            if (pagination.room_id) {
-                qb.andWhere('rekening.room_id = :room_id', { room_id: pagination.room_id });
-            }
-            qb.orderBy('rekening.id', 'DESC');
-            qb.skip((pagination.page - 1) * pagination.amount);
-            qb.take(pagination.amount);
-            const [data, total] = await qb.getManyAndCount();
-            return { data, total };
-        } catch (error) {
-            throw error;
+        const queryBuilder = this.repo
+            .createQueryBuilder('rekening')
+            .leftJoinAndSelect('rekening.jenisUsulan', 'jenisUsulan');
+
+        // Filter by id_jenis_usulan if provided
+        if (pagination.id_jenis_usulan !== undefined) {
+            queryBuilder.andWhere('rekening.id_jenis_usulan = :id_jenis_usulan', { 
+                id_jenis_usulan: pagination.id_jenis_usulan 
+            });
         }
+
+        if (pagination.search) {
+            queryBuilder.andWhere(
+                '(rekening.rekening_kode ILIKE :search OR rekening.rekening_uraian ILIKE :search)',
+                { search: `%${pagination.search}%` },
+            );
+        }
+
+        queryBuilder.orderBy('rekening.id', 'DESC');
+
+        // Apply pagination
+        if (pagination.page !== undefined && pagination.amount !== undefined) {
+            queryBuilder.skip((pagination.page - 1) * pagination.amount);
+            queryBuilder.take(pagination.amount);
+        }
+
+        const [data, total] = await queryBuilder.getManyAndCount();
+
+        return { data, total };
     }
 }

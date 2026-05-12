@@ -1,14 +1,26 @@
-import { IsNumber, IsOptional, Min } from 'class-validator';
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class GetUsersDto {
-  @IsNumber()
-  @Min(1)
-  @Transform(({ value }) => parseInt(value, 10))
-  page!: number;
+  // Pagination
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    page?: number;
 
-  @IsNumber()
-  @Min(1)
-  @Transform(({ value }) => parseInt(value, 10))
-  amount!: number;
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    @Transform(({ value }) => value ? parseInt(value, 10) : undefined)
+    amount?: number;
+
+    // Search & filter
+    @IsOptional()
+    @IsString()
+    search?: string;
+
+    @IsOptional()
+    @IsString()
+    role?: string;
 }

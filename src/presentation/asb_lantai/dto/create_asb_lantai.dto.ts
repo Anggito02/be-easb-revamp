@@ -1,12 +1,24 @@
-import { IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateAsbLantaiDto {
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
   lantai!: string;
-  type!: string;
-  koef!: number;
-  id_satuan!: number;
 
-  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @Transform(({ value }) => value?.trim())
+  type!: string;
+
   @IsNumber()
-  room_id?: number;
+  @IsNotEmpty()
+  @Transform(({ value }) => parseFloat(value))
+  koef!: number;
+
+  @IsNumber()
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value, 10))
+  id_satuan!: number;
 }

@@ -1,4 +1,5 @@
-import { IsString, IsNotEmpty, Length, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, Length, IsNumber } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateStandardKlasifikasiDto {
     @IsString()
@@ -13,17 +14,16 @@ export class CreateStandardKlasifikasiDto {
 
     @IsNumber()
     @IsNotEmpty()
+    @Transform(({ value }) => parseFloat(value))
     inflasi: number;
 
     @IsNumber()
     @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     id_asb_klasifikasi: number;
 
     @IsNumber()
     @IsNotEmpty()
+    @Transform(({ value }) => parseInt(value, 10))
     id_kabkota: number;
-
-    @IsOptional()
-    @IsNumber()
-    room_id?: number;
 }
