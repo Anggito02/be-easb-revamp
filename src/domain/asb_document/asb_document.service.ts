@@ -37,4 +37,10 @@ export abstract class AsbDocumentService {
         idOpd?: number | null,
         role?: Role,
     ): Promise<{ buffer: Buffer; filename: string }>;
+    abstract downloadSuratPermohonan(
+        idAsb: number,
+        idOpd?: number | null | undefined,
+        role?: Role,
+        username?: string,
+    ): Promise<{ buffer: Buffer; filename: string }>;
 }

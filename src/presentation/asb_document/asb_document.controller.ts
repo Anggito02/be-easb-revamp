@@ -95,11 +95,11 @@ export class AsbDocumentController {
     ) {
         try {
             const user = req.user as UserContext;
-            const { buffer, filename } = await this.service.downloadByAsbAndSpec(
+            const { buffer, filename } = await this.service.downloadSuratPermohonan(
                 dto.idAsb,
-                DocumentSpec.SURAT_PERMOHONAN,
                 user.idOpd,
                 user.roles[0],
+                user.username,
             );
 
             res.set({

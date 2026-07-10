@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MulterModule } from '@nestjs/platform-express';
 import { AsbDocumentOrmEntity } from '../../infrastructure/asb_document/orm/asb_document.orm_entity';
+import { AsbOrmEntity } from '../../infrastructure/asb/orm/asb.orm_entity';
 import { AsbDocumentRepository } from '../../domain/asb_document/asb_document.repository';
 import { AsbDocumentRepositoryImpl } from '../../infrastructure/asb_document/repositories/asb_document.repository.impl';
 import { AsbDocumentService } from '../../domain/asb_document/asb_document.service';
@@ -18,7 +19,7 @@ import { SuratPermohonanUseCase } from 'src/application/asb_document/use_cases/s
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([AsbDocumentOrmEntity]),
+        TypeOrmModule.forFeature([AsbDocumentOrmEntity, AsbOrmEntity]),
         MulterModule.register({
             limits: {
                 fileSize: 10 * 1024 * 1024, // 10MB

@@ -1,4 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 import archiver from 'archiver';
@@ -17,11 +19,14 @@ import { Readable } from 'typeorm/platform/PlatformTools.js';
 import { SuratPermohonanDto } from 'src/presentation/asb_document/dto/surat_permohonan,dto';
 import { SuratPermohonanUseCase } from './use_cases/surat_permohonan.use_case';
 import { Role } from '../../domain/user/user_role.enum';
+import { AsbOrmEntity } from '../../infrastructure/asb/orm/asb.orm_entity';
 
 @Injectable()
 export class AsbDocumentServiceImpl extends AsbDocumentService {
     constructor(
         private readonly repository: AsbDocumentRepository,
+        @InjectRepository(AsbOrmEntity)
+        private readonly asbRepository: Repository<AsbOrmEntity>,
         private readonly ensureDocumentDir: EnsureDocumentDirectoryUseCase,
         private readonly saveDocument: SaveDocumentUseCase,
         private readonly deleteDocument: DeleteDocumentUseCase,
@@ -220,5 +225,88 @@ export class AsbDocumentServiceImpl extends AsbDocumentService {
             buffer,
             filename,
         };
+    }
+
+    async downloadSuratPermohonan(
+        idAsb: number,
+        idOpd?: number | null | undefined,
+        role?: Role,
+        username?: string,
+    ): Promise<{ buffer: Buffer; filename: string }> {
+        const opdFilter = role ? this.getOpdFilter(idOpd ?? null, role) : undefined;
+
+        let document = (
+            await this.repository.findByAsbIdAll(idAsb, opdFilter)
+        ).find((doc) => doc.spec === DocumentSpec.SURAT_PERMOHONAN);
+
+        // Self-healing: if the document was never created (e.g. Puppeteer
+        // generation failed silently at usulan-creation time, or this ASB
+        // predates the feature), lazily (re)generate it from current ASB data.
+        if (!document) {
+            await this.regenerateSuratPermohonan(idAsb, opdFilter, username);
+            document = (
+                await this.repository.findByAsbIdAll(idAsb, opdFilter)
+            ).find((doc) => doc.spec === DocumentSpec.SURAT_PERMOHONAN);
+        }
+
+        if (!document) {
+            throw new NotFoundException(
+                `Document with spec ${DocumentSpec.SURAT_PERMOHONAN} not found for ASB with id ${idAsb}`,
+            );
+        }
+
+        if (!fs.existsSync(document.filename)) {
+            throw new NotFoundException(`File not found on disk: ${document.filename}`);
+        }
+
+        const buffer = fs.readFileSync(document.filename);
+        const filename = path.basename(document.filename);
+
+        return {
+            buffer,
+            filename,
+        };
+    }
+
+    private async regenerateSuratPermohonan(
+        idAsb: number,
+        opdFilter: number | null | undefined,
+        username?: string,
+    ): Promise<void> {
+        const qb = this.asbRepository
+            .createQueryBuilder('asb')
+            .leftJoinAndSelect('asb.opd', 'opd')
+            .leftJoinAndSelect('asb.asbJenis', 'asbJenis')
+            .where('asb.id = :idAsb', { idAsb });
+
+        if (opdFilter !== null && opdFilter !== undefined) {
+            qb.andWhere('asb.id_opd = :opdFilter', { opdFilter });
+        }
+
+        const asb = await qb.getOne();
+        if (!asb) {
+            throw new NotFoundException(`ASB with id ${idAsb} not found`);
+        }
+
+        const dto: SuratPermohonanDto = {
+            idAsb: asb.id,
+            opd: asb.opd?.opd || '',
+            nama_asb: asb.namaAsb || '',
+            asb_jenis: asb.asbJenis?.jenis || '',
+            alamat: asb.alamat || '',
+            username: username || '',
+        };
+
+        try {
+            await this.generateSuratPermohonan(dto);
+        } catch (error) {
+            console.error(
+                `Failed to (re)generate surat permohonan for ASB ${idAsb}:`,
+                error,
+            );
+            throw new NotFoundException(
+                `Surat permohonan could not be generated for ASB with id ${idAsb}`,
+            );
+        }
     }
 }
