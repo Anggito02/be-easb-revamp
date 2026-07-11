@@ -63,8 +63,12 @@ import { ResponseCaptureInterceptor } from './common/interceptors/response_captu
 import { AuditInterceptor } from './common/interceptors/audit.interceptor';
 import { AuditEventModule } from './presentation/audit_event/audit_event.module';
 import { DataSourceOptions } from 'typeorm';
-import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import { JwtAuthGuard } from './common/guards/jwt_auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { UserThrottlerGuard } from './common/guards/user_throttler.guard';
+
 
 // import module lain sesuai kebutuhan
 
@@ -199,10 +203,11 @@ import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
             provide: APP_INTERCEPTOR,
             useClass: AuditInterceptor,
         },
-        {
-            provide: APP_GUARD,
-            useClass: ThrottlerGuard,
-        },
+        // Order matters: JWT must populate req.user before UserThrottlerGuard.getTracker.
+        { provide: APP_GUARD, useClass: JwtAuthGuard },
+        { provide: APP_GUARD, useClass: RolesGuard },
+        { provide: APP_GUARD, useClass: UserThrottlerGuard },
     ],
 })
 export class AppModule {}
+

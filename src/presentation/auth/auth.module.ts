@@ -7,9 +7,6 @@ import { JwtStrategy } from '../../application/auth/jwt.strategy';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RefreshJwtStrategy } from 'src/application/auth/refresh.strategy';
-import { JwtAuthGuard } from 'src/common/guards/jwt_auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserOrmEntity } from 'src/infrastructure/user/orm/user.orm_entity';
 import { AuthRepository } from 'src/application/auth/auth.repository';
@@ -34,14 +31,7 @@ import { OpdModule } from '../opd/opd.module';
         OpdModule,
     ],
     controllers: [AuthController],
-    providers: [
-        AuthService,
-        JwtStrategy,
-        RefreshJwtStrategy,
-        { provide: APP_GUARD, useClass: JwtAuthGuard },
-        { provide: APP_GUARD, useClass: RolesGuard },
-        AuthRepository,
-    ],
+    providers: [AuthService, JwtStrategy, RefreshJwtStrategy, AuthRepository],
     exports: [AuthService],
 })
 export class AuthModule {}

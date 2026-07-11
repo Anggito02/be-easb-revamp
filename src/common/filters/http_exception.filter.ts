@@ -46,6 +46,23 @@ export class HttpExceptionFilter implements ExceptionFilter {
         // Sanitize error message to remove sensitive information
         message = this.sanitizeErrorMessage(message, isDevelopment);
 
+        if (status === HttpStatus.TOO_MANY_REQUESTS) {
+            // @nestjs/throttler sets Retry-After before throw; ensure it survives this filter.
+            if (!res.getHeader('Retry-After')) {
+                let retryAfter = 60;
+                if (exception instanceof HttpException) {
+                    const body = exception.getResponse();
+                    if (typeof body === 'object' && body !== null && 'retryAfter' in body) {
+                        const parsed = Number((body as { retryAfter?: number }).retryAfter);
+                        if (!Number.isNaN(parsed)) {
+                            retryAfter = Math.max(1, Math.ceil(parsed));
+                        }
+                    }
+                }
+                res.setHeader('Retry-After', String(retryAfter));
+            }
+        }
+
         const responseBody = {
             status: status >= 400 ? 'error' : 'success',
             responseCode: status,

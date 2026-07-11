@@ -41,6 +41,9 @@ async function bootstrap() {
         logger: ['log', 'error', 'warn'],
     });
 
+    // Honor X-Forwarded-For from nginx (one hop) so unauth throttle tracker uses client IP.
+    app.getHttpAdapter().getInstance().set('trust proxy', 1);
+
     const config = app.get(ConfigService);
     const isProduction = config.get('NODE_ENV') === 'production';
 
