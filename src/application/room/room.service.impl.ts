@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { RoomService } from '../../domain/room/room.service';
 import { RoomRepository } from '../../domain/room/room.repository';
 import { Room } from '../../domain/room/room.entity';
@@ -13,9 +13,9 @@ export class RoomServiceImpl extends RoomService {
         super();
     }
 
-    async findAll(dto: GetRoomsDto): Promise<{ data: Room[]; total: number }> {
+    async findAll(dto: GetRoomsDto, restrictToRoomId?: number | null): Promise<{ data: Room[]; total: number }> {
         try {
-            return await this.roomRepository.findAll(dto);
+            return await this.roomRepository.findAll(dto, restrictToRoomId);
         } catch (error) {
             throw error;
         }
@@ -117,6 +117,11 @@ export class RoomServiceImpl extends RoomService {
             const existing = await this.roomRepository.findById(roomId);
             if (!existing) {
                 throw new NotFoundException(`Room with id ${roomId} not found`);
+            }
+            if (existing.kabkota_id == null) {
+                throw new BadRequestException(
+                    'Room must be linked to a kabupaten/kota before managing tahun anggaran (tahun anggaran is stored per kota)',
+                );
             }
 
             const tahunAnggarans = await this.roomRepository.getTahunAnggarans(roomId);

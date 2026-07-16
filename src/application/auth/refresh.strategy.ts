@@ -4,6 +4,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { UserService } from 'src/domain/user/user.service';
+import { Role } from 'src/domain/user/user_role.enum';
 
 @Injectable()
 export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh') {
@@ -34,12 +35,16 @@ export class RefreshJwtStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
             throw new UnauthorizedException('Refresh token revoked');
         }
 
+        const roomId = user.roles.includes(Role.SUPERADMIN)
+            ? null
+            : (user.room_id ?? null);
+
         return {
             sub: payload.sub,
             username: payload.username,
             roles: payload.roles,
             idOpd: payload.idOpd,
-            roomId: payload.roomId ?? null,
+            roomId,
         };
     }
 }

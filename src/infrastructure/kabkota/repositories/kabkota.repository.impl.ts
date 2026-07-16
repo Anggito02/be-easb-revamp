@@ -57,12 +57,23 @@ export class KabKotaRepositoryImpl implements KabKotaRepository {
 
     async findAll(pagination: GetKabKotasDto): Promise<{ data: KabKota[], total: number }> {
         const findOptions: any = {
-            order: { id: 'DESC' }
+            order: { id: 'DESC' },
         };
+
+        const provinceId =
+            pagination.provinceId !== undefined &&
+            !Number.isNaN(pagination.provinceId)
+                ? pagination.provinceId
+                : undefined;
 
         if (pagination.search) {
             const q = ILike(`%${pagination.search}%`);
-            findOptions.where = [{ nama: q }, { kode: q }];
+            findOptions.where =
+                provinceId !== undefined
+                    ? [{ nama: q, provinceId }, { kode: q, provinceId }]
+                    : [{ nama: q }, { kode: q }];
+        } else if (provinceId !== undefined) {
+            findOptions.where = { provinceId };
         }
 
         if (pagination.page !== undefined && pagination.amount !== undefined) {

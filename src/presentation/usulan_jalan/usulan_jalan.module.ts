@@ -21,6 +21,7 @@ import { GenerateUraianUsulanJalanUseCase } from '../../application/usulan_jalan
 import { GenerateSpesifikasiUsulanJalanUseCase } from '../../application/usulan_jalan/use_cases/generate_spesifikasi_usulan_jalan.use_case';
 import { CalculateBiayaSmkkUseCase } from '../../application/usulan_jalan/use_cases/calculate_biaya_smkk.use_case';
 import { MainDashboardModule } from '../main_dashboard/main_dashboard.module';
+import { RoomModule } from '../room/room.module';
 
 @Module({
     imports: [
@@ -31,6 +32,7 @@ import { MainDashboardModule } from '../main_dashboard/main_dashboard.module';
         ]),
         VerifikatorModule,
         MainDashboardModule,
+        RoomModule,
         JalanSpesifikasiDesainModule,
         JalanSpesifikasiDesainReviewModule,
         PpnGlobalModule,

@@ -41,6 +41,9 @@ export class UserOrmEntity {
   @Column({ name: 'refresh_token_version', type: 'int', default: 0 })
   refreshTokenVersion!: number;
 
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  is_active!: boolean;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamp' })
   createdAt!: Date;
 

@@ -12,6 +12,7 @@ export class ValidateUserUseCase {
         const ok = await bcrypt.compare(dto.password, user.passwordHash? user.passwordHash : '');
 
         if (!ok) return null;
+        if (user.is_active === false) return null;
         const { passwordHash, ...safe } = user as any;
 
         return safe as User;

@@ -5,11 +5,12 @@ import { DeepPartial } from 'typeorm';
 import { UsulanJalan } from './usulan_jalan.entity';
 import { GetUsulanJalanAnalyticsFilterDto } from 'src/application/usulan_jalan/dto/get_usulan_jalan_analytics_filter.dto';
 import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan_jalan_analytics.dto';
+import type { OpdJalanReadScope, UsulanJalanFindByIdOpdOptions } from './opd_jalan_visibility';
 
 export abstract class UsulanJalanRepository {
-    abstract findById(id: number, idOpd?: number): Promise<UsulanJalanWithRelationsDto | null>;
-    abstract findAll(dto: FindAllUsulanJalanDto, idOpd?: number): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }>;
-    abstract getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null>;
+    abstract findById(id: number, opd?: UsulanJalanFindByIdOpdOptions): Promise<UsulanJalanWithRelationsDto | null>;
+    abstract findAll(dto: FindAllUsulanJalanDto, opdReadScope?: OpdJalanReadScope): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }>;
+    abstract getRejectInfo(id: number, opdReadScope?: OpdJalanReadScope): Promise<RejectInfoDto | null>;
     abstract create(data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
     abstract update(id: number, data: DeepPartial<UsulanJalan>): Promise<UsulanJalanWithRelationsDto>;
     abstract delete(id: number): Promise<void>;

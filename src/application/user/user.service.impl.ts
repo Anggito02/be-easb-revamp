@@ -255,9 +255,9 @@ export class UserServiceImpl implements UserService {
         }
     }
 
-    async getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult> {
+    async getUsers(pagination: GetUsersDto, restrictToRoomId?: number | null): Promise<UsersPaginationResult> {
         try {
-            const result = await this.userRepo.getUsers(pagination);
+            const result = await this.userRepo.getUsers(pagination, restrictToRoomId);
 
             // sanitize users - remove passwordHash from response and superadmin users
             const sanitizedUsers = result.data.map(user => {
@@ -320,15 +320,7 @@ export class UserServiceImpl implements UserService {
                 throw new ForbiddenException('Forbidden: insufficient permissions');
             }
 
-            // Verifikasi password milik pemanggil (bukan password target)
-            const passwordOk = await bcrypt.compare(
-                dto.currentPassword,
-                authenticatedUser.passwordHash ? authenticatedUser.passwordHash : '',
-            );
-            if (!passwordOk) {
-                // Gunakan 403 (bukan 401) agar frontend tidak memperlakukan ini sebagai sesi kadaluarsa
-                throw new ForbiddenException('Wrong current password');
-            }
+            // Superadmin & admin: cukup JWT; tidak wajib mengirim password akun pemanggil.
 
             if (dto.userId === authenticatedUserId) {
                 throw new ForbiddenException('Cannot change your own password through this endpoint');

@@ -17,4 +17,11 @@ export class GetKabKotasDto {
     @IsOptional()
     @IsString()
     search?: string;
+
+    /** When set, only kab/kota in this province are returned (list endpoint, not `available`). */
+    @IsOptional()
+    @IsNumber()
+    @Min(1)
+    @Transform(({ value }) => (value ? parseInt(value, 10) : undefined))
+    provinceId?: number;
 }

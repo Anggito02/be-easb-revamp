@@ -79,6 +79,12 @@ export class RekeningRepositoryImpl implements RekeningRepository {
             });
         }
 
+        if (pagination.room_id !== undefined) {
+            queryBuilder.andWhere('(rekening.room_id = :room_id OR rekening.room_id IS NULL)', {
+                room_id: pagination.room_id,
+            });
+        }
+
         if (pagination.search) {
             queryBuilder.andWhere(
                 '(rekening.rekening_kode ILIKE :search OR rekening.rekening_uraian ILIKE :search)',

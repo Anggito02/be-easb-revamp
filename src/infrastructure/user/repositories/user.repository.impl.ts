@@ -57,9 +57,15 @@ export class UserRepositoryImpl implements UserRepository {
         return u;
     }
 
-    async updateUser(existingUser: UpdateUserDto): Promise<User> {
-        const updatedUser = await this.repo.save(existingUser);
-        return updatedUser;
+    async updateUser(dto: UpdateUserDto): Promise<User> {
+        const existing = await this.repo.findOne({ where: { id: dto.id } });
+        if (!existing) {
+            throw new Error(`User ${dto.id} not found`);
+        }
+        if (dto.username !== undefined) existing.username = dto.username;
+        if (dto.roles !== undefined) existing.roles = dto.roles;
+        if (dto.is_active !== undefined) existing.is_active = dto.is_active;
+        return await this.repo.save(existing);
     }
 
     async updateUserByAdmin(existingUser: UpdateUserByAdminDto): Promise<User> {
@@ -77,6 +83,7 @@ export class UserRepositoryImpl implements UserRepository {
 
     async getUsers(
         pagination: GetUsersDto,
+        restrictToRoomId?: number | null,
       ): Promise<{ data: User[]; total: number }> {
           const page = Math.max(Number(pagination?.page) || 1, 1);
           const amount = Math.max(Number(pagination?.amount) || 10, 1);
@@ -87,6 +94,10 @@ export class UserRepositoryImpl implements UserRepository {
             .take(amount)
             .orderBy('u.id', 'DESC')
             .where('u.deleted_at IS NULL');
+
+          if (restrictToRoomId != null) {
+              qb.andWhere('u.room_id = :rid', { rid: restrictToRoomId });
+          }
 
           if (pagination.search) {
             const dbType = process.env.DB_TYPE || 'postgres';

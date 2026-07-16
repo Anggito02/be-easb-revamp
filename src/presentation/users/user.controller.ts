@@ -12,6 +12,7 @@ import {
     Delete,
     Query,
     Req,
+    ForbiddenException,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { UserService } from '../../domain/user/user.service';
@@ -370,9 +371,21 @@ export class UserController {
 
     @Roles(Role.SUPERADMIN, Role.ADMIN)
     @Get('list')
-    async getUsers(@Query() dto: GetUsersDto, @Res({ passthrough: true }) res: Response): Promise<ResponseDto> {
+    async getUsers(
+        @Query() dto: GetUsersDto,
+        @Req() req: Request,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<ResponseDto> {
         try {
-            const result = await this.userService.getUsers(dto);
+            const ctx = req.user as UserContext;
+            let restrictRoomId: number | null | undefined;
+            if (ctx.roles.includes(Role.ADMIN) && !ctx.roles.includes(Role.SUPERADMIN)) {
+                if (ctx.roomId == null) {
+                    throw new ForbiddenException('Admin is not assigned to a room');
+                }
+                restrictRoomId = ctx.roomId;
+            }
+            const result = await this.userService.getUsers(dto, restrictRoomId);
 
             return {
                 status: 'success',

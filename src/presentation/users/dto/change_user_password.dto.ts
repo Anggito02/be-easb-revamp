@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, MinLength, IsNumber } from 'class-validator';
+import { IsString, MinLength, IsNumber, IsOptional } from 'class-validator';
 
 export class ChangeUserPasswordDto {
   @IsNumber()
@@ -8,7 +8,8 @@ export class ChangeUserPasswordDto {
   @MinLength(8)
   newPassword!: string;
 
+  /** Deprecated: superadmin/admin no longer need to send their password for this flow. */
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  currentPassword!: string;
+  currentPassword?: string;
 }

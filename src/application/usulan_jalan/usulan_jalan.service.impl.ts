@@ -32,6 +32,8 @@ import { CreateJalanSaluranSpesifikasiSmkkDto } from '../../presentation/jalan_s
 import { CreateJalanSaluranSpesifikasiSmkkReviewDto } from '../../presentation/jalan_saluran_spesifikasi_smkk_review/dto/create_jalan_saluran_spesifikasi_smkk_review.dto';
 import { MainDashboardRepository } from '../../domain/main_dashboard/main_dashboard.repository';
 import { ID_JENIS_USULAN_JALAN } from '../../domain/jenis_usulan/jenis_usulan.constants';
+import { RoomService } from '../../domain/room/room.service';
+import type { OpdJalanReadScope } from '../../domain/usulan_jalan/opd_jalan_visibility';
 
 @Injectable()
 export class UsulanJalanServiceImpl implements UsulanJalanService {
@@ -48,19 +50,59 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         private readonly jalanSaluranSmkkService: JalanSaluranSmkkService,
         private readonly jalanSaluranSpesifikasiSmkkService: JalanSaluranSpesifikasiSmkkService,
         private readonly jalanSaluranSpesifikasiSmkkReviewService: JalanSaluranSpesifikasiSmkkReviewService,
+        private readonly roomService: RoomService,
     ) { }
 
-    async findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null> {
-        // OPD users can only see their own data
-        const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
-        return await this.repository.findById(id, idOpd);
+    private async resolveOpdReadScope(
+        userIdOpd: number | null,
+        userRoles: Role[],
+        roomId: number | null,
+    ): Promise<OpdJalanReadScope | undefined> {
+        if (!userRoles.includes(Role.OPD)) return undefined;
+        if (userIdOpd == null) {
+            throw new ForbiddenException('OPD user has no associated OPD');
+        }
+        let roomKabkotaId: number | null = null;
+        if (roomId != null) {
+            const room = await this.roomService.findById(roomId);
+            roomKabkotaId = room?.kabkota_id ?? null;
+        }
+        return { idOpd: userIdOpd, roomKabkotaId };
     }
 
-    async findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanListResultDto> {
-        // OPD users can only see their own data
-        const idOpd = userRoles.includes(Role.OPD) && userIdOpd !== null ? userIdOpd : undefined;
+    /** OPD may only mutate usulan owned by their OPD; staff roles use unscoped read. */
+    private async findByIdForMutation(
+        id: number,
+        userIdOpd: number | null,
+        userRoles: Role[],
+    ): Promise<UsulanJalanWithRelationsDto | null> {
+        const isAdmin = userRoles.includes(Role.ADMIN);
+        const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
+        const isOpd = userRoles.includes(Role.OPD);
+        if (isAdmin || isSuperAdmin) {
+            return this.repository.findById(id);
+        }
+        if (isOpd) {
+            if (!userIdOpd) {
+                throw new ForbiddenException('OPD user has no associated OPD');
+            }
+            return this.repository.findById(id, { mode: 'strict', idOpd: userIdOpd });
+        }
+        return this.repository.findById(id);
+    }
 
-        const { data, total } = await this.repository.findAll(dto, idOpd);
+    async findById(id: number, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<UsulanJalanWithRelationsDto | null> {
+        const readScope = await this.resolveOpdReadScope(userIdOpd, userRoles, roomId);
+        if (readScope) {
+            return await this.repository.findById(id, { mode: 'read', scope: readScope });
+        }
+        return await this.repository.findById(id);
+    }
+
+    async findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<UsulanJalanListResultDto> {
+        const readScope = await this.resolveOpdReadScope(userIdOpd, userRoles, roomId);
+
+        const { data, total } = await this.repository.findAll(dto, readScope);
 
         const page = dto.page ?? 1;
         const amount = dto.amount ?? total;
@@ -141,7 +183,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             if (!userIdOpd) {
                 throw new ForbiddenException('OPD user has no associated OPD');
             }
-            existingUsulanJalan = await this.repository.findById(dto.id, userIdOpd);
+            existingUsulanJalan = await this.repository.findById(dto.id, { mode: 'strict', idOpd: userIdOpd });
         } else {
             throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
         }
@@ -216,7 +258,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             if (!userIdOpd) {
                 throw new ForbiddenException('OPD user has no associated OPD');
             }
-            existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan, userIdOpd);
+            existingUsulanJalan = await this.repository.findById(dto.idUsulanJalan, { mode: 'strict', idOpd: userIdOpd });
         } else {
             throw new ForbiddenException('User is not authorized to update this Usulan Jalan');
         }
@@ -359,7 +401,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async updateUsulanJalan(dto: UpdateUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         // Check existence and permission
-        const usulanJalan = await this.findById(dto.id, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(dto.id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.id} not found`);
         }
@@ -396,7 +438,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async deleteUsulanJalan(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number }> {
         // Check existence and permission
-        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalan) {
         throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -420,7 +462,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
         // Check existence
-        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(dto.idUsulanJalan, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
@@ -483,7 +525,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
         // Check existence
-        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(dto.idUsulanJalan, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
@@ -624,7 +666,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
             // Check existence
-        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -667,7 +709,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
             // Check existence
-        const usulanJalan = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(dto.idUsulanJalan, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
@@ -685,7 +727,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
             // Re-read Usulan Jalan data before update to prevent race condition
-        const usulanJalanBeforeUpdate = await this.findById(dto.idUsulanJalan, userIdOpd, userRoles);
+        const usulanJalanBeforeUpdate = await this.findByIdForMutation(dto.idUsulanJalan, userIdOpd, userRoles);
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${dto.idUsulanJalan} not found`);
         }
@@ -734,7 +776,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
             // Check existence
-        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -752,7 +794,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
             // Re-read Usulan Jalan data before update to prevent race condition
-        const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalanBeforeUpdate = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -779,7 +821,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
 
     async reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }> {
         // Check existence
-        const usulanJalan = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalan = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalan) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -806,7 +848,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         }
 
         // Re-read Usulan Jalan data before update to prevent race condition
-        const usulanJalanBeforeUpdate = await this.findById(id, userIdOpd, userRoles);
+        const usulanJalanBeforeUpdate = await this.findByIdForMutation(id, userIdOpd, userRoles);
         if (!usulanJalanBeforeUpdate) {
             throw new NotFoundException(`Usulan Jalan with id ${id} not found`);
         }
@@ -839,7 +881,7 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
         };
     }
 
-    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null> {
+    async getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<RejectInfoDto | null> {
         // Check if user is ADMIN or SUPERADMIN
         const isAdmin = userRoles.includes(Role.ADMIN);
         const isSuperAdmin = userRoles.includes(Role.SUPERADMIN);
@@ -855,13 +897,14 @@ export class UsulanJalanServiceImpl implements UsulanJalanService {
             const isOpd = userRoles.includes(Role.OPD);
 
             if (isOpd) {
-                // OPD users must have an idOpd
                 if (!userIdOpd) {
                     throw new ForbiddenException('OPD user has no associated OPD');
                 }
-
-                // Fetch with OPD filter
-                rejectInfo = await this.repository.getRejectInfo(id, userIdOpd);
+                const readScope = await this.resolveOpdReadScope(userIdOpd, userRoles, roomId);
+                if (!readScope) {
+                    throw new ForbiddenException('OPD user has no associated OPD');
+                }
+                rejectInfo = await this.repository.getRejectInfo(id, readScope);
             } else {
                 throw new ForbiddenException('User is not authorized to access reject info');
             }

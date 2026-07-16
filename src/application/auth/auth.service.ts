@@ -45,6 +45,12 @@ export class AuthService {
         return user;
     }
 
+    /** SUPERADMIN is global: never embed a tenant room in JWT claims. */
+    private jwtRoomIdForUser(user: User): number | null {
+        if (user.roles.includes(Role.SUPERADMIN)) return null;
+        return user.room_id ?? null;
+    }
+
     private async signAccess(user: User): Promise<string> {
         let idOpd: number | null = null;
 
@@ -56,7 +62,7 @@ export class AuthService {
             idOpd = opd?.id ?? null;
         }
 
-        const roomId = user.room_id ?? null;
+        const roomId = this.jwtRoomIdForUser(user);
         const payload = { sub: String(user.id), username: user.username, roles: user.roles, idOpd, roomId };
         const expiresIn = this.config.getOrThrow<string>('jwt.accessTtl');
         return this.jwt.sign(payload, { expiresIn } as any);
@@ -73,7 +79,7 @@ export class AuthService {
             idOpd = opd?.id ?? null;
         }
 
-        const roomId = user.room_id ?? null;
+        const roomId = this.jwtRoomIdForUser(user);
         const payload = {
             sub: String(user.id),
             username: user.username,

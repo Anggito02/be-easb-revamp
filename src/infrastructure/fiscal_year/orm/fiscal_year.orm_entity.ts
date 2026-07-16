@@ -1,13 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Unique } from 'typeorm';
 
-@Entity('room_tahun_anggarans')
-@Unique(['room_id', 'tahun'])
-export class RoomTahunAnggaranOrmEntity {
+@Entity('fiscal_years')
+@Unique(['kabkota_id', 'tahun'])
+export class FiscalYearOrmEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'room_id', type: 'integer' })
-    room_id: number;
+    @Column({ name: 'kabkota_id', type: 'integer' })
+    kabkota_id: number;
 
     @Column({ type: 'integer' })
     tahun: number;

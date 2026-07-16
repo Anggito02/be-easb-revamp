@@ -95,7 +95,7 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.findAll(dto, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.findAll(dto, user.idOpd, user.roles, user.roomId);
 
             return {
                 status: 'success',
@@ -143,7 +143,7 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.findById(id, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.findById(id, user.idOpd, user.roles, user.roomId);
 
             return {
                 status: 'success',
@@ -727,7 +727,7 @@ export class UsulanJalanController {
     ): Promise<ResponseDto> {
         try {
             const user = req.user as UserContext;
-            const result = await this.usulanJalanService.getRejectInfo(id, user.idOpd, user.roles);
+            const result = await this.usulanJalanService.getRejectInfo(id, user.idOpd, user.roles, user.roomId);
 
             return {
                 status: 'success',

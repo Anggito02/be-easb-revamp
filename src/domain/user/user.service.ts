@@ -22,7 +22,7 @@ export abstract class UserService {
     abstract updateRoomId(userId: number, roomId: number | null): Promise<User>
     abstract deleteUser(user: DeleteUserDto): Promise<boolean>
     abstract deleteUserByAdmin(user: DeleteUserByAdminDto): Promise<boolean>
-    abstract getUsers(pagination: GetUsersDto): Promise<UsersPaginationResult>
+    abstract getUsers(pagination: GetUsersDto, restrictToRoomId?: number | null): Promise<UsersPaginationResult>
     abstract getUserDetail(user: GetUserDetailDto): Promise<User>
     abstract changeUserPassword(authenticatedUserId: number, dto: ChangeUserPasswordDto): Promise<User>
 }

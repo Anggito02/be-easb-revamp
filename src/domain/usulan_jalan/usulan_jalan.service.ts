@@ -16,8 +16,8 @@ import { VerifyBpkadUsulanJalanDto } from 'src/presentation/usulan_jalan/dto/ver
 
 export abstract class UsulanJalanService {
     // Query methods
-    abstract findById(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanWithRelationsDto | null>;
-    abstract findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[]): Promise<UsulanJalanListResultDto>;
+    abstract findById(id: number, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<UsulanJalanWithRelationsDto | null>;
+    abstract findAll(dto: FindAllUsulanJalanDto, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<UsulanJalanListResultDto>;
 
     // Index CRUD operations (SUPERADMIN, ADMIN, OPD)  
     abstract createIndex(dto: CreateUsulanJalanStoreIndexDto, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
@@ -38,6 +38,6 @@ export abstract class UsulanJalanService {
     abstract verifyBappeda(id: number, userId: string | null, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
 
     abstract reject(id: number, rejectReason: string, userId: string, userIdOpd: number | null, userRoles: Role[]): Promise<{ id: number; status: any }>;
-    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[]): Promise<RejectInfoDto | null>;
+    abstract getRejectInfo(id: number, userIdOpd: number | null, userRoles: Role[], roomId: number | null): Promise<RejectInfoDto | null>;
     abstract getAnalytics(userIdOpd: number | null, userRoles: Role[], filter?: GetUsulanJalanAnalyticsFilterDto): Promise<UsulanJalanAnalyticsDto>;
 }

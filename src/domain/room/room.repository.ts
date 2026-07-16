@@ -5,7 +5,7 @@ import { UpdateRoomDto } from 'src/presentation/room/dto/update_room.dto';
 import { GetRoomsDto } from 'src/presentation/room/dto/get_rooms.dto';
 
 export abstract class RoomRepository {
-    abstract findAll(dto: GetRoomsDto): Promise<{ data: Room[]; total: number }>;
+    abstract findAll(dto: GetRoomsDto, restrictToRoomId?: number | null): Promise<{ data: Room[]; total: number }>;
     abstract findById(id: number): Promise<Room | null>;
     abstract findByKode(kode: string): Promise<Room | null>;
     abstract findByKabkotaId(kabkotaId: number): Promise<Room | null>;

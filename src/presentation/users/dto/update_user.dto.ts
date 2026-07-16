@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsString, IsNotEmpty, IsArray, ArrayNotEmpty, IsEnum, IsOptional, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, ArrayNotEmpty, IsEnum, IsOptional, IsNumber, IsBoolean } from 'class-validator';
 import { Role } from 'src/domain/user/user_role.enum';
 
 export class UpdateUserDto {
@@ -17,4 +17,8 @@ export class UpdateUserDto {
   @IsEnum(Role, { each: true })
   @IsOptional()
   roles?: Role[];
+
+  @IsBoolean()
+  @IsOptional()
+  is_active?: boolean;
 }

@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { RoomRepository } from '../../../domain/room/room.repository';
 import { Room } from '../../../domain/room/room.entity';
 import { RoomTahunAnggaran } from '../../../domain/room/room_tahun_anggaran.entity';
 import { RoomOrmEntity } from '../orm/room.orm_entity';
-import { RoomTahunAnggaranOrmEntity } from '../orm/room_tahun_anggaran.orm_entity';
+import { FiscalYearOrmEntity } from '../../fiscal_year/orm/fiscal_year.orm_entity';
 import { CreateRoomDto } from 'src/presentation/room/dto/create_room.dto';
 import { UpdateRoomDto } from 'src/presentation/room/dto/update_room.dto';
 import { GetRoomsDto } from 'src/presentation/room/dto/get_rooms.dto';
@@ -15,17 +15,27 @@ export class RoomRepositoryImpl implements RoomRepository {
     constructor(
         @InjectRepository(RoomOrmEntity)
         private readonly repo: Repository<RoomOrmEntity>,
-        @InjectRepository(RoomTahunAnggaranOrmEntity)
-        private readonly tahunAnggaranRepo: Repository<RoomTahunAnggaranOrmEntity>,
+        @InjectRepository(FiscalYearOrmEntity)
+        private readonly fiscalYearRepo: Repository<FiscalYearOrmEntity>,
     ) {}
 
-    async findAll(dto: GetRoomsDto): Promise<{ data: Room[]; total: number }> {
+    async findAll(dto: GetRoomsDto, restrictToRoomId?: number | null): Promise<{ data: Room[]; total: number }> {
         const qb = this.repo.createQueryBuilder('room');
 
+        if (restrictToRoomId != null) {
+            qb.andWhere('room.id = :rid', { rid: restrictToRoomId });
+        }
+
         if (dto.search) {
+            const search = `%${dto.search}%`;
             qb.andWhere(
-                '(room.nama ILIKE :search OR room.kode_room ILIKE :search)',
-                { search: `%${dto.search}%` },
+                `(room.nama ILIKE :search OR room.kode_room ILIKE :search OR EXISTS (
+                    SELECT 1 FROM kabkotas k
+                    LEFT JOIN provinces p ON p.id = k.province_id
+                    WHERE k.id = room.kabkota_id
+                      AND (k.nama ILIKE :search OR p.nama ILIKE :search)
+                ))`,
+                { search },
             );
         }
 
@@ -38,7 +48,56 @@ export class RoomRepositoryImpl implements RoomRepository {
             .take(dto.amount);
 
         const [data, total] = await qb.getManyAndCount();
-        return { data, total };
+
+        const kabkotaIds = [...new Set(data.map((r) => r.kabkota_id).filter((id): id is number => id != null))];
+        const labelByKabkotaId = new Map<number, { kabkota_nama: string; province_nama: string | null }>();
+        if (kabkotaIds.length > 0) {
+            const rows = await this.repo.manager
+                .createQueryBuilder()
+                .select('k.id', 'id')
+                .addSelect('k.nama', 'kabkota_nama')
+                .addSelect('p.nama', 'province_nama')
+                .from('kabkotas', 'k')
+                .leftJoin('provinces', 'p', 'p.id = k.province_id')
+                .where('k.id IN (:...ids)', { ids: kabkotaIds })
+                .getRawMany<{ id: string | number; kabkota_nama: string; province_nama: string | null }>();
+            for (const row of rows) {
+                labelByKabkotaId.set(Number(row.id), {
+                    kabkota_nama: row.kabkota_nama,
+                    province_nama: row.province_nama ?? null,
+                });
+            }
+        }
+
+        const tahunByKabkotaId = new Map<number, number[]>();
+        if (kabkotaIds.length > 0) {
+            const fyRows = await this.fiscalYearRepo.find({
+                where: { kabkota_id: In(kabkotaIds) },
+                order: { tahun: 'ASC' },
+            });
+            for (const fy of fyRows) {
+                const arr = tahunByKabkotaId.get(fy.kabkota_id) ?? [];
+                arr.push(fy.tahun);
+                tahunByKabkotaId.set(fy.kabkota_id, arr);
+            }
+        }
+
+        const enriched: Room[] = data.map((room) => {
+            const meta = room.kabkota_id != null ? labelByKabkotaId.get(room.kabkota_id) : undefined;
+            const tahunAnggaran =
+                room.kabkota_id != null ? (tahunByKabkotaId.get(room.kabkota_id) ?? []) : [];
+            if (!meta) {
+                return { ...room, tahun_anggaran: tahunAnggaran };
+            }
+            return {
+                ...room,
+                kabkota_nama: meta.kabkota_nama,
+                province_nama: meta.province_nama,
+                tahun_anggaran: tahunAnggaran,
+            };
+        });
+
+        return { data: enriched, total };
     }
 
     async findById(id: number): Promise<Room | null> {
@@ -96,22 +155,38 @@ export class RoomRepositoryImpl implements RoomRepository {
     }
 
     async addTahunAnggaran(roomId: number, tahun: number): Promise<RoomTahunAnggaran> {
-        const entity = this.tahunAnggaranRepo.create({ room_id: roomId, tahun, is_active: true });
-        const saved = await this.tahunAnggaranRepo.save(entity);
-        return saved;
+        const room = await this.repo.findOne({ where: { id: roomId } });
+        if (!room || room.kabkota_id == null) {
+            throw new NotFoundException(`Room ${roomId} has no linked kabupaten/kota`);
+        }
+        const entity = this.fiscalYearRepo.create({
+            kabkota_id: room.kabkota_id,
+            tahun,
+            is_active: true,
+        });
+        const saved = await this.fiscalYearRepo.save(entity);
+        return this.mapFiscalYearToRoomTahun(saved, roomId);
     }
 
     async removeTahunAnggaran(roomId: number, tahun: number): Promise<boolean> {
-        const result = await this.tahunAnggaranRepo.delete({ room_id: roomId, tahun });
+        const room = await this.repo.findOne({ where: { id: roomId } });
+        if (!room || room.kabkota_id == null) {
+            return false;
+        }
+        const result = await this.fiscalYearRepo.delete({ kabkota_id: room.kabkota_id, tahun });
         return (result.affected ?? 0) > 0;
     }
 
     async getTahunAnggarans(roomId: number): Promise<RoomTahunAnggaran[]> {
-        const entities = await this.tahunAnggaranRepo.find({
-            where: { room_id: roomId },
+        const room = await this.repo.findOne({ where: { id: roomId } });
+        if (!room || room.kabkota_id == null) {
+            return [];
+        }
+        const entities = await this.fiscalYearRepo.find({
+            where: { kabkota_id: room.kabkota_id },
             order: { tahun: 'ASC' },
         });
-        return entities;
+        return entities.map((e) => this.mapFiscalYearToRoomTahun(e, roomId));
     }
 
     async assignKabkota(roomId: number, kabkotaId: number | null): Promise<Room> {
@@ -119,5 +194,16 @@ export class RoomRepositoryImpl implements RoomRepository {
         const updated = await this.repo.findOne({ where: { id: roomId } });
         if (!updated) throw new NotFoundException(`Room with id ${roomId} not found`);
         return updated;
+    }
+
+    private mapFiscalYearToRoomTahun(row: FiscalYearOrmEntity, roomId: number): RoomTahunAnggaran {
+        return {
+            id: row.id,
+            room_id: roomId,
+            kabkota_id: row.kabkota_id,
+            tahun: row.tahun,
+            is_active: row.is_active,
+            createdAt: row.createdAt,
+        };
     }
 }

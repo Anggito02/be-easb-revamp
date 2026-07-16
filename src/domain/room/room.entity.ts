@@ -9,4 +9,10 @@ export class Room {
   created_by_user_id!: number | null;
   createdAt!: Date;
   updatedAt!: Date;
+  /** Filled on list/detail reads when joined from kabkotas */
+  kabkota_nama?: string | null;
+  /** Filled on list/detail reads when joined from provinces via kabkota */
+  province_nama?: string | null;
+  /** Tahun anggaran for this room's linked kabupaten/kota (from fiscal_years) */
+  tahun_anggaran?: number[];
 }

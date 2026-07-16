@@ -8,4 +8,5 @@ export class User {
   roles!: Role[];
   refreshTokenVersion!: number;
   room_id!: number | null; // null for SUPERADMIN, set for ADMIN/VERIFIKATOR/OPD
+  is_active!: boolean;
 }

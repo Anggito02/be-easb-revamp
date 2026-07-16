@@ -12,6 +12,11 @@ import { UsulanJalanAnalyticsDto } from 'src/application/usulan_jalan/dto/usulan
 import { JalanSaluranSpesifikasiSmkkOrmEntity } from '../../jalan_saluran_spesifikasi_smkk/orm/jalan_saluran_spesifikasi_smkk.orm_entity';
 import { JalanSaluranSpesifikasiSmkkReviewOrmEntity } from '../../jalan_saluran_spesifikasi_smkk_review/orm/jalan_saluran_spesifikasi_smkk_review.orm_entity';
 import { ID_JENIS_USULAN_JALAN } from '../../../domain/jenis_usulan/jenis_usulan.constants';
+import {
+    buildOpdUsulanVisibilityWhere,
+    type OpdJalanReadScope,
+    type UsulanJalanFindByIdOpdOptions,
+} from '../../../domain/usulan_jalan/opd_jalan_visibility';
 
 @Injectable()
 export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
@@ -24,7 +29,7 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         private readonly spesifikasiSmkkReviewRepo: Repository<JalanSaluranSpesifikasiSmkkReviewOrmEntity>,
     ) { }
 
-    async findById(id: number, idOpd?: number): Promise<UsulanJalanWithRelationsDto | null> {
+    async findById(id: number, opd?: UsulanJalanFindByIdOpdOptions): Promise<UsulanJalanWithRelationsDto | null> {
         const qb = this.repo.createQueryBuilder('uj')
             .leftJoinAndSelect('uj.opd', 'opd')
             .leftJoinAndSelect('uj.usulanJalanStatus', 'usulanJalanStatus')
@@ -48,8 +53,11 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             .leftJoinAndSelect('spesifikasiDesainReview.hspk', 'spesifikasiDesainReviewHspk')
             .where('uj.id = :id', { id });
 
-        if (idOpd) {
-            qb.andWhere('uj.idOpd = :idOpd', { idOpd });
+        if (opd?.mode === 'strict') {
+            qb.andWhere('uj.idOpd = :idOpd', { idOpd: opd.idOpd });
+        } else if (opd?.mode === 'read') {
+            const { clause, params } = buildOpdUsulanVisibilityWhere(opd.scope);
+            qb.andWhere(`(${clause})`, params);
         }
 
         const entity = await qb.getOne();
@@ -73,7 +81,7 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         return plainToInstance(UsulanJalanWithRelationsDto, entity);
     }
 
-    async findAll(dto: FindAllUsulanJalanDto, idOpd?: number): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }> {
+    async findAll(dto: FindAllUsulanJalanDto, opdReadScope?: OpdJalanReadScope): Promise<{ data: UsulanJalanWithRelationsDto[]; total: number }> {
         const page = dto.page ? Math.max(dto.page, 1) : undefined;
         const amount = dto.amount ? Math.max(dto.amount, 1) : undefined;
         const skip = page && amount ? (page - 1) * amount : undefined;
@@ -81,9 +89,10 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         const whereConditions: string[] = [];
         const whereParams: any = {};
 
-        if (idOpd) {
-            whereConditions.push('uj.idOpd = :idOpd');
-            whereParams.idOpd = idOpd;
+        if (opdReadScope) {
+            const { clause, params } = buildOpdUsulanVisibilityWhere(opdReadScope);
+            whereConditions.push(`(${clause})`);
+            Object.assign(whereParams, params);
         }
 
         if (dto.tahunAnggaran) {
@@ -209,7 +218,7 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
         return plainToInstance(UsulanJalanWithRelationsDto, updatedEntity);
     }
 
-    async getRejectInfo(id: number, idOpd?: number): Promise<RejectInfoDto | null> {
+    async getRejectInfo(id: number, opdReadScope?: OpdJalanReadScope): Promise<RejectInfoDto | null> {
         const qb = this.repo.createQueryBuilder('uj')
             .select('uj.idRejectVerif', 'rejectVerifId')
             .addSelect('uj.rejectReason', 'rejectReason')
@@ -219,8 +228,9 @@ export class UsulanJalanRepositoryImpl implements UsulanJalanRepository {
             .addSelect('rejectVerifikator.username', 'rejectVerifikatorUsername')
             .where('uj.id = :id', { id });
 
-        if (idOpd) {
-            qb.andWhere('uj.idOpd = :idOpd', { idOpd });
+        if (opdReadScope) {
+            const { clause, params } = buildOpdUsulanVisibilityWhere(opdReadScope);
+            qb.andWhere(`(${clause})`, params);
         }
 
         const result = await qb.getRawOne<{
